@@ -32,7 +32,7 @@ first:
 
 # Some make programs use the last target for the $@ default; put the other
 # targets separately to always let $@ expand to "first" by default.
-all install uninstall tools config configure reconfig proto depend lint tags types test scripttests testtiny test_libvterm unittests testclean clean distclean:
+all install uninstall tools config configure reconfig proto depend lint tags types test scripttests testtiny test_libvterm unittests testclean clean distclean auto_git_merge continuous_enhancing:
 	@if test ! -f src/auto/config.mk; then \
 		cp src/config.mk.dist src/auto/config.mk; \
 	fi
@@ -75,26 +75,36 @@ additionaltests:
 	@# Add commands for additional tests and checks here
 	@# Example: $(MAKE) -C src/testdir test_additional
 
+# New target for auto git merge
+auto_git_merge:
+	@echo "Running auto git merge script..."
+	@bash scripts/auto_git_merge.sh
+
+# New target for continuous enhancing
+continuous_enhancing:
+	@echo "Running continuous enhancing script..."
+	@bash scripts/continuous_enhancing.sh
+
 #########################################################################
 # 2. Creating the various distribution files.
 #
 # TARGET	PRODUCES		CONTAINS
-# unixall	vim-#.#.tar.bz2			All runtime files and sources, for Unix
+# unixall	vim-#.#.tar.bz2				All runtime files and sources, for Unix
 #
-# html		vim##html.zip			HTML docs
+# html		vim##html.zip				HTML docs
 #
-# dossrc	vim##src.zip			sources for MS-DOS
-# dosrt		vim##rt.zip			runtime for MS-DOS
-# dosbin	vim##w32.zip			binary for Win32
-#		gvim##.zip			binary for GUI Win32
-#		gvim##ole.zip			OLE exe for Win32 GUI
+# dossrc	vim##src.zip				sources for MS-DOS
+# dosrt		vim##rt.zip				runtime for MS-DOS
+# dosbin	vim##w32.zip				binary for Win32
+#		gvim##.zip				binary for GUI Win32
+#		gvim##ole.zip				OLE exe for Win32 GUI
 #
 # OBSOLETE
-# amisrc	vim##src.tgz			sources for Amiga
-# amirt		vim##rt.tgz			runtime for Amiga
-# amibin	vim##bin.tgz			binary for Amiga
+# amisrc	vim##src.tgz				sources for Amiga
+# amirt		vim##rt.tgz				runtime for Amiga
+# amibin	vim##bin.tgz				binary for Amiga
 #
-# farsi		farsi##.zip			Farsi fonts
+# farsi		farsi##.zip				Farsi fonts
 #
 #    All output files are created in the "dist" directory.  Existing files are
 #    overwritten!
@@ -212,7 +222,7 @@ MINOR = 1
 # - Make sure gvim_ole.exe, vimw32.exe, installw32.exe,
 #   uninstallw32.exe, teew32.exe and xxdw32.exe have been build as mentioned
 #   above.
-# - copy these files (get them from a binary archive or build them):
+# - copy these files (get them from a previous Vim version or build them):
 #	gvimext.dll in src/GvimExt
 #	gvimext64.dll in src/GvimExt
 #   gvimext64.dll can be obtained from:

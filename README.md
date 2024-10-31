@@ -159,3 +159,15 @@ The repository has been scanned for potential issues and areas for enhancement. 
 ## CI Configuration
 
 The CI configuration in `.github/workflows/ci.yml` has been reviewed and optimized for efficiency. New steps for additional tests and checks have been added.
+
+## Auto Git Merge and Continuous Enhancing
+
+This repository includes scripts and configurations for auto git merge and continuous enhancing. These features help to automate the process of merging code changes and continuously improving the codebase.
+
+### Auto Git Merge
+
+The `scripts/auto_git_merge.sh` script handles automatic merging of code changes. It includes necessary commands and logic to perform the merge process.
+
+### Continuous Enhancing
+
+The `scripts/continuous_enhancing.sh` script handles continuous enhancing of the codebase. It includes necessary commands and logic to continuously improve the code quality and performance.
