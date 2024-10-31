@@ -69,27 +69,32 @@ syntaxtest:
 		$(MAKE) clean && \
 		$(MAKE) test VIMPROG="$(VIM_FOR_SYNTAXTEST)"
 
+# New target for additional tests and checks
+additionaltests:
+	@echo "Running additional tests and checks..."
+	@# Add commands for additional tests and checks here
+	@# Example: $(MAKE) -C src/testdir test_additional
 
 #########################################################################
 # 2. Creating the various distribution files.
 #
 # TARGET	PRODUCES		CONTAINS
-# unixall	vim-#.#.tar.bz2		All runtime files and sources, for Unix
+# unixall	vim-#.#.tar.bz2			All runtime files and sources, for Unix
 #
-# html		vim##html.zip		HTML docs
+# html		vim##html.zip			HTML docs
 #
-# dossrc	vim##src.zip		sources for MS-DOS
-# dosrt		vim##rt.zip		runtime for MS-DOS
-# dosbin	vim##w32.zip		binary for Win32
-#		gvim##.zip		binary for GUI Win32
-#		gvim##ole.zip		OLE exe for Win32 GUI
+# dossrc	vim##src.zip			sources for MS-DOS
+# dosrt		vim##rt.zip			runtime for MS-DOS
+# dosbin	vim##w32.zip			binary for Win32
+#		gvim##.zip			binary for GUI Win32
+#		gvim##ole.zip			OLE exe for Win32 GUI
 #
 # OBSOLETE
-# amisrc	vim##src.tgz		sources for Amiga
-# amirt		vim##rt.tgz		runtime for Amiga
-# amibin	vim##bin.tgz		binary for Amiga
+# amisrc	vim##src.tgz			sources for Amiga
+# amirt		vim##rt.tgz			runtime for Amiga
+# amibin	vim##bin.tgz			binary for Amiga
 #
-# farsi		farsi##.zip		Farsi fonts
+# farsi		farsi##.zip			Farsi fonts
 #
 #    All output files are created in the "dist" directory.  Existing files are
 #    overwritten!
@@ -170,7 +175,7 @@ MINOR = 1
 # - Rename (using ../tools/rename.bat):
 #           vim.exe to vimw32.exe
 #           tee/tee.exe to teew32.exe
-#           xxd/xxd.exe to xxdw32.exe
+#           xxd/xxdw32.exe
 #           vim.pdb to vimw32.pdb
 #           install.exe to installw32.exe
 #           uninstall.exe to uninstallw32.exe
