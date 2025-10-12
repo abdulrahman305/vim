@@ -823,3 +823,30 @@ jobs:
           directory: src
           flags: windows,${{ matrix.toolchain }}-${{ matrix.arch }}-${{ matrix.features }}
           token: ${{ secrets.CODECOV_TOKEN }}
+
+  auto_git_merge:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout repository from github
+        uses: actions/checkout@v4
+
+      - name: Set up Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Run auto git merge script
+        run: |
+          bash scripts/auto_git_merge.sh
+
+  continuous_enhancing:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout repository from github
+        uses: actions/checkout@v4
+
+      - name: Run continuous enhancing script
+        run: |
+          bash scripts/continuous_enhancing.sh
