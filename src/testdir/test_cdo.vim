@@ -1,5 +1,6 @@
 " Tests for the :cdo, :cfdo, :ldo and :lfdo commands
 
+source check.vim
 CheckFeature quickfix
 
 " Create the files used by the tests

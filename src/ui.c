@@ -63,7 +63,7 @@ ui_write(char_u *s, int len, int console UNUSED)
 #endif
 }
 
-#if defined(UNIX) || defined(VMS) || defined(MSWIN)
+#if defined(UNIX) || defined(VMS) || defined(PROTO) || defined(MSWIN)
 /*
  * When executing an external program, there may be some typed characters that
  * are not consumed by it.  Give them back to ui_inchar() and they are stored
@@ -248,7 +248,7 @@ theend:
     return retval;
 }
 
-#if defined(UNIX) || defined(VMS) || defined(FEAT_GUI)
+#if defined(UNIX) || defined(VMS) || defined(FEAT_GUI) || defined(PROTO)
 /*
  * Common code for mch_inchar() and gui_inchar(): Wait for a while or
  * indefinitely until characters are available, dealing with timers and
@@ -407,19 +407,7 @@ inchar_loop(
 
 	if ((resize_func != NULL && resize_func(TRUE))
 #if defined(FEAT_CLIENTSERVER) && defined(UNIX)
-		|| (
-# ifdef FEAT_X11
-		    (clientserver_method == CLIENTSERVER_METHOD_X11 &&
-		    server_waiting())
-# endif
-# if defined(FEAT_X11) && defined(FEAT_SOCKETSERVER)
-		    ||
-# endif
-# ifdef FEAT_SOCKETSERVER
-		    (clientserver_method == CLIENTSERVER_METHOD_SOCKET &&
-		     socket_server_waiting_accept())
-# endif
-		)
+		|| server_waiting()
 #endif
 #ifdef MESSAGE_QUEUE
 		|| interrupted
@@ -436,7 +424,7 @@ inchar_loop(
 }
 #endif
 
-#if defined(FEAT_TIMERS)
+#if defined(FEAT_TIMERS) || defined(PROTO)
 /*
  * Wait for a timer to fire or "wait_func" to return non-zero.
  * Returns OK when something was read.
@@ -578,7 +566,7 @@ ui_suspend(void)
     mch_suspend();
 }
 
-#if !defined(UNIX) || !defined(SIGTSTP)
+#if !defined(UNIX) || !defined(SIGTSTP) || defined(PROTO)
 /*
  * When the OS can't really suspend, call this function to start a shell.
  * This is never called in the GUI.
@@ -659,10 +647,11 @@ ui_new_shellsize(void)
     }
 }
 
-#if (defined(FEAT_EVAL) || defined(FEAT_TERMINAL)) \
+#if ((defined(FEAT_EVAL) || defined(FEAT_TERMINAL)) \
 	    && (defined(FEAT_GUI) \
 		|| defined(MSWIN) \
-		|| (defined(HAVE_TGETENT) && defined(FEAT_TERMRESPONSE)))
+		|| (defined(HAVE_TGETENT) && defined(FEAT_TERMRESPONSE)))) \
+	|| defined(PROTO)
 /*
  * Get the window position in pixels, if possible.
  * Return FAIL when not possible.
@@ -738,7 +727,7 @@ ui_breakcheck_force(int force)
 // For the client-server code in the console the received keys are put in the
 // input buffer.
 
-#if defined(USE_INPUT_BUF)
+#if defined(USE_INPUT_BUF) || defined(PROTO)
 
 /*
  * Internal typeahead buffer.  Includes extra space for long key code
@@ -777,7 +766,7 @@ vim_is_input_buf_empty(void)
     return (inbufcount == 0);
 }
 
-#if defined(FEAT_OLE)
+#if defined(FEAT_OLE) || defined(PROTO)
     int
 vim_free_in_input_buf(void)
 {
@@ -785,7 +774,7 @@ vim_free_in_input_buf(void)
 }
 #endif
 
-#if defined(FEAT_GUI_GTK)
+#if defined(FEAT_GUI_GTK) || defined(PROTO)
     int
 vim_used_in_input_buf(void)
 {
@@ -1082,7 +1071,7 @@ read_error_exit(void)
     preserve_exit();
 }
 
-#if defined(CURSOR_SHAPE)
+#if defined(CURSOR_SHAPE) || defined(PROTO)
 /*
  * May update the shape of the cursor.
  */
@@ -1251,7 +1240,7 @@ ui_focus_change(
 	maketitle();
 }
 
-#if defined(HAVE_INPUT_METHOD)
+#if defined(HAVE_INPUT_METHOD) || defined(PROTO)
 /*
  * Save current Input Method status to specified place.
  */

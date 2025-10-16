@@ -1,29 +1,20 @@
 " Test for all command modifiers in
 
-def s:memoize_cmdmods(): func(): list<string>
-  var cmdmods: list<string> = []
-  return () => {
-    if empty(cmdmods)
-      edit ../ex_docmd.c
-      var top = search('^static cmdmod_info_T cmdmod_info_tab[') + 1
-      var bot = search('^};.*\/\/ cmdmod_info_tab') - 1
-      var lines = getline(top, bot)
-      cmdmods = lines->map((_, v) => substitute(v, '.*"\(\k*\)".*', '\1', ''))
-      bwipe!
-    endif
-    return cmdmods
-  }
-enddef
-let s:get_cmdmods = s:memoize_cmdmods()
-
 def Test_cmdmods_array()
   # Get all the command modifiers from ex_cmds.h.
   var lines = readfile('../ex_cmds.h')->filter((_, l) => l =~ 'ex_wrongmodifier,')
   var cmds = lines->map((_, v) => substitute(v, '.*"\(\k*\)".*', '\1', ''))
+
   # :hide is both a command and a modifier
   cmds->extend(['hide'])
 
-  var mods = s:get_cmdmods()
+  # Get the entries of cmdmod_info_tab[] in ex_docmd.c
+  edit ../ex_docmd.c
+  var top = search('^static cmdmod_info_T cmdmod_info_tab[') + 1
+  var bot = search('^};.*\/\/ cmdmod_info_tab') - 1
+  lines = getline(top, bot)
+  var mods = lines->map((_, v) => substitute(v, '.*"\(\k*\)".*', '\1', ''))
+
   # Add the other commands that use ex_wrongmodifier.
   mods->extend([
                 'endclass',
@@ -82,13 +73,10 @@ def Test_keep_cmdmods_names()
 enddef
 
 def Test_cmdmod_completion()
-  for mod in s:get_cmdmods()
-    var cmd = $'{mod} ed'
-    if mod == 'filter'
-      cmd = $'{mod} /pattern/ ed'
-    endif
-    assert_equal('edit', getcompletion(cmd, 'cmdline')[0])
-  endfor
+  assert_equal('edit', getcompletion('keepalt ed',      'cmdline')[0])
+  assert_equal('edit', getcompletion('keepjumps ed',    'cmdline')[0])
+  assert_equal('edit', getcompletion('keepmarks ed',    'cmdline')[0])
+  assert_equal('edit', getcompletion('keeppatterns ed', 'cmdline')[0])
 enddef
 
 " vim: shiftwidth=2 sts=2 expandtab

@@ -1,10 +1,12 @@
 " Test for modeless selection
 
 " This only works for Unix in a terminal
+source check.vim
 CheckNotGui
 CheckUnix
 
-source util/mouse.vim
+source shared.vim
+source mouse.vim
 
 " Test for modeless characterwise selection (single click)
 func Test_modeless_characterwise_selection()

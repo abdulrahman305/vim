@@ -7,7 +7,7 @@
  *
  * File MOTIF_REDEFINES.H originally delivers together with
  * OpenVMS Porting Library
- * defunct link: openvms.compaq.com/openvms/products/ips/porting.html
+ * http://www.openvms.compaq.com/openvms/products/ips/porting.html
  *
  * This file has been modified for Vim development.
  * Original file contains just defines that GTK for OpenVMS uses,

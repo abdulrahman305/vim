@@ -1,6 +1,6 @@
 vim9script
-# Vim9 Ex commands
 
+# Vim9 Ex commands
 
 # START NOT MATCHED
 :@
@@ -12,8 +12,10 @@ vim9script
 :help
  :help
 : help
- : help # FIXME
+ : help
 
+:2match
+:3match
 :abbreviate
 :abclear
 :aboveleft
@@ -201,7 +203,7 @@ vim9script
 :folddoclosed
 :folddoopen
 :foldopen
-:for foo in bar | endfor
+:for
 :function
 :global/.../
 :goto
@@ -538,7 +540,6 @@ vim9script
 :undojoin
 :undolist
 :unhide
-:uniq
 :unlockvar
 :unmap
 :unmenu
@@ -596,6 +597,8 @@ Foo() | help
 Foo() |help
 Foo()| help
 
+Foo() | 2match
+Foo() | 3match
 Foo() | abbreviate
 Foo() | abclear
 Foo() | aboveleft
@@ -782,7 +785,7 @@ Foo() | foldclose
 Foo() | folddoclosed
 Foo() | folddoopen
 Foo() | foldopen
-Foo() | for foo in bar | endfor
+Foo() | for
 Foo() | function
 Foo() | global/.../
 Foo() | goto
@@ -1118,7 +1121,6 @@ Foo() | undo
 Foo() | undojoin
 Foo() | undolist
 Foo() | unhide
-Foo() | uniq
 Foo() | unlockvar
 Foo() | unmap
 Foo() | unmenu

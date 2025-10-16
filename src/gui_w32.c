@@ -130,7 +130,7 @@ static void keycode_trans_strategy_init(void)
 
 }
 
-#if defined(FEAT_RENDER_OPTIONS)
+#if defined(FEAT_RENDER_OPTIONS) || defined(PROTO)
     int
 gui_mch_set_rendering_options(char_u *s)
 {
@@ -272,9 +272,12 @@ gui_mch_set_rendering_options(char_u *s)
 # include <tchar.h>
 #endif
 
-#include <shellapi.h>
-#include <commctrl.h>
-#include <windowsx.h>
+// cproto fails on missing include files
+#ifndef PROTO
+# include <shellapi.h>
+# include <commctrl.h>
+# include <windowsx.h>
+#endif // PROTO
 
 #ifdef FEAT_MENU
 # define MENUHINTS		// show menu hints in command line
@@ -315,12 +318,64 @@ gui_mch_set_rendering_options(char_u *s)
 # define SPI_SETWHEELSCROLLCHARS	0x006D
 #endif
 
-#ifndef DWMWA_CAPTION_COLOR
-# define DWMWA_CAPTION_COLOR		35
-#endif
-
-#ifndef DWMWA_TEXT_COLOR
-# define DWMWA_TEXT_COLOR		36
+#ifdef PROTO
+/*
+ * Define a few things for generating prototypes.  This is just to avoid
+ * syntax errors, the defines do not need to be correct.
+ */
+# define APIENTRY
+# define CALLBACK
+# define CONST
+# define FAR
+# define NEAR
+# define WINAPI
+# undef _cdecl
+# define _cdecl
+typedef int BOOL;
+typedef int BYTE;
+typedef int DWORD;
+typedef int WCHAR;
+typedef int ENUMLOGFONT;
+typedef int FINDREPLACE;
+typedef int HANDLE;
+typedef int HBITMAP;
+typedef int HBRUSH;
+typedef int HDROP;
+typedef int INT;
+typedef int LOGFONTW[];
+typedef int LPARAM;
+typedef int LPCREATESTRUCT;
+typedef int LPCSTR;
+typedef int LPCTSTR;
+typedef int LPRECT;
+typedef int LPSTR;
+typedef int LPWINDOWPOS;
+typedef int LPWORD;
+typedef int LRESULT;
+typedef int HRESULT;
+# undef MSG
+typedef int MSG;
+typedef int NEWTEXTMETRIC;
+typedef int NMHDR;
+typedef int OSVERSIONINFO;
+typedef int PWORD;
+typedef int RECT;
+typedef int SIZE;
+typedef int UINT;
+typedef int WORD;
+typedef int WPARAM;
+typedef int POINT;
+typedef void *HINSTANCE;
+typedef void *HMENU;
+typedef void *HWND;
+typedef void *HDC;
+typedef void VOID;
+typedef int LPNMHDR;
+typedef int LONG;
+typedef int WNDPROC;
+typedef int UINT_PTR;
+typedef int COLORREF;
+typedef int HCURSOR;
 #endif
 
 static void _OnPaint(HWND hwnd);
@@ -412,10 +467,6 @@ static int (WINAPI *pGetSystemMetricsForDpi)(int, UINT) = NULL;
 //static INT (WINAPI *pGetWindowDpiAwarenessContext)(HWND hwnd) = NULL;
 static DPI_AWARENESS_CONTEXT (WINAPI *pSetThreadDpiAwarenessContext)(DPI_AWARENESS_CONTEXT dpiContext) = NULL;
 static DPI_AWARENESS (WINAPI *pGetAwarenessFromDpiAwarenessContext)(DPI_AWARENESS_CONTEXT) = NULL;
-
-static HINSTANCE hLibDwm = NULL;
-static HRESULT (WINAPI *pDwmSetWindowAttribute)(HWND, DWORD, LPCVOID, DWORD);
-static void dyn_dwm_load(void);
 
     static int WINAPI
 stubGetSystemMetricsForDpi(int nIndex, UINT dpi UNUSED)
@@ -1540,67 +1591,6 @@ _TextAreaWndProc(
     }
 }
 
-    static void
-dyn_dwm_load(void)
-{
-    hLibDwm = vimLoadLib("dwmapi.dll");
-    if (hLibDwm == NULL)
-	return;
-
-    pDwmSetWindowAttribute = (HRESULT (WINAPI *)(HWND, DWORD, LPCVOID, DWORD))
-	GetProcAddress(hLibDwm, "DwmSetWindowAttribute");
-
-    if (pDwmSetWindowAttribute == NULL)
-    {
-	FreeLibrary(hLibDwm);
-	hLibDwm = NULL;
-	return;
-    }
-}
-
-extern BOOL win11_or_later; // this is in os_win32.c
-
-/*
- * Set TitleBar's color. Handle hl-TitleBar and hl-TitleBarNC.
- *
- * Only enabled when 'guioptions' has 'C'.
- * if "TitleBar guibg=NONE guifg=NONE" reset the window back to using the
- * system's default behavior for the border color.
- */
-    void
-gui_mch_set_titlebar_colors(void)
-{
-    if (pDwmSetWindowAttribute == NULL || !win11_or_later)
-	return;
-
-    guicolor_T captionColor = 0xFFFFFFFF;
-    guicolor_T textColor = 0xFFFFFFFF;
-
-    if (vim_strchr(p_go, GO_TITLEBAR) != NULL)
-    {
-	if (gui.in_focus)
-	{
-	    captionColor = gui.title_bg_pixel;
-	    textColor = gui.title_fg_pixel;
-	}
-	else
-	{
-	    captionColor = gui.titlenc_bg_pixel;
-	    textColor = gui.titlenc_fg_pixel;
-	}
-
-	if (captionColor == INVALCOLOR)
-	    captionColor = 0xFFFFFFFF;
-	if (textColor == INVALCOLOR)
-	    textColor = 0xFFFFFFFF;
-    }
-
-    pDwmSetWindowAttribute(s_hwnd, DWMWA_CAPTION_COLOR,
-	    &captionColor, sizeof(captionColor));
-    pDwmSetWindowAttribute(s_hwnd, DWMWA_TEXT_COLOR,
-	    &textColor, sizeof(textColor));
-}
-
 /*
  * Called when the foreground or background color has been changed.
  */
@@ -1917,7 +1907,7 @@ gui_mch_get_font(
     return font;
 }
 
-#if defined(FEAT_EVAL)
+#if defined(FEAT_EVAL) || defined(PROTO)
 /*
  * Return the name of font "font" in allocated memory.
  * Don't know how to get the actual name, thus use the provided name.
@@ -2167,8 +2157,7 @@ static void process_message_usual_key(UINT vk, const MSG *pmsg)
  * Experimental implementation, introduced in v8.2.4807
  * "processing key event in Win32 GUI is not ideal"
  */
-    static void
-process_message_usual_key_experimental(UINT vk, const MSG *pmsg)
+static void process_message_usual_key_experimental(UINT vk, const MSG *pmsg)
 {
     WCHAR	ch[8];
     int		len;
@@ -2248,8 +2237,7 @@ process_message_usual_key_experimental(UINT vk, const MSG *pmsg)
 /*
  * "Classic" implementation, existing prior to v8.2.4807
  */
-    static void
-process_message_usual_key_classic(UINT vk, const MSG *pmsg)
+static void process_message_usual_key_classic(UINT vk, const MSG *pmsg)
 {
     char_u	string[40];
 
@@ -2749,7 +2737,7 @@ gui_mch_set_menu_pos(
     // It will be in the right place anyway
 }
 
-#if defined(FEAT_MENU)
+#if defined(FEAT_MENU) || defined(PROTO)
 /*
  * Make menu item hidden or not hidden
  */
@@ -2790,7 +2778,7 @@ gui_mch_get_rgb(guicolor_T pixel)
 							   + GetBValue(pixel));
 }
 
-#if defined(FEAT_GUI_DIALOG)
+#if defined(FEAT_GUI_DIALOG) || defined(PROTO)
 /*
  * Convert pixels in X to dialog units
  */
@@ -2908,7 +2896,7 @@ CenterWindow(
 }
 #endif // FEAT_GUI_DIALOG
 
-#if defined(FEAT_TOOLBAR)
+#if defined(FEAT_TOOLBAR) || defined(PROTO)
     void
 gui_mch_show_toolbar(int showit)
 {
@@ -2931,7 +2919,7 @@ gui_mch_show_toolbar(int showit)
 
 #endif
 
-#if defined(FEAT_GUI_TABLINE)
+#if defined(FEAT_GUI_TABLINE) || defined(PROTO)
     static void
 add_tabline_popup_menu_entry(HMENU pmenu, UINT item_id, char_u *item_text)
 {
@@ -3685,11 +3673,12 @@ gui_mch_exit(int rc UNUSED)
     static char_u *
 logfont2name(LOGFONTW lf)
 {
+    char	*p;
+    char	*res;
     char	*charset_name;
     char	*quality_name;
     char	*font_name;
-    size_t	res_size;
-    char	*res;
+    int		points;
 
     font_name = (char *)utf16_to_enc(lf.lfFaceName, NULL);
     if (font_name == NULL)
@@ -3697,48 +3686,43 @@ logfont2name(LOGFONTW lf)
     charset_name = charset_id2name((int)lf.lfCharSet);
     quality_name = quality_id2name((int)lf.lfQuality);
 
-    res_size = STRLEN(font_name) + 30
-		    + (charset_name == NULL ? 0 : STRLEN(charset_name) + 2)
-		    + (quality_name == NULL ? 0 : STRLEN(quality_name) + 2);
-    res = alloc(res_size);
+    res = alloc(strlen(font_name) + 30
+		    + (charset_name == NULL ? 0 : strlen(charset_name) + 2)
+		    + (quality_name == NULL ? 0 : strlen(quality_name) + 2));
     if (res != NULL)
     {
-	char	*p;
-	int	points;
-	size_t	res_len;
-
-	// replace spaces in font_name with underscores.
-	for (p = font_name; *p != NUL; ++p)
-	{
-	    if (isspace(*p))
-		*p = '_';
-	}
-
+	p = res;
 	// make a normal font string out of the lf thing:
 	points = pixels_to_points(
 			 lf.lfHeight < 0 ? -lf.lfHeight : lf.lfHeight, TRUE);
 	if (lf.lfWeight == FW_NORMAL || lf.lfWeight == FW_BOLD)
-	    res_len = vim_snprintf_safelen(
-		(char *)res, res_size, "%s:h%d", font_name, points);
+	    sprintf((char *)p, "%s:h%d", font_name, points);
 	else
-	    res_len = vim_snprintf_safelen(
-		(char *)res, res_size, "%s:h%d:W%ld", font_name, points, lf.lfWeight);
-
-	res_len += vim_snprintf_safelen(
-	    (char *)res + res_len,
-	    res_size - res_len,
-	    "%s%s%s%s",
-	    lf.lfItalic ? ":i" : "",
-	    lf.lfWeight == FW_BOLD ? ":b" : "",
-	    lf.lfUnderline ? ":u" : "",
-	    lf.lfStrikeOut ? ":s" : "");
-
+	    sprintf((char *)p, "%s:h%d:W%ld", font_name, points, lf.lfWeight);
+	while (*p)
+	{
+	    if (*p == ' ')
+		*p = '_';
+	    ++p;
+	}
+	if (lf.lfItalic)
+	    STRCAT(p, ":i");
+	if (lf.lfWeight == FW_BOLD)
+	    STRCAT(p, ":b");
+	if (lf.lfUnderline)
+	    STRCAT(p, ":u");
+	if (lf.lfStrikeOut)
+	    STRCAT(p, ":s");
 	if (charset_name != NULL)
-	    res_len += vim_snprintf_safelen((char *)res + res_len,
-		res_size - res_len, ":c%s", charset_name);
+	{
+	    STRCAT(p, ":c");
+	    STRCAT(p, charset_name);
+	}
 	if (quality_name != NULL)
-	    vim_snprintf((char *)res + res_len,
-		res_size - res_len, ":q%s", quality_name);
+	{
+	    STRCAT(p, ":q");
+	    STRCAT(p, quality_name);
+	}
     }
 
     vim_free(font_name);
@@ -3960,7 +3944,7 @@ gui_mch_settitle(
     set_window_title(s_hwnd, (title == NULL ? "VIM" : (char *)title));
 }
 
-#if defined(FEAT_MOUSESHAPE)
+#if defined(FEAT_MOUSESHAPE) || defined(PROTO)
 // Table for shape IDCs.  Keep in sync with the mshape_names[] table in
 // misc2.c!
 static LPCSTR mshape_idcs[] =
@@ -4011,7 +3995,7 @@ mch_set_mouse_shape(int shape)
 }
 #endif
 
-#if defined(FEAT_BROWSE)
+#if defined(FEAT_BROWSE) || defined(PROTO)
 /*
  * Wide version of convert_filter().
  */
@@ -4991,10 +4975,9 @@ _OnNotify(HWND hwnd, UINT id, NMHDR *hdr)
 		else
 		{
 		    LPNMTTDISPINFO	lpdi = (LPNMTTDISPINFO)hdr;
-		    size_t		len = STRLEN(str);
 
-		    if (len < sizeof(lpdi->szText)
-			    || ((tt_text = vim_strnsave(str, len)) == NULL))
+		    if (STRLEN(str) < sizeof(lpdi->szText)
+			    || ((tt_text = vim_strsave(str)) == NULL))
 			vim_strncpy((char_u *)lpdi->szText, str,
 				sizeof(lpdi->szText) - 1);
 		    else
@@ -5037,6 +5020,7 @@ _OnMenuSelect(HWND hwnd, WPARAM wParam, LPARAM lParam)
 	    == MF_HILITE
 	    && (State & MODE_CMDLINE) == 0)
     {
+	UINT	    idButton;
 	vimmenu_T   *pMenu;
 	static int  did_menu_tip = FALSE;
 
@@ -5048,23 +5032,17 @@ _OnMenuSelect(HWND hwnd, WPARAM wParam, LPARAM lParam)
 	    did_menu_tip = FALSE;
 	}
 
-	pMenu = gui_mswin_find_menu(root_menu, (UINT)LOWORD(wParam));
-	if (pMenu != NULL && pMenu->strings[MENU_INDEX_TIP] != NULL)
+	idButton = (UINT)LOWORD(wParam);
+	pMenu = gui_mswin_find_menu(root_menu, idButton);
+	if (pMenu != NULL && pMenu->strings[MENU_INDEX_TIP] != 0
+		&& GetMenuState(s_menuBar, pMenu->id, MF_BYCOMMAND) != -1)
 	{
-	    MENUITEMINFO menuinfo;
-
-	    menuinfo.cbSize = sizeof(MENUITEMINFO);
-	    menuinfo.fMask = MIIM_ID;		    // We only want to check if the menu item exists,
-						    // so retrieve something simple.
-	    if (GetMenuItemInfo(s_menuBar, pMenu->id, FALSE, &menuinfo))
-	    {
-		++msg_hist_off;
-		msg((char *)pMenu->strings[MENU_INDEX_TIP]);
-		--msg_hist_off;
-		setcursor();
-		out_flush();
-		did_menu_tip = TRUE;
-	    }
+	    ++msg_hist_off;
+	    msg((char *)pMenu->strings[MENU_INDEX_TIP]);
+	    --msg_hist_off;
+	    setcursor();
+	    out_flush();
+	    did_menu_tip = TRUE;
 	}
 	return 0L;
     }
@@ -5073,7 +5051,7 @@ _OnMenuSelect(HWND hwnd, WPARAM wParam, LPARAM lParam)
 #endif
 
     static BOOL
-_OnGetDpiScaledSize(HWND hwnd UNUSED, UINT dpi, SIZE *size)
+_OnGetDpiScaledSize(HWND hwnd, UINT dpi, SIZE *size)
 {
     int		old_width, old_height;
     int		new_width, new_height;
@@ -5343,7 +5321,7 @@ ole_error(char *arg)
 }
 #endif
 
-#if defined(GUI_MAY_SPAWN)
+#if defined(GUI_MAY_SPAWN) || defined(PROTO)
     static char *
 gvim_error(void)
 {
@@ -5394,11 +5372,13 @@ gui_mch_do_spawn(char_u *arg)
 	{
 	    if (*p == L'"')
 	    {
-		// Skip quoted strings
-		while (*++p && *p != L'"');
+		while (*p && *p != L'"')
+		    ++p;
+		if (*p)
+		    ++p;
 	    }
-
-	    ++p;
+	    else
+		++p;
 	}
 	cmd = p;
     }
@@ -5414,12 +5394,7 @@ gui_mch_do_spawn(char_u *arg)
 	if (session == NULL)
 	    goto error;
 	savebg = p_bg;
-	p_bg = vim_strnsave((char_u *)"light", 5);	// Set 'bg' to "light".
-	if (p_bg == NULL)
-	{
-	    p_bg = savebg;
-	    goto error;
-	}
+	p_bg = vim_strsave((char_u *)"light");	// Set 'bg' to "light".
 	ret = write_session_file(session);
 	vim_free(p_bg);
 	p_bg = savebg;
@@ -5645,8 +5620,6 @@ gui_mch_init(void)
 #endif
 
     load_dpi_func();
-
-    dyn_dwm_load();
 
     s_dpi = pGetDpiForSystem();
     update_scrollbar_size();
@@ -6187,7 +6160,7 @@ GetResultStr(HWND hwnd, int GCS, int *lenp)
 #endif
 
 // For global functions we need prototypes.
-#if defined(FEAT_MBYTE_IME)
+#if defined(FEAT_MBYTE_IME) || defined(PROTO)
 
 /*
  * set font to IM.
@@ -6803,7 +6776,7 @@ gui_mch_get_screen_dimensions(int *screen_w, int *screen_h)
 }
 
 
-#if defined(FEAT_MENU)
+#if defined(FEAT_MENU) || defined(PROTO)
 /*
  * Add a sub menu to the menu bar.
  */
@@ -6888,7 +6861,7 @@ gui_make_popup(char_u *path_name, int mouse_pos)
     gui_mch_show_popupmenu_at(menu, (int)p.x, (int)p.y);
 }
 
-# if defined(FEAT_TEAROFF)
+# if defined(FEAT_TEAROFF) || defined(PROTO)
 /*
  * Given a menu descriptor, e.g. "File.New", find it in the menu hierarchy and
  * create it as a pseudo-"tearoff menu".
@@ -7104,7 +7077,7 @@ gui_mch_menu_grey(
 #define add_word(x)		*p++ = (x)
 #define add_long(x)		dwp = (DWORD *)p; *dwp++ = (x); p = (WORD *)dwp
 
-#if defined(FEAT_GUI_DIALOG)
+#if defined(FEAT_GUI_DIALOG) || defined(PROTO)
 /*
  * stuff for dialogs
  */
@@ -7154,11 +7127,8 @@ dialog_callback(
 
 	    GetDlgItemTextW(hwnd, DLG_NONBUTTON_CONTROL + 2, wp, IOSIZE);
 	    p = utf16_to_enc(wp, NULL);
-	    if (p != NULL)
-	    {
-		vim_strncpy(s_textfield, p, IOSIZE);
-		vim_free(p);
-	    }
+	    vim_strncpy(s_textfield, p, IOSIZE);
+	    vim_free(p);
 	    vim_free(wp);
 	}
 
@@ -8258,7 +8228,7 @@ gui_mch_tearoff(
 }
 #endif
 
-#if defined(FEAT_TOOLBAR)
+#if defined(FEAT_TOOLBAR) || defined(PROTO)
 # include "gui_w32_rc.h"
 
 /*
@@ -8401,7 +8371,7 @@ get_toolbar_bitmap(vimmenu_T *menu)
 }
 #endif
 
-#if defined(FEAT_GUI_TABLINE)
+#if defined(FEAT_GUI_TABLINE) || defined(PROTO)
     static void
 initialise_tabline(void)
 {
@@ -8539,7 +8509,7 @@ tabline_wndproc(
 }
 #endif
 
-#if defined(FEAT_OLE) || defined(FEAT_EVAL)
+#if defined(FEAT_OLE) || defined(FEAT_EVAL) || defined(PROTO)
 /*
  * Make the GUI window come to the foreground.
  */
@@ -8606,7 +8576,7 @@ dyn_imm_load(void)
 
 #endif
 
-#if defined(FEAT_SIGN_ICONS)
+#if defined(FEAT_SIGN_ICONS) || defined(PROTO)
 
 # ifdef FEAT_XPM_W32
 #  define IMAGE_XPM   100
@@ -8765,7 +8735,7 @@ gui_mch_destroy_sign(void *sign)
 }
 #endif
 
-#if defined(FEAT_BEVAL_GUI)
+#if defined(FEAT_BEVAL_GUI) || defined(PROTO)
 
 /*
  * BALLOON-EVAL IMPLEMENTATION FOR WINDOWS.
@@ -9022,7 +8992,7 @@ gui_mch_destroy_beval_area(BalloonEval *beval)
 }
 #endif // FEAT_BEVAL_GUI
 
-#if defined(FEAT_NETBEANS_INTG)
+#if defined(FEAT_NETBEANS_INTG) || defined(PROTO)
 /*
  * We have multiple signs to draw at the same location. Draw the
  * multi-sign indicator (down-arrow) instead. This is the Win32 version.
@@ -9058,7 +9028,7 @@ netbeans_draw_multisign_indicator(int row)
 }
 #endif
 
-#if defined(FEAT_EVAL)
+#if defined(FEAT_EVAL) || defined(PROTO)
 
 // TODO: at the moment, this is just a copy of test_gui_mouse_event.
 // But, we could instead generate actual Win32 mouse event messages,
@@ -9087,7 +9057,7 @@ test_gui_w32_sendevent_mouse(dict_T *args)
 	if (dict_get_bool(args, "cell", FALSE))
 	{
 	    // calculate the middle of the character cell
-	    // Note: Cell coordinates are 1-based from Vim script
+	    // Note: Cell coordinates are 1-based from vimscript
 	    int pY = (row - 1) * gui.char_height + gui.char_height / 2;
 	    int pX = (col - 1) * gui.char_width + gui.char_width / 2;
 	    gui_mouse_moved(pX, pY);

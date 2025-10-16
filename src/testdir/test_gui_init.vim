@@ -1,9 +1,11 @@
 " Tests specifically for the GUI features/options that need to be set up at
 " startup to take effect at runtime.
 
+source shared.vim
+source check.vim
 CheckCanRunGui
 
-source util/setup_gui.vim
+source setup_gui.vim
 
 func Setup()
   call GUISetUpCommon()

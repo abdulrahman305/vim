@@ -1,6 +1,5 @@
 " Vim :def and :function commands (nested)
 
-
 def FunA(): string
     def DoFunA(): string
 	return "."
@@ -37,4 +36,3 @@ echo FunA()
 echo FunB()
 echo FunC()
 echo FunD()
-

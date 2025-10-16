@@ -74,7 +74,6 @@ extern int _stricoll(char *a, char *b);
 # include "debugger.pro"
 # include "dict.pro"
 # include "diff.pro"
-# include "linematch.pro"
 # include "digraph.pro"
 # include "drawline.pro"
 # include "drawscreen.pro"
@@ -123,9 +122,6 @@ extern int _stricoll(char *a, char *b);
 # ifdef FEAT_VIMINFO
 #  include "viminfo.pro"
 # endif
-# ifdef FEAT_TABPANEL
-#  include "tabpanel.pro"
-# endif
 
 // These prototypes cannot be produced automatically.
 int smsg(const char *, ...) ATTRIBUTE_COLD ATTRIBUTE_FORMAT_PRINTF(1, 2);
@@ -143,7 +139,6 @@ void siemsg(const char *, ...) ATTRIBUTE_COLD ATTRIBUTE_FORMAT_PRINTF(1, 2);
 int vim_snprintf_add(char *, size_t, const char *, ...) ATTRIBUTE_FORMAT_PRINTF(3, 4);
 
 int vim_snprintf(char *, size_t, const char *, ...) ATTRIBUTE_FORMAT_PRINTF(3, 4);
-size_t vim_snprintf_safelen(char *, size_t, const char *, ...) ATTRIBUTE_FORMAT_PRINTF(3, 4);
 
 int vim_vsnprintf(char *str, size_t str_m, const char *fmt, va_list ap)
 	ATTRIBUTE_FORMAT_PRINTF(3, 0);
@@ -177,9 +172,6 @@ void mbyte_im_set_active(int active_arg);
 #  include "profiler.pro"
 # endif
 # include "quickfix.pro"
-#ifdef FEAT_WAYLAND
-# include "wayland.pro"
-#endif
 # include "regexp.pro"
 # include "register.pro"
 # include "scriptfile.pro"
@@ -188,7 +180,6 @@ void mbyte_im_set_active(int active_arg);
 # if defined(FEAT_CRYPT) || defined(FEAT_PERSISTENT_UNDO)
 #  include "sha256.pro"
 # endif
-# include "fuzzy.pro"
 # include "search.pro"
 # ifdef FEAT_SIGNS
 #  include "sign.pro"
@@ -215,7 +206,6 @@ void mbyte_im_set_active(int active_arg);
 # include "textobject.pro"
 # include "textformat.pro"
 # include "time.pro"
-# include "tuple.pro"
 # include "typval.pro"
 # include "ui.pro"
 # include "undo.pro"
@@ -231,7 +221,6 @@ void mbyte_im_set_active(int active_arg);
 #  include "vim9compile.pro"
 #  include "vim9execute.pro"
 #  include "vim9expr.pro"
-#  include "vim9generics.pro"
 #  include "vim9instr.pro"
 #  include "vim9type.pro"
 # endif
@@ -337,6 +326,7 @@ extern char_u *vimpty_getenv(const char_u *string);	// in misc2.c
 # if defined(FEAT_PERL) && !defined(IN_PERL_FILE)
 #  define CV void
 #  include "if_perl.pro"
+#  include "if_perlsfio.pro"
 # endif
 
 # ifdef MACOS_CONVERT

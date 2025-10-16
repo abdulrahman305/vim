@@ -1,8 +1,10 @@
 " Test for syntax and syntax iskeyword option
 
+source check.vim
 CheckFeature syntax
 
-source util/screendump.vim
+source view_util.vim
+source screendump.vim
 
 func GetSyntaxItem(pat)
   let c = ''
@@ -191,14 +193,14 @@ func Test_syntax_completion()
   " Check that clearing "Aap" avoids it showing up before Boolean.
   hi Aap ctermfg=blue
   call feedkeys(":syn list \<C-A>\<C-B>\"\<CR>", 'tx')
-  call assert_match('^"syn list Aap Added Bold BoldItalic Boolean Changed Character ', @:)
+  call assert_match('^"syn list Aap Added Boolean Changed Character ', @:)
   hi clear Aap
 
   call feedkeys(":syn list \<C-A>\<C-B>\"\<CR>", 'tx')
-  call assert_match('^"syn list Added Bold BoldItalic Boolean Changed Character ', @:)
+  call assert_match('^"syn list Added Boolean Changed Character ', @:)
 
   call feedkeys(":syn match \<C-A>\<C-B>\"\<CR>", 'tx')
-  call assert_match('^"syn match Added Bold BoldItalic Boolean Changed Character ', @:)
+  call assert_match('^"syn match Added Boolean Changed Character ', @:)
 
   syn cluster Aax contains=Aap
   call feedkeys(":syn list @A\<C-A>\<C-B>\"\<CR>", 'tx')
@@ -207,7 +209,7 @@ endfunc
 
 func Test_echohl_completion()
   call feedkeys(":echohl no\<C-A>\<C-B>\"\<CR>", 'tx')
-  call assert_equal('"echohl NONE NonText Normal', @:)
+  call assert_equal('"echohl NonText Normal none', @:)
 endfunc
 
 func Test_syntax_arg_skipped()
@@ -629,7 +631,6 @@ endfunc
 
 " Check highlighting for a small piece of C code with a screen dump.
 func Test_syntax_c()
-  CheckScreendump
   CheckRunVimInTerminal
   call writefile([
 	\ '/* comment line at the top */',
@@ -948,7 +949,7 @@ func Test_syn_contained_transparent()
 endfunc
 
 func Test_syn_include_contains_TOP()
-  let l:case = "TOP in included syntax refers to top level of that included syntax"
+  let l:case = "TOP in included syntax means its group list name"
   new
   syntax include @INCLUDED syntax/c.vim
   syntax region FencedCodeBlockC start=/```c/ end=/```/ contains=@INCLUDED
@@ -959,18 +960,6 @@ func Test_syn_include_contains_TOP()
   " cCppOutElse has contains=TOP
   let l:expected = ["cType"]
   eval AssertHighlightGroups(5, 1, l:expected, 1, l:case)
-  syntax clear
-  bw!
-endfunc
-
-func Test_syn_include_contains_TOP_excluding()
-  new
-  syntax include @INCLUDED syntax/c.vim
-  syntax region FencedCodeBlockC start=/```c/ end=/```/ contains=@INCLUDED
-
-  call setline(1,  ['```c', '#if 0', 'int', '#else', 'int', '#if', '#endif', '```' ])
-  let l:expected = ["cCppOutElse", "cConditional"]
-  eval AssertHighlightGroups(6, 1, l:expected, 1)
   syntax clear
   bw!
 endfunc

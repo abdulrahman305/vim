@@ -1,29 +1,9 @@
-// VIM_TEST_SETUP setlocal fen fdc=2 fdl=8 fdm=syntax
+// VIM_TEST_SETUP setlocal foldenable foldcolumn=2 foldmethod=syntax
 // VIM_TEST_SETUP let g:java_foldtext_show_first_or_second_line = 1
-// VIM_TEST_SETUP let g:java_highlight_java_lang = 1
-// VIM_TEST_SETUP let g:java_ignore_folding = "x"
-// VIM_TEST_SETUP let g:java_lookbehind_byte_counts = {'javaBlock': -1}
-
-
-
-
-
 // VIM_TEST_SETUP highlight link javaBlockOtherStart Structure
 // VIM_TEST_SETUP highlight link javaBlockStart Todo
 
 
-
-/***/  import java.lang.Comparable;	/*
-import java.lang.Object;
-import java.lang.String;
-*/
-import java.lang.String;
-
-import java.lang.Comparable;	/***/
-import java.lang.Object;	// //
-import java.lang.String;	/***/
-
-import java.util.function.Function;
 	@SuppressWarnings({
 	"""
 	bespoke
@@ -44,14 +24,11 @@ import java.util.function.Function;
 """
 })
 class FoldingTests {
-	interface Foldable
+	interface Foldenable
 	{
 	}
 
 	static {
-		String import⁠$ = """
-import java.lang.String;
-""";
 		new Object() {
 			{
 				{
@@ -81,12 +58,12 @@ out: {
 }
 	}
 /*\\\*/	{
-		(new Function<Object, Object>() {
+		(new java.util.function.Function<Object, Object>() {
 			/**
 			 * {@inheritDoc} */
 			public Object apply(Object o) { return o; };
 		}).apply(
-		(new Function<Object, Object>() {
+		(new java.util.function.Function<Object, Object>() {
 			/** {@inheritDoc}
 			 */
 			public Object apply(Object o) { return o; };
@@ -141,5 +118,5 @@ out: {
 // {
 // }
 
-/* 120|..........................................................................................*/ interface Foldable {
+/* 122|..........................................................................................*/ interface Foldenable {
 }

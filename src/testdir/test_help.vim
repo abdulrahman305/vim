@@ -1,6 +1,7 @@
 " Tests for :help
 
-import './util/vim9.vim' as v9
+source check.vim
+import './vim9.vim' as v9
 
 func Test_help_restore_snapshot()
   help
@@ -139,17 +140,11 @@ func Test_helptag_cmd()
   call delete('Xtagdir/tags')
 
   " Test parsing tags
-  call writefile(['*tag1*', 'Example: >', '  *notag1*', 'Example end: *tag2*',
-                \ '>', '  *notag2*', '<',
-                \ '*tag3*', 'Code: >vim', '  *notag3*', 'Code end: *tag4*',
-                \ '>i3config', '  *notag4*', '<'],
+  call writefile(['*tag1*', 'Example: >', '  *notag*', 'Example end: *tag2*'],
     \ 'Xtagdir/a/doc/sample.txt')
   helptags Xtagdir
   call assert_equal(["tag1\ta/doc/sample.txt\t/*tag1*",
-                   \ "tag2\ta/doc/sample.txt\t/*tag2*",
-                   \ "tag3\ta/doc/sample.txt\t/*tag3*",
-                   \ "tag4\ta/doc/sample.txt\t/*tag4*"],
-    \ readfile('Xtagdir/tags'))
+                  \  "tag2\ta/doc/sample.txt\t/*tag2*"], readfile('Xtagdir/tags'))
 
   " Duplicate tags in the help file
   call writefile(['*tag1*', '*tag1*', '*tag2*'], 'Xtagdir/a/doc/sample.txt')
@@ -208,23 +203,6 @@ func Test_help_using_visual_match()
       h5\%V]
   END
   call v9.CheckScriptFailure(lines, 'E149:')
-endfunc
-
-func Test_helptag_navigation()
-  let helpdir = tempname()
-  let tempfile = helpdir . '/test.txt'
-  call mkdir(helpdir, 'pR')
-  call writefile(['', '*[tag*', '', '|[tag|'], tempfile)
-  exe 'helptags' helpdir
-  exe 'sp' tempfile
-  exe 'lcd' helpdir
-  setl ft=help
-  let &l:iskeyword='!-~,^*,^|,^",192-255'
-  call cursor(4, 2)
-  " Vim must not escape `[` when expanding the tag
-  exe "normal! \<C-]>"
-  call assert_equal(2, line('.'))
-  bw
 endfunc
 
 

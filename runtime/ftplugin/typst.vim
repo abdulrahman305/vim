@@ -1,9 +1,7 @@
 " Vim filetype plugin file
 " Language:    Typst
-" Previous Maintainer:  Gregory Anders
-"                       Luca Saccarola <github.e41mv@aleeas.com>
-" Maintainer:  This runtime file is looking for a new maintainer.
-" Last Change: 2025 Aug 05
+" Maintainer:  Gregory Anders
+" Last Change: 2024 Oct 21
 " Based on:    https://github.com/kaarmu/typst.vim
 
 if exists('b:did_ftplugin')
@@ -13,14 +11,10 @@ let b:did_ftplugin = 1
 
 setlocal commentstring=//\ %s
 setlocal comments=s1:/*,mb:*,ex:*/,://
-setlocal formatoptions+=croqn
-" Numbered Lists
-setlocal formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*
-" Unordered (-), Ordered (+) and definition (/) Lists
-setlocal formatlistpat+=\\\|^\\s*[-+/\]\\s\\+
+setlocal formatoptions+=croq
 setlocal suffixesadd=.typ
 
-let b:undo_ftplugin = 'setl cms< com< fo< flp< sua<'
+let b:undo_ftplugin = 'setl cms< com< fo< sua<'
 
 if get(g:, 'typst_conceal', 0)
   setlocal conceallevel=2

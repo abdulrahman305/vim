@@ -1,9 +1,7 @@
 " Vim indent file
 " Language:    Typst
-" Previous Maintainer:  Gregory Anders
-"                       Luca Saccarola <github.e41mv@aleeas.com>
-" Maintainer:  This runtime file is looking for a new maintainer.
-" Last Change: 2025 Aug 05
+" Maintainer:  Gregory Anders <greg@gpanders.com>
+" Last Change: 2024-07-14
 " Based on:    https://github.com/kaarmu/typst.vim
 
 if exists('b:did_indent')

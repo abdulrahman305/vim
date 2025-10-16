@@ -1,6 +1,7 @@
 " Tests for editing the command line.
 
-source util/screendump.vim
+source check.vim
+source screendump.vim
 
 func Test_getcmdwintype()
   call feedkeys("q/:let a = getcmdwintype()\<CR>:q\<CR>", 'x!')

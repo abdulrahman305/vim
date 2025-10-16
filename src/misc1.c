@@ -344,7 +344,7 @@ plines_win(
     linenr_T	lnum,
     int		limit_winheight)	// when TRUE limit to window height
 {
-#if defined(FEAT_DIFF)
+#if defined(FEAT_DIFF) || defined(PROTO)
     // Check for filler lines above this buffer line.  When folded the result
     // is one line anyway.
     return plines_win_nofill(wp, lnum, limit_winheight)
@@ -543,15 +543,11 @@ plines_m_win(win_T *wp, linenr_T first, linenr_T last, int max)
 gchar_pos(pos_T *pos)
 {
     char_u	*ptr;
-    int		ptrlen;
 
     // When searching columns is sometimes put at the end of a line.
     if (pos->col == MAXCOL)
 	return NUL;
-    ptrlen = ml_get_len(pos->lnum);
     ptr = ml_get_pos(pos);
-    if (pos->col > ptrlen)
-	return NUL;
     if (has_mbyte)
 	return (*mb_ptr2char)(ptr);
     return (int)*ptr;
@@ -563,26 +559,6 @@ gchar_cursor(void)
     if (has_mbyte)
 	return (*mb_ptr2char)(ml_get_cursor());
     return (int)*ml_get_cursor();
-}
-
-/*
- * Return the character immediately before the cursor.
- */
-    int
-char_before_cursor(void)
-{
-    if (curwin->w_cursor.col == 0)
-	return -1;
-
-    char_u *line = ml_get_curline();
-
-    if (has_mbyte)
-    {
-	char_u *p = line + curwin->w_cursor.col;
-	int prev_len = (*mb_head_off)(line, p - 1) + 1;
-	return mb_ptr2char(p - prev_len);
-    }
-    return line[curwin->w_cursor.col - 1];
 }
 
 /*
@@ -675,7 +651,7 @@ ask_yesno(char_u *str, int direct)
     return r;
 }
 
-#if defined(FEAT_EVAL)
+#if defined(FEAT_EVAL) || defined(PROTO)
 
 /*
  * Returns the current mode as a string in "buf[MODE_MAX_LENGTH]", NUL
@@ -871,7 +847,6 @@ get_keystroke(void)
     int		save_mapped_ctrl_c = mapped_ctrl_c;
     int		waited = 0;
 
-    mod_mask = 0;
     mapped_ctrl_c = FALSE;	// mappings are not used here
     for (;;)
     {
@@ -975,7 +950,7 @@ get_keystroke(void)
     vim_free(buf);
 
     mapped_ctrl_c = save_mapped_ctrl_c;
-    return merge_modifyOtherKeys(n, &mod_mask);
+    return n;
 }
 
 // For overflow detection, add a digit safely to an int value.
@@ -1350,7 +1325,7 @@ init_homedir(void)
     }
 }
 
-#if defined(EXITFREE)
+#if defined(EXITFREE) || defined(PROTO)
     void
 free_homedir(void)
 {
@@ -1364,7 +1339,7 @@ free_users(void)
 }
 #endif
 
-#if defined(MSWIN)
+#if defined(MSWIN) || defined(PROTO)
 /*
  * Initialize $VIM and $VIMRUNTIME when 'enc' is updated.
  */
@@ -1422,16 +1397,16 @@ expand_env_save_opt(char_u *src, int one)
  * Skips over "\ ", "\~" and "\$" (not for Win32 though).
  * If anything fails no expansion is done and dst equals src.
  */
-    size_t
+    void
 expand_env(
     char_u	*src,		// input string e.g. "$HOME/vim.hlp"
     char_u	*dst,		// where to put the result
     int		dstlen)		// maximum length of the result
 {
-    return expand_env_esc(src, dst, dstlen, FALSE, FALSE, NULL);
+    expand_env_esc(src, dst, dstlen, FALSE, FALSE, NULL);
 }
 
-    size_t
+    void
 expand_env_esc(
     char_u	*srcp,		// input string e.g. "$HOME/vim.hlp"
     char_u	*dst,		// where to put the result
@@ -1448,7 +1423,6 @@ expand_env_esc(
     int		mustfree;	// var was allocated, need to free it later
     int		at_start = TRUE; // at start of a name
     int		startstr_len = 0;
-    char_u	*dst_start = dst;
 
     if (startstr != NULL)
 	startstr_len = (int)STRLEN(startstr);
@@ -1599,7 +1573,6 @@ expand_env_esc(
 		 */
 		{
 		    char_u	test[MAXPATHL], paths[MAXPATHL];
-		    size_t	testlen;
 		    char_u	*path, *next_path, *ptr;
 		    stat_T	st;
 
@@ -1611,20 +1584,14 @@ expand_env_esc(
 				next_path++);
 			if (*next_path)
 			    *next_path++ = NUL;
-			testlen = vim_snprintf_safelen(
-			    (char *)test,
-			    sizeof(test),
-			    "%s/%s",
-			    path,
-			    dst + 1);
+			STRCPY(test, path);
+			STRCAT(test, "/");
+			STRCAT(test, dst + 1);
 			if (mch_stat(test, &st) == 0)
 			{
-			    var = alloc(testlen + 1);
-			    if (var != NULL)
-			    {
-				STRCPY(var, test);
-				mustfree = TRUE;
-			    }
+			    var = alloc(STRLEN(test) + 1);
+			    STRCPY(var, test);
+			    mustfree = TRUE;
 			    break;
 			}
 		    }
@@ -1670,26 +1637,23 @@ expand_env_esc(
 		}
 	    }
 
-	    if (var != NULL && *var != NUL)
+	    if (var != NULL && *var != NUL
+		    && (STRLEN(var) + STRLEN(tail) + 1 < (unsigned)dstlen))
 	    {
+		STRCPY(dst, var);
+		dstlen -= (int)STRLEN(var);
 		c = (int)STRLEN(var);
-
-		if (c + STRLEN(tail) + 1 < (unsigned)dstlen)
-		{
-		    STRCPY(dst, var);
-		    dstlen -= c;
-		    // if var[] ends in a path separator and tail[] starts
-		    // with it, skip a character
-		    if (after_pathsep(dst, dst + c)
+		// if var[] ends in a path separator and tail[] starts
+		// with it, skip a character
+		if (after_pathsep(dst, dst + c)
 #if defined(BACKSLASH_IN_FILENAME) || defined(AMIGA)
-			    && dst[c - 1] != ':'
+			&& dst[c - 1] != ':'
 #endif
-			    && vim_ispathsep(*tail))
-			++tail;
-		    dst += c;
-		    src = tail;
-		    copy_char = FALSE;
-		}
+			&& vim_ispathsep(*tail))
+		    ++tail;
+		dst += c;
+		src = tail;
+		copy_char = FALSE;
 	    }
 	    if (mustfree)
 		vim_free(var);
@@ -1724,8 +1688,6 @@ expand_env_esc(
 
     }
     *dst = NUL;
-
-    return (size_t)(dst - dst_start);
 }
 
 /*
@@ -2045,7 +2007,7 @@ vim_unsetenv_ext(char_u *var)
 	didset_vimruntime = FALSE;
 }
 
-#if defined(FEAT_EVAL)
+#if defined(FEAT_EVAL) || defined(PROTO)
 /*
  * Set environment variable "name" and take care of side effects.
  */
@@ -2373,7 +2335,7 @@ fast_breakcheck(void)
     }
 }
 
-# if defined(FEAT_SPELL)
+# if defined(FEAT_SPELL) || defined(PROTO)
 /*
  * Like line_breakcheck() but check 100 times less often.
  */
@@ -2389,7 +2351,8 @@ veryfast_breakcheck(void)
 #endif
 
 #if defined(VIM_BACKTICK) || defined(FEAT_EVAL) \
-	|| (defined(HAVE_LOCALE_H) || defined(X_LOCALE))
+	|| (defined(HAVE_LOCALE_H) || defined(X_LOCALE)) \
+	|| defined(PROTO)
 
 #ifndef SEEK_SET
 # define SEEK_SET 0
@@ -2497,7 +2460,7 @@ done:
     return buffer;
 }
 
-# if defined(FEAT_EVAL)
+# if defined(FEAT_EVAL) || defined(PROTO)
 
     static void
 get_cmd_output_as_rettv(
@@ -2802,7 +2765,7 @@ path_with_url(char_u *fname)
     return path_is_url(p);
 }
 
-#if defined(FEAT_EVAL)
+#if defined(FEAT_EVAL) || defined(PROTO)
 /*
  * Return the dictionary of v:event.
  * Save and clear the value in case it already has items.

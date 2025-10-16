@@ -773,7 +773,7 @@ chartabsize(char_u *p, colnr_T col)
     RET_WIN_BUF_CHARTABSIZE(curwin, curbuf, p, col)
 }
 
-#if defined(FEAT_LINEBREAK)
+#if defined(FEAT_LINEBREAK) || defined(PROTO)
     int
 win_chartabsize(win_T *wp, char_u *p, colnr_T col)
 {
@@ -821,7 +821,6 @@ linetabsize_col(int startcol, char_u *s)
 
 /*
  * Like linetabsize_str(), but for a given window instead of the current one.
- * Doesn't count the size of 'listchars' "eol".
  */
     int
 win_linetabsize(win_T *wp, linenr_T lnum, char_u *line, colnr_T len)
@@ -837,23 +836,12 @@ win_linetabsize(win_T *wp, linenr_T lnum, char_u *line, colnr_T len)
 /*
  * Return the number of cells line "lnum" of window "wp" will take on the
  * screen, taking into account the size of a tab and text properties.
- * Doesn't count the size of 'listchars' "eol".
  */
-    int
+  int
 linetabsize(win_T *wp, linenr_T lnum)
 {
     return win_linetabsize(wp, lnum,
 		       ml_get_buf(wp->w_buffer, lnum, FALSE), (colnr_T)MAXCOL);
-}
-
-/*
- * Like linetabsize(), but counts the size of 'listchars' "eol".
- */
-    int
-linetabsize_eol(win_T *wp, linenr_T lnum)
-{
-    return linetabsize(wp, lnum)
-	+ ((wp->w_p_list && wp->w_lcs_chars.eol != NUL) ? 1 : 0);
 }
 
 /*
@@ -918,9 +906,8 @@ win_linetabsize_cts(chartabsize_T *cts, colnr_T len)
     // check for a virtual text at the end of a line or on an empty line
     if (len == MAXCOL && cts->cts_has_prop_with_text && *cts->cts_ptr == NUL)
     {
-	int head = 0;
-	(void)win_lbr_chartabsize(cts, &head);
-	vcol += cts->cts_cur_text_width + head;
+	(void)win_lbr_chartabsize(cts, NULL);
+	vcol += cts->cts_cur_text_width;
 	// when properties are above or below the empty line must also be
 	// counted
 	if (cts->cts_ptr == cts->cts_line && cts->cts_prop_lines > 0)
@@ -1006,7 +993,7 @@ vim_isfilec(int c)
     return (c >= 0x100 || (c > 0 && (g_chartab[c] & CT_FNAME_CHAR)));
 }
 
-#if defined(FEAT_SPELL)
+#if defined(FEAT_SPELL) || defined(PROTO)
 /*
  * Return TRUE if 'c' is a valid file-name character, including characters left
  * out of 'isfname' to make "gf" work, such as comma, space, '@', etc.
@@ -1326,8 +1313,7 @@ win_lbr_chartabsize(
 			     (vcol + size) % (wp->w_width - col_off) + col_off,
 					      &n_extra, &p, NULL, NULL, FALSE);
 #  ifdef FEAT_LINEBREAK
-			if (text_prop_no_showbreak(tp))
-			    no_sbr = TRUE;  // don't use 'showbreak' now
+			no_sbr = TRUE;  // don't use 'showbreak' now
 #  endif
 		    }
 		    else
@@ -1880,7 +1866,7 @@ skipwhite(char_u *q)
     return p;
 }
 
-#if defined(FEAT_EVAL)
+#if defined(FEAT_EVAL) || defined(PROTO)
 /*
  * skip over ' ', '\t' and '\n'.
  */
@@ -1924,7 +1910,7 @@ skipdigits(char_u *q)
     return p;
 }
 
-#if defined(FEAT_SYN_HL) || defined(FEAT_SPELL)
+#if defined(FEAT_SYN_HL) || defined(FEAT_SPELL) || defined(PROTO)
 /*
  * skip over binary digits
  */

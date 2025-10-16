@@ -7,7 +7,7 @@
 " Usage: Vim -S <this-file>
 "
 " Author: Bram Moolenaar
-" Last Update: 2025 Sep 21
+" Last Update: 2020 Aug 24
 
 " Parse lines of UnicodeData.txt.  Creates a list of lists in s:dataprops.
 func! ParseDataToProps()
@@ -420,7 +420,7 @@ if Test_AddLinesToCharDict() || Test_CharDictToPairList()
   finish
 endif
 
-if !exists("g:loaded_netrwPlugin")
+if !exists("g:loaded_netrw")
   echomsg "Netrw not available, cannot download"
   finish
 endif

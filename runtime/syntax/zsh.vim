@@ -2,7 +2,7 @@
 " Language:             Zsh shell script
 " Maintainer:           Christian Brabandt <cb@256bit.org>
 " Previous Maintainer:  Nikolai Weibull <now@bitwi.se>
-" Latest Revision:      2024 Jan 04
+" Latest Revision:      2022-07-26
 " License:              Vim (see :h license)
 " Repository:           https://github.com/chrisbra/vim-zsh
 
@@ -48,9 +48,8 @@ syn match   zshPOSIXQuoted      '\\u[0-9a-fA-F]\{1,4}'
 syn match   zshPOSIXQuoted      '\\U[1-9a-fA-F]\{1,8}'
 
 syn region  zshString           matchgroup=zshStringDelimiter start=+"+ end=+"+
-                                \ contains=@Spell,zshQuoted,@zshDerefs,@zshSubstQuoted fold
+                                \ contains=zshQuoted,@zshDerefs,@zshSubstQuoted fold
 syn region  zshString           matchgroup=zshStringDelimiter start=+'+ end=+'+ fold
-                                \ contains=@Spell
 syn region  zshPOSIXString      matchgroup=zshStringDelimiter start=+\$'+
                                 \ skip=+\\[\\']+ end=+'+ contains=zshPOSIXQuoted,zshQuoted
 syn match   zshJobSpec          '%\(\d\+\|?\=\w\+\|[%+-]\)'
@@ -69,7 +68,7 @@ syn keyword zshConditional      if then elif else fi esac select
 
 syn keyword zshCase             case nextgroup=zshCaseWord skipwhite
 syn match zshCaseWord           /\S\+/ nextgroup=zshCaseIn skipwhite contained transparent
-syn keyword zshCaseIn           in nextgroup=zshComment,zshCasePattern skipwhite skipnl contained
+syn keyword zshCaseIn           in nextgroup=zshCasePattern skipwhite skipnl contained
 syn match zshCasePattern        /\S[^)]*)/ contained
 
 syn keyword zshRepeat           while until repeat
@@ -95,24 +94,22 @@ syn match   zshRedir            '|\@1<!|&\=|\@!'
 
 syn region  zshHereDoc          matchgroup=zshRedir
                                 \ start='<\@<!<<\s*\z([^<]\S*\)'
-                                \ end='^\z1$'
-                                \ contains=@Spell,@zshSubst,@zshDerefs,zshQuoted,zshPOSIXString
+                                \ end='^\z1\>'
+                                \ contains=@zshSubst,@zshDerefs,zshQuoted,zshPOSIXString
 syn region  zshHereDoc          matchgroup=zshRedir
                                 \ start='<\@<!<<\s*\\\z(\S\+\)'
-                                \ end='^\z1$'
-                                \ contains=@Spell
+                                \ end='^\z1\>'
+                                \ contains=@zshSubst,@zshDerefs,zshQuoted,zshPOSIXString
 syn region  zshHereDoc          matchgroup=zshRedir
                                 \ start='<\@<!<<-\s*\\\=\z(\S\+\)'
-                                \ end='^\t*\z1$'
-                                \ contains=@Spell
+                                \ end='^\s*\z1\>'
+                                \ contains=@zshSubst,@zshDerefs,zshQuoted,zshPOSIXString
 syn region  zshHereDoc          matchgroup=zshRedir
                                 \ start=+<\@<!<<\s*\(["']\)\z(\S\+\)\1+
-                                \ end='^\z1$'
-                                \ contains=@Spell
+                                \ end='^\z1\>'
 syn region  zshHereDoc          matchgroup=zshRedir
                                 \ start=+<\@<!<<-\s*\(["']\)\z(\S\+\)\1+
-                                \ end='^\t*\z1$'
-                                \ contains=@Spell
+                                \ end='^\s*\z1\>'
 
 syn match   zshVariable         '\<\h\w*' contained
 

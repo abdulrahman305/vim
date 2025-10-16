@@ -12,7 +12,7 @@
 
 #include "vim.h"
 
-#if defined(FEAT_JOB_CHANNEL)
+#if defined(FEAT_JOB_CHANNEL) || defined(PROTO)
 
 // TRUE when netbeans is running with a GUI.
 #ifdef FEAT_GUI
@@ -396,7 +396,7 @@ free_unused_channels(int copyID, int mask)
     }
 }
 
-#if defined(FEAT_GUI)
+#if defined(FEAT_GUI) || defined(PROTO)
 
 # if defined(FEAT_GUI_X11) || defined(FEAT_GUI_GTK)
 /*
@@ -2714,11 +2714,7 @@ invoke_one_time_callback(
 }
 
     static void
-append_to_buffer(
-    buf_T	*buffer,
-    char_u	*msg,
-    channel_T	*channel,
-    ch_part_T	part)
+append_to_buffer(buf_T *buffer, char_u *msg, channel_T *channel, ch_part_T part)
 {
     aco_save_T	aco;
     linenr_T    lnum = buffer->b_ml.ml_line_count;
@@ -3135,7 +3131,7 @@ may_invoke_callback(channel_T *channel, ch_part_T part)
     return TRUE;
 }
 
-#if defined(FEAT_NETBEANS_INTG)
+#if defined(FEAT_NETBEANS_INTG) || defined(PROTO)
 /*
  * Return TRUE when channel "channel" is open for writing to.
  * Also returns FALSE or invalid "channel".
@@ -3472,7 +3468,7 @@ channel_clear(channel_T *channel)
     free_callback(&channel->ch_close_cb);
 }
 
-#if defined(EXITFREE)
+#if defined(EXITFREE) || defined(PROTO)
     void
 channel_free_all(void)
 {
@@ -4143,7 +4139,7 @@ theend:
     free_job_options(&opt);
 }
 
-#if defined(MSWIN) || defined(__HAIKU__) || defined(FEAT_GUI)
+#if defined(MSWIN) || defined(__HAIKU__) || defined(FEAT_GUI) || defined(PROTO)
 /*
  * Check the channels for anything that is ready to be read.
  * The data is put in the read queue.
@@ -4194,7 +4190,7 @@ channel_handle_events(int only_keep_open)
 }
 #endif
 
-# if defined(FEAT_GUI)
+# if defined(FEAT_GUI) || defined(PROTO)
 /*
  * Return TRUE when there is any channel with a keep_open flag.
  */
@@ -4645,7 +4641,7 @@ ch_raw_common(typval_T *argvars, typval_T *rettv, int eval)
 
 #define KEEP_OPEN_TIME 20  // msec
 
-#if defined(UNIX) && !defined(HAVE_SELECT)
+#if (defined(UNIX) && !defined(HAVE_SELECT)) || defined(PROTO)
 /*
  * Add open channels to the poll struct.
  * Return the adjusted struct index.
@@ -4738,7 +4734,7 @@ channel_poll_check(int ret_in, void *fds_in)
 }
 #endif // UNIX && !HAVE_SELECT
 
-#if !defined(MSWIN) && defined(HAVE_SELECT)
+#if (!defined(MSWIN) && defined(HAVE_SELECT)) || defined(PROTO)
 
 /*
  * The "fd_set" type is hidden to avoid problems with the function proto.
@@ -5008,7 +5004,7 @@ set_ref_in_channel(int copyID)
 	{
 	    tv.v_type = VAR_CHANNEL;
 	    tv.vval.v_channel = channel;
-	    abort = abort || set_ref_in_item(&tv, copyID, NULL, NULL, NULL);
+	    abort = abort || set_ref_in_item(&tv, copyID, NULL, NULL);
 	}
     return abort;
 }

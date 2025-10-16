@@ -8,13 +8,13 @@
  */
 
 /*
- * profiler.c: Vim script profiler
+ * profiler.c: vim script profiler
  */
 
 #include "vim.h"
 
-#if defined(FEAT_EVAL)
-# if defined(FEAT_PROFILE) || defined(FEAT_RELTIME)
+#if defined(FEAT_EVAL) || defined(PROTO)
+# if defined(FEAT_PROFILE) || defined(FEAT_RELTIME) || defined(PROTO)
 /*
  * Store the current time in "tm".
  */
@@ -200,7 +200,7 @@ profile_divide(proftime_T *tm, int count, proftime_T *tm2)
 }
 #endif
 
-# if defined(FEAT_PROFILE)
+# if defined(FEAT_PROFILE) || defined(PROTO)
 /*
  * Functions for profiling.
  */

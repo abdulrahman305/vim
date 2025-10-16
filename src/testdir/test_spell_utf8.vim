@@ -1,5 +1,6 @@
 " Test for spell checking with 'encoding' set to utf-8
 
+source check.vim
 CheckFeature spell
 
 scriptencoding utf-8

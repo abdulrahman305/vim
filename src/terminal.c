@@ -40,7 +40,7 @@
 
 #include "vim.h"
 
-#if defined(FEAT_TERMINAL)
+#if defined(FEAT_TERMINAL) || defined(PROTO)
 
 #ifndef MIN
 # define MIN(x,y) ((x) < (y) ? (x) : (y))
@@ -53,10 +53,10 @@
 
 // This is VTermScreenCell without the characters, thus much smaller.
 typedef struct {
-    VTermScreenCellAttrs	attrs;
-    char			width;
-    VTermColor			fg;
-    VTermColor			bg;
+  VTermScreenCellAttrs	attrs;
+  char			width;
+  VTermColor		fg;
+  VTermColor		bg;
 } cellattr_T;
 
 typedef struct sb_line_S {
@@ -1071,7 +1071,7 @@ expand_terminal_opt(
 	    FALSE);
 }
 
-#if defined(FEAT_SESSION)
+#if defined(FEAT_SESSION) || defined(PROTO)
 /*
  * Write a :terminal command to the session file to restore the terminal in
  * window "wp".
@@ -1430,10 +1430,6 @@ write_to_term(buf_T *buffer, char_u *msg, channel_T *channel)
 	if (buffer == curbuf && (State & MODE_CMDLINE) == 0)
 	{
 	    update_screen(UPD_VALID_NO_UPDATE);
-#if defined(FEAT_TABPANEL)
-	    if (redraw_tabpanel)
-		draw_tabpanel();
-#endif
 	    // update_screen() can be slow, check the terminal wasn't closed
 	    // already
 	    if (buffer == curbuf && curbuf->b_term != NULL)
@@ -2189,7 +2185,7 @@ may_move_terminal_to_buffer(term_T *term, int redraw)
     }
 }
 
-#if defined(FEAT_TIMERS)
+#if defined(FEAT_TIMERS) || defined(PROTO)
 /*
  * Check if any terminal timer expired.  If so, copy text from the terminal to
  * the buffer.
@@ -2593,7 +2589,7 @@ term_get_highlight_id(term_T *term, win_T *wp)
     return syn_name2id(name);
 }
 
-#if defined(FEAT_GUI)
+#if defined(FEAT_GUI) || defined(PROTO)
     cursorentry_T *
 term_get_cursor_shape(guicolor_T *fg, guicolor_T *bg)
 {
@@ -3458,23 +3454,11 @@ limit_scrollback(term_T *term, garray_T *gap, int update_buffer)
 	    (sb_line_T *)gap->ga_data + todo,
 	    sizeof(sb_line_T) * gap->ga_len);
     if (update_buffer)
-    {
-	win_T *curwin_save = curwin;
-	win_T *wp = NULL;
-
 	term->tl_scrollback_scrolled -= todo;
 
-	FOR_ALL_WINDOWS(wp)
-	{
-	    if (wp->w_buffer == term->tl_buffer)
-	    {
-		curwin = wp;
-		check_cursor();
-		update_topline();
-	    }
-	}
-	curwin = curwin_save;
-    }
+    // make sure cursor is on a valid line
+    if (curbuf == term->tl_buffer)
+	check_cursor();
 }
 
 /*
@@ -3638,15 +3622,15 @@ handle_bell(void *user UNUSED)
 }
 
 static VTermScreenCallbacks screen_callbacks = {
-    handle_damage,		// damage
-    handle_moverect,		// moverect
-    handle_movecursor,		// movecursor
-    handle_settermprop,		// settermprop
-    handle_bell,		// bell
-    handle_resize,		// resize
-    handle_pushline,		// sb_pushline
-    NULL,			// sb_popline
-    NULL			// sb_clear
+  handle_damage,	// damage
+  handle_moverect,	// moverect
+  handle_movecursor,	// movecursor
+  handle_settermprop,	// settermprop
+  handle_bell,		// bell
+  handle_resize,	// resize
+  handle_pushline,	// sb_pushline
+  NULL,			// sb_popline
+  NULL			// sb_clear
 };
 
 /*
@@ -3737,7 +3721,7 @@ term_after_channel_closed(term_T *term)
     return FALSE;
 }
 
-#if defined(FEAT_PROP_POPUP)
+#if defined(FEAT_PROP_POPUP) || defined(PROTO)
 /*
  * If the current window is a terminal in a popup window and the job has
  * finished, close the popup window and to back to the previous window.
@@ -4862,13 +4846,13 @@ parse_csi(
 }
 
 static VTermStateFallbacks state_fallbacks = {
-    NULL,		// control
-    parse_csi,		// csi
-    parse_osc,		// osc
-    NULL,		// dcs
-    NULL,		// apc
-    NULL,		// pm
-    NULL		// sos
+  NULL,		// control
+  parse_csi,	// csi
+  parse_osc,	// osc
+  NULL,		// dcs
+  NULL,		// apc
+  NULL,		// pm
+  NULL		// sos
 };
 
 /*
@@ -5097,7 +5081,7 @@ set_ref_in_term(int copyID)
 	{
 	    tv.v_type = VAR_JOB;
 	    tv.vval.v_job = term->tl_job;
-	    abort = abort || set_ref_in_item(&tv, copyID, NULL, NULL, NULL);
+	    abort = abort || set_ref_in_item(&tv, copyID, NULL, NULL);
 	}
     return abort;
 }
@@ -6629,7 +6613,7 @@ f_term_sendkeys(typval_T *argvars, typval_T *rettv UNUSED)
     }
 }
 
-#if defined(FEAT_GUI) || defined(FEAT_TERMGUICOLORS)
+#if defined(FEAT_GUI) || defined(FEAT_TERMGUICOLORS) || defined(PROTO)
 /*
  * "term_getansicolors(buf)" function
  */
@@ -6938,7 +6922,7 @@ term_send_eof(channel_T *ch)
 	}
 }
 
-#if defined(FEAT_GUI)
+#if defined(FEAT_GUI) || defined(PROTO)
     job_T *
 term_getjob(term_T *term)
 {
@@ -6946,10 +6930,24 @@ term_getjob(term_T *term)
 }
 #endif
 
-# if defined(MSWIN)
+# if defined(MSWIN) || defined(PROTO)
 
 ///////////////////////////////////////
 // 2. MS-Windows implementation.
+#ifdef PROTO
+typedef int COORD;
+typedef int DWORD;
+typedef int HANDLE;
+typedef int *DWORD_PTR;
+typedef int HPCON;
+typedef int HRESULT;
+typedef int LPPROC_THREAD_ATTRIBUTE_LIST;
+typedef int SIZE_T;
+typedef int PSIZE_T;
+typedef int PVOID;
+typedef int BOOL;
+# define WINAPI
+#endif
 
 HRESULT (WINAPI *pCreatePseudoConsole)(COORD, HANDLE, HANDLE, DWORD, HPCON*);
 HRESULT (WINAPI *pResizePseudoConsole)(HPCON, COORD);
@@ -7070,11 +7068,7 @@ conpty_term_and_job_init(
     if (cmd_wchar == NULL)
 	goto failed;
     if (opt->jo_cwd != NULL)
-    {
 	cwd_wchar = enc_to_utf16(opt->jo_cwd, NULL);
-	if (cwd_wchar == NULL)
-	    goto failed;
-    }
 
     win32_build_env(opt->jo_env, &ga_env, TRUE);
     env_wchar = ga_env.ga_data;
@@ -7276,6 +7270,8 @@ use_conpty(void)
     return has_conpty;
 }
 
+#  ifndef PROTO
+
 #define WINPTY_SPAWN_FLAG_AUTO_SHUTDOWN 1ul
 #define WINPTY_SPAWN_FLAG_EXIT_AFTER_SHUTDOWN 2ull
 #define WINPTY_MOUSE_MODE_FORCE		2
@@ -7300,6 +7296,7 @@ HANDLE (*winpty_agent_process)(void*);
 #define WINPTY_DLL "winpty.dll"
 
 static HINSTANCE hWinPtyDLL = NULL;
+#  endif
 
     static int
 dyn_winpty_init(int verbose)
@@ -7413,11 +7410,7 @@ winpty_term_and_job_init(
     if (cmd_wchar == NULL)
 	goto failed;
     if (opt->jo_cwd != NULL)
-    {
 	cwd_wchar = enc_to_utf16(opt->jo_cwd, NULL);
-	if (cwd_wchar == NULL)
-	    goto failed;
-    }
 
     win32_build_env(opt->jo_env, &ga_env, TRUE);
     env_wchar = ga_env.ga_data;
@@ -7577,11 +7570,7 @@ failed:
 	char *msg = (char *)utf16_to_enc(
 				(short_u *)winpty_error_msg(winpty_err), NULL);
 
-	if (msg != NULL)
-	{
-	    emsg(msg);
-	    vim_free(msg);
-	}
+	emsg(msg);
 	winpty_error_free(winpty_err);
     }
     return FAIL;

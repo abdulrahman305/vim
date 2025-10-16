@@ -30,7 +30,7 @@
 
 #include "vim.h"
 
-#if defined(FEAT_ARABIC)
+#if defined(FEAT_ARABIC) || defined(PROTO)
 
 // Unicode values for Arabic characters.
 #define a_HAMZA				0x0621

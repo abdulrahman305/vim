@@ -1,5 +1,8 @@
 " Tests for system() and systemlist()
 
+source shared.vim
+source check.vim
+
 func Test_System()
   if !has('win32')
     call assert_equal("123\n", system('echo 123'))

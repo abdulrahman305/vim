@@ -3,11 +3,13 @@
 set encoding=utf-8
 scriptencoding utf-8
 
+source check.vim
 CheckOption linebreak
 CheckFeature conceal
 CheckFeature signs
 
-source util/screendump.vim
+source view_util.vim
+source screendump.vim
 
 func s:screen_lines(lnum, width) abort
   return ScreenLines(a:lnum, a:width)
@@ -368,7 +370,6 @@ endfunc
 func Test_visual_ends_before_showbreak()
   CheckScreendump
 
-  " Redraw at the end is necessary due to https://github.com/vim/vim/issues/16620
   let lines =<< trim END
       vim9script
       &wrap = true
@@ -376,7 +377,6 @@ func Test_visual_ends_before_showbreak()
       &showbreak = '↪ '
       ['xxxxx ' .. 'y'->repeat(&columns - 6) .. ' zzzz']->setline(1)
       normal! wvel
-      redraw
   END
   call writefile(lines, 'XvisualEndsBeforeShowbreak', 'D')
   let buf = RunVimInTerminal('-S XvisualEndsBeforeShowbreak', #{rows: 6})

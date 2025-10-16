@@ -75,7 +75,6 @@ DOCS = \
 	pi_paren.txt \
 	pi_spec.txt \
 	pi_tar.txt \
-	pi_tutor.txt \
 	pi_vimball.txt \
 	pi_zip.txt \
 	popup.txt \
@@ -152,8 +151,6 @@ DOCS = \
 	vim9.txt \
 	vim9class.txt \
 	visual.txt \
-	vietnamese.txt \
-	wayland.txt \
 	windows.txt \
 	workshop.txt
 
@@ -231,7 +228,6 @@ HTMLS = \
 	pi_paren.html \
 	pi_spec.html \
 	pi_tar.html \
-	pi_tutor.html \
 	pi_vimball.html \
 	pi_zip.html \
 	popup.html \
@@ -305,12 +301,10 @@ HTMLS = \
 	version8.html \
 	version9.html \
 	vi_diff.html \
-	vietnamese.html \
 	vimindex.html \
 	vim9.html \
 	vim9class.html \
 	visual.html \
-	wayland.html \
 	windows.html \
 	workshop.html
 

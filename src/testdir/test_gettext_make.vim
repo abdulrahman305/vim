@@ -1,3 +1,4 @@
+source check.vim
 CheckNotMac
 CheckFeature gettext
 

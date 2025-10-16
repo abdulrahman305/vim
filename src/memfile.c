@@ -594,10 +594,13 @@ mf_sync(memfile_T *mfp, int flags)
 	}
 	else
 # endif
-# ifdef HAVE_SYNC
-	    sync();
-# else
+	    // OpenNT is strictly POSIX (Benzinger)
+	    // Tandem/Himalaya NSK-OSS doesn't have sync()
+	    // No sync() on Stratus VOS
+# if defined(__OPENNT) || defined(__TANDEM) || defined(__VOS__)
 	    fflush(NULL);
+# else
+	    sync();
 # endif
 #endif
 #ifdef VMS

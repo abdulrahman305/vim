@@ -1,0 +1,3047 @@
+# Armenian translation for Vim		vim:set foldmethod=marker:
+#
+# Do ":help uganda"  in Vim to read copying and usage conditions.
+# Do ":help credits" in Vim to see a list of people who contributed.
+#
+# Gagik Hakobyan <hakgagik@yahoo,com> 2015
+# option - կարգանշան
+# unload - բեռնաթափել
+# load - բեռնել
+# loop - շրջակցում
+# prefix - նախածանց
+# nested - ներդրված
+# flag - դրոշմանիշ
+# compound - պարփակ
+# region -
+# include - կցաֆայլ
+# cluster - hամակարգ
+# highlight - գունանշում
+# attribute - բնորոշիչ
+# garbage - աղբ
+# shell - terminal
+# combine - միավորում
+# search - որոնում
+# patch - նմանակում
+# extra - հավելյալ
+# feature - հատկություն
+# ignore - անտեսել
+# replace - փոխարինում
+# pattern - նմուշ
+# delimiter - բաժանիչ
+# equal - համարժեք
+# settings - կարգաբերում
+# duplicate - կրկնակի
+# find -
+# found - հայտնաբերված
+# support - աջակցում
+# class - դաս
+# fold - փաթաթ
+# soundfold - ձայնափաթաթ
+# swap -
+# menu -
+# undo - չեղարկում
+# overwrite -
+# skipp -
+# owner -
+# failed -
+# list
+# match - համընկնում
+# autocommand -
+# case - depq,
+# fatal - օրհասական
+# mark - նշակ
+# key - banali
+# character - ??
+# demage - վնասված
+# abort
+# event -
+# read-only
+# option
+# preview - Նախադիտում
+# spell - ուղղագրում
+# directory - թղթապանակ
+msgid ""
+msgstr ""
+"Project-Id-Version: vim_9.1_am\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-09-24 21:58+0300\n"
+"PO-Revision-Date: 2024-10-11 11:18+0000\n"
+"Last-Translator: Gagik Hakobyan <hakgagik@yahoo.com>\n"
+"Language-Team: Armenian\n"
+"Language: hy\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Loco-Source-Locale: en_AM\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Poedit-KeywordsList: փաթաթ;միջակայք\n"
+"X-Loco-Parser: loco_parse_po"
+
+msgid "ERROR: "
+msgstr "ՍԽԱԼ: "
+
+#, c-format
+msgid "--Deleted--"
+msgstr "--Ջնջված է--"
+
+#, c-format
+msgid "auto-removing autocommand: %s <buffer=%d>"
+msgstr "ինքնա֊ջնջող ինքնահրաման: %s <բուֆեր=%d>"
+
+msgid "W19: Deleting augroup that is still in use"
+msgstr "W19: Օգտագործվող ինքնախմբի ջնջում"
+
+#, c-format
+msgid "No matching autocommands: %s"
+msgstr "Չկան համապատասխան ինքնահրամաններ: %s"
+
+#, c-format
+msgid "%s Autocommands for \"%s\""
+msgstr "%s Ինքնահրամաններ \"%s\"-ի համար"
+
+#, c-format
+msgid "Executing %s"
+msgstr "Կատարվում է %s"
+
+#, c-format
+msgid "autocommand %s"
+msgstr "ինքնահրաման %s"
+
+msgid "add() argument"
+msgstr "add() արգումենտ"
+
+msgid "insert() argument"
+msgstr "insert() արգումենտ"
+
+msgid "[Location List]"
+msgstr "[Տեղորոշման ցանկ]"
+
+msgid "[Quickfix List]"
+msgstr "[Արագ կարգավորման ցանկ]"
+
+#, c-format
+msgid "%d buffer unloaded"
+msgid_plural "%d buffers unloaded"
+msgstr[0] "%d բուֆեր բեռնաթափվել է"
+msgstr[1] "%d բուֆերներ բեռնաթափվել են"
+
+#, c-format
+msgid "%d buffer deleted"
+msgid_plural "%d buffers deleted"
+msgstr[0] "%d բուֆեր ջնջվել է"
+msgstr[1] "%d բուֆերներ ջնջվել են"
+
+#, c-format
+msgid "%d buffer wiped out"
+msgid_plural "%d buffers wiped out"
+msgstr[0] "%d բուֆեր մաքրվել է"
+msgstr[1] "%d բուֆերներ մաքրվել են"
+
+msgid "W14: Warning: List of file names overflow"
+msgstr "W14: Զգուշացում: ֆայլերի ցանկը հատել է սահմանաչափը"
+
+#, c-format
+msgid "line %ld"
+msgstr "տող %ld"
+
+msgid " [Modified]"
+msgstr " [Փոփոխված]"
+
+msgid "[Not edited]"
+msgstr "[Չխմբագրված]"
+
+msgid "[Read errors]"
+msgstr "[Կարդալու սխալներ]"
+
+msgid "[RO]"
+msgstr "[ՄԿ]"
+
+msgid "[readonly]"
+msgstr "[Միայն կարդալու համար]"
+
+#, c-format
+msgid "%ld line --%d%%--"
+msgid_plural "%ld lines --%d%%--"
+msgstr[0] "%ld տող --%d%%--"
+msgstr[1] "%ld տողեր --%d%%--"
+
+#, c-format
+msgid "line %ld of %ld --%d%%-- col "
+msgstr "տող. %ld - %ld --%d%%-- քան. "
+
+msgid "[No Name]"
+msgstr "[Անանուն]"
+
+msgid "help"
+msgstr "օգնություն"
+
+msgid "[Help]"
+msgstr "[օգնություն]"
+
+msgid "[Preview]"
+msgstr "[Նախադիտում]"
+
+msgid "All"
+msgstr "Ամբողջը"
+
+msgid "Bot"
+msgstr "Ներքևում"
+
+msgid "Top"
+msgstr "Վերևում"
+
+#, c-format
+msgid "%d%%"
+msgstr "%d%%"
+
+#, c-format
+msgid " (%d of %d)"
+msgstr " (%d %d-ից)"
+
+#, c-format
+msgid " ((%d) of %d)"
+msgstr " ((%d) %d-ից)"
+
+#, c-format
+msgid " (file %d of %d)"
+msgstr " (Ֆայլ %d %d-ից)"
+
+#, c-format
+msgid " (file (%d) of %d)"
+msgstr " (Ֆայլ (%d) %d-ից)"
+
+msgid "[Command Line]"
+msgstr "[Հրամանյին տող]"
+
+msgid "[Prompt]"
+msgstr "[Հուշում]"
+
+msgid "[Popup]"
+msgstr "[Սահապատ]"
+
+msgid "[Scratch]"
+msgstr "[Ժամանակավոր]"
+
+msgid "WARNING: The file has been changed since reading it!!!"
+msgstr "Զգուշացում: ֆայլը փոփոխվել է դեռ չկարդացված !!!"
+
+msgid "Do you really want to write to it"
+msgstr "Իրո՞ք ուզում եք գրել"
+
+msgid "[New]"
+msgstr "[Նոր]"
+
+msgid "[New File]"
+msgstr "[Նոր ֆայլ]"
+
+msgid " CONVERSION ERROR"
+msgstr " ՓՈԽԱԿԵՐՊՄԱՆ ՍԽԱԼ"
+
+#, c-format
+msgid " in line %ld;"
+msgstr " %ld տողում;"
+
+msgid "[NOT converted]"
+msgstr "[ՉԻ փոխակերպվել]"
+
+msgid "[converted]"
+msgstr "[փոխակերպվել է]"
+
+msgid "[Device]"
+msgstr "[Սարք]"
+
+msgid " [a]"
+msgstr " [a]"
+
+msgid " appended"
+msgstr " կից"
+
+msgid " [w]"
+msgstr " [w]"
+
+msgid " written"
+msgstr " ամրագրված է"
+
+msgid ""
+"\n"
+"WARNING: Original file may be lost or damaged\n"
+msgstr ""
+"\n"
+"Զգուշացում: նախնական ֆայլը հնարավոր է վնասված է\n"
+
+msgid "don't quit the editor until the file is successfully written!"
+msgstr "մի փակեք խմբագիրը քանի դեռ ֆայլը հաջողությամբ կգրվի!"
+
+msgid "W10: Warning: Changing a readonly file"
+msgstr "W10: Զգուշացում: Փոփոխվում է կարդալու թուլտվությամբ ֆայլ"
+
+msgid "No display"
+msgstr "Էկրան չկա"
+
+msgid ""
+": Send failed.\n"
+msgstr ""
+": Հնարավոր չեղավ ուղարկել.\n"
+
+msgid ""
+": Send failed. Trying to execute locally\n"
+msgstr ""
+": Հնարավոր չեղավ ուղարկել. Լոկալ կատարման փորձ\n"
+
+#, c-format
+msgid "%d of %d edited"
+msgstr "%d֊ը %d֊ից խմբագրվել է"
+
+msgid ""
+"No display: Send expression failed.\n"
+msgstr ""
+"Էկրան չկա: Հնարավոր չեղավ ուղարկել արտահայտությունը.\n"
+
+msgid ""
+": Send expression failed.\n"
+msgstr ""
+": Հնարավոր չեղավ ուղարկել արտահայտությունը.\n"
+
+msgid "Used CUT_BUFFER0 instead of empty selection"
+msgstr "Օգտագործվել է CUT_BUFFER0 դատարկ ընտրության փոխարեն"
+
+msgid "tagname"
+msgstr "պիտակի անուն"
+
+msgid ""
+" kind file\n"
+msgstr ""
+" ֆայլի տիպ\n"
+
+msgid "'history' option is zero"
+msgstr "'history' կարգանշանը դատարկ է"
+
+msgid "Warning: Using a weak encryption method; see :help 'cm'"
+msgstr "Զգուշացում։ Օգտագործվում է թույլ կոդավորման մեթոդ, տես․ :help 'cm'"
+
+msgid "Note: Encryption of swapfile not supported, disabling swap file"
+msgstr ""
+"Նշում․ փոխանակման ֆայլի կոդավորումը չի աջակցվում, ապաակտիվացվում է "
+"փոխանակման ֆայլը"
+
+msgid "Enter encryption key: "
+msgstr "Կոդավորման համար մուտթագրեք գաղտնաբառը: "
+
+msgid "Enter same key again: "
+msgstr "Կրկնեք գաղտնաբառը: "
+
+msgid "Keys don't match!"
+msgstr "Բանալիները տարբեր են!"
+
+msgid "[crypted]"
+msgstr "[կոդավորված]"
+
+#, c-format
+msgid "xchacha20v2: using custom opslimit \"%llu\" for Key derivation."
+msgstr ""
+"xchacha20v2: օգտագործելով \"%llu\" մաքսային սահմանաչափը բանալիների ածանցման "
+"համար:"
+
+#, c-format
+msgid "xchacha20v2: using default opslimit \"%llu\" for Key derivation."
+msgstr ""
+"xchacha20v2: օգտագործելով լռելյայն \"%llu\" opslimit բանալի ածանցման համար:"
+
+#, c-format
+msgid "xchacha20v2: using custom memlimit \"%lu\" for Key derivation."
+msgstr ""
+"xchacha20v2: օգտագործելով հատուկ memlimit \"%lu\" հիմնական ածանցման համար:"
+
+#, c-format
+msgid "xchacha20v2: using default memlimit \"%lu\" for Key derivation."
+msgstr ""
+"xchacha20v2: օգտագործելով լռելյայն memlimit \"%lu\" հիմնական ածանցման համար:"
+
+#, c-format
+msgid "xchacha20v2: using custom algorithm \"%d\" for Key derivation."
+msgstr ""
+"xchacha20v2: օգտագործելով \"%d\" հատուկ ալգորիթմը բանալիների ածանցման համար:"
+
+#, c-format
+msgid "xchacha20v2: using default algorithm \"%d\" for Key derivation."
+msgstr ""
+"xchacha20v2: օգտագործելով \"%d\" լռելյայն ալգորիթմը բանալիների ածանցման "
+"համար:"
+
+msgid "Entering Debug mode.  Type \"cont\" to continue."
+msgstr "Մուտք կոդի զննման ռեժիմ. Շարունակելու համար կատարել \"cont\" հրամանը."
+
+#, c-format
+msgid "Oldval = \"%s\""
+msgstr "Օլդվալ = \"%s\""
+
+#, c-format
+msgid "Newval = \"%s\""
+msgstr "Newval = \"%s\""
+
+#, c-format
+msgid "line %ld: %s"
+msgstr "տող %ld: %s"
+
+#, c-format
+msgid "cmd: %s"
+msgstr "հրաման: %s"
+
+#| msgid "E726: Stride is zero"
+msgid "frame is zero"
+msgstr "շրջանակը զրո է"
+
+#, c-format
+msgid "frame at highest level: %d"
+msgstr "շրջանակ ամենաբարձր մակարդակում՝ %d"
+
+#, c-format
+msgid "Breakpoint in \"%s%s\" line %ld"
+msgstr "Վերադարձի կետը՝ \"%s%s\" տող %ld"
+
+msgid "No breakpoints defined"
+msgstr "Վերադարձի կետեր չեն սահամանվել"
+
+#, c-format
+msgid "%3d  %s %s  line %ld"
+msgstr "%3d  %s %s տող %ld"
+
+#, c-format
+msgid "%3d  expr %s"
+msgstr "%3d  expr %s"
+
+msgid "extend() argument"
+msgstr "extend() արգումենտ"
+
+#, c-format
+msgid "Not enough memory to use internal diff for buffer \"%s\""
+msgstr ""
+"Հիշողությունը բավարար չէ \"%s\" բուֆերի համար ներքին տարբերություն "
+"օգտագործելու համար"
+
+msgid "Patch file"
+msgstr "Նմանակման ֆայլ"
+
+msgid "Custom"
+msgstr "Հարմարեցված"
+
+msgid "Latin supplement"
+msgstr "Լատինական հավելում"
+
+msgid "Greek and Coptic"
+msgstr "Հունական և Ղպտիական"
+
+msgid "Cyrillic"
+msgstr "Կիրիլիցա"
+
+msgid "Hebrew"
+msgstr "Եբրայական"
+
+msgid "Arabic"
+msgstr "Արաբական"
+
+msgid "Latin extended"
+msgstr "Լատինական ընդարձակ"
+
+msgid "Greek extended"
+msgstr "Հունարեն երկարաձգված"
+
+msgid "Punctuation"
+msgstr "Կետադրական նշան"
+
+msgid "Super- and subscripts"
+msgstr "Սուպեր- և բաժանորդներ"
+
+msgid "Currency"
+msgstr "Արժույթ"
+
+msgid "Other"
+msgstr "Այլ"
+
+msgid "Roman numbers"
+msgstr "Հռոմեական թվեր"
+
+msgid "Arrows"
+msgstr "Ռադիո"
+
+msgid "Mathematical operators"
+msgstr "Մաթեմատիկական օպերատորներ"
+
+msgid "Technical"
+msgstr "Տեխնիկական"
+
+msgid "Box drawing"
+msgstr "Տուփի նկարչություն"
+
+msgid "Block elements"
+msgstr "Արգելափակման տարրեր"
+
+msgid "Geometric shapes"
+msgstr "Երկրաչափական պատկերներ"
+
+msgid "Symbols"
+msgstr "Խորհրդանիշներ"
+
+msgid "Dingbats"
+msgstr "Դինգբատներ"
+
+msgid "CJK symbols and punctuation"
+msgstr "CJK նշաններ և կետադրական նշաններ"
+
+msgid "Hiragana"
+msgstr "Հիրագանա"
+
+msgid "Katakana"
+msgstr "Կատականա"
+
+msgid "Bopomofo"
+msgstr "Բոպոմոֆո"
+
+msgid ""
+"\n"
+"\tLast set from "
+msgstr ""
+"\n"
+"\tՎերջին փոփոխումը "
+
+msgid "&Ok"
+msgstr "&Լավ"
+
+msgid ""
+"&OK\n"
+"&Cancel"
+msgstr ""
+"&Լավ\n"
+"&Չեղարկել"
+
+msgid "called inputrestore() more often than inputsave()"
+msgstr "inputrestore() կանչվել է ավելի շատ քան inputsave() ֆունկցիան"
+
+#, c-format
+msgid "<%s>%s%s  %d,  Hex %02x,  Oct %03o, Digr %s"
+msgstr "<%s>%s%s  %d,  Hex %02x,  Oct %03o, Digr %s"
+
+#, c-format
+msgid "<%s>%s%s  %d,  Hex %02x,  Octal %03o"
+msgstr "<%s>%s%s  %d,  Hexa %02x,  Octal %03o"
+
+#, c-format
+msgid "> %d, Hex %04x, Oct %o, Digr %s"
+msgstr "> %d, Հեքս %04x, Հոկտ %o, Դիգ %s"
+
+#, c-format
+msgid "> %d, Hex %08x, Oct %o, Digr %s"
+msgstr "> %d, Հեքս %08x, Հոկտ %o, Դիգ %s"
+
+#, c-format
+msgid "> %d, Hex %04x, Octal %o"
+msgstr "> %d, Hexa %04x, Octal %o"
+
+#, c-format
+msgid "> %d, Hex %08x, Octal %o"
+msgstr "> %d, Hexa %08x, Octal %o"
+
+#, c-format
+msgid "%ld line moved"
+msgid_plural "%ld lines moved"
+msgstr[0] "%ld տող տեղափոխվել է"
+msgstr[1] "%ld տողեր տեղափոխվել են"
+
+#, c-format
+msgid "%ld lines filtered"
+msgstr "%ld տողեր ֆիլտրվել են"
+
+msgid ""
+"[No write since last change]\n"
+msgstr ""
+"[Փոփոխությունները պահպանված չեն]\n"
+
+msgid "Save As"
+msgstr "Պահպանել որպես"
+
+msgid "Write partial file?"
+msgstr "Պահպանե՞լ մաս-մաս?"
+
+#, c-format
+msgid "Overwrite existing file \"%s\"?"
+msgstr "Վերագրում գոյություն ունեցող ֆայլում\"%s\"?"
+
+#, c-format
+msgid "Swap file \"%s\" exists, overwrite anyway?"
+msgstr "Սվեփ ֆայլը գոյություն ունի \"%s\", վերագրել?"
+
+#, c-format
+msgid ""
+"'readonly' option is set for \"%s\".\n"
+"Do you wish to write anyway?"
+msgstr ""
+"\"%s\"-ի համար 'readonly' կարգանշումը միացված է.\n"
+"Պահպանել?"
+
+#, c-format
+msgid ""
+"File permissions of \"%s\" are read-only.\n"
+"It may still be possible to write it.\n"
+"Do you wish to try?"
+msgstr ""
+"\"%s\" ֆայլն ունի միայն կարդալու հնարավորություն.\n"
+"Հնարավոր է, որ այն կարելի է ամրագրել.\n"
+"Ու՞զում եք փորձել?"
+
+msgid "Edit File"
+msgstr "Խմբագրել ֆայլը"
+
+#, c-format
+msgid "replace with %s (y/n/a/q/l/^E/^Y)?"
+msgstr "փոխարինել %s արժեքո՞վ (y/n/a/q/l/^E/^Y)"
+
+msgid "(Interrupted) "
+msgstr "(Ընդհատված) "
+
+#, c-format
+msgid "%ld match on %ld line"
+msgid_plural "%ld matches on %ld line"
+msgstr[0] "%ld համընկնում %ld տողում"
+msgstr[1] "%ld համընկնումներ %ld տողում"
+
+#, c-format
+msgid "%ld substitution on %ld line"
+msgid_plural "%ld substitutions on %ld line"
+msgstr[0] "%ld հատ փոխարինումներ %ld տողում"
+msgstr[1] "%ld հատ փոխարինումներ %ld տողում"
+
+#, c-format
+msgid "%ld match on %ld lines"
+msgid_plural "%ld matches on %ld lines"
+msgstr[0] "%ld համընկնում %ld տողերում"
+msgstr[1] "%ld համընկնումներ %ld տողերում"
+
+#, c-format
+msgid "%ld substitution on %ld lines"
+msgid_plural "%ld substitutions on %ld lines"
+msgstr[0] "%ld հատ փոխարինումներ %ld տեղերում"
+msgstr[1] "%ld հատ փոխարինումներ %ld տեղերում"
+
+#, c-format
+msgid "Pattern found in every line: %s"
+msgstr "Ամեն տողում համապատասխանեցում է հայտնաբերվել: %s"
+
+#, c-format
+msgid "Pattern not found: %s"
+msgstr "Նմուշը չի հայտնաբերվել: %s"
+
+msgid "No old files"
+msgstr "Չկան հին ֆայլեր"
+
+#, c-format
+msgid "Save changes to \"%s\"?"
+msgstr "Պահպանե՞լ փոփոխությունները \"%s\"?"
+
+msgid "Warning: Entered other buffer unexpectedly (check autocommands)"
+msgstr ""
+"Զգուշացում: Անսպասելու անցում է կատարվել դեպի այլ բուֆեր (ստուգեք "
+"ինքնահրամանննրը)"
+
+#, c-format
+msgid "W20: Required python version 2.x not supported, ignoring file: %s"
+msgstr "W20: Պահանջվող python 2.x տարբերակը չի աջակցվում՝ %s ֆայլն անտեսվում է"
+
+#, c-format
+msgid "W21: Required python version 3.x not supported, ignoring file: %s"
+msgstr ""
+"W21: Պահանջվող python 3.x տարբերակը չի աջակցվում, անտեսում ենք %s ֆայլը"
+
+msgid "Entering Ex mode.  Type \"visual\" to go to Normal mode."
+msgstr ""
+"Մուտք Կատարման ռեժիմ. Նորմալ ռեժիմ անցնելու համար կատարել \"visual\" հրամանը."
+
+#, c-format
+msgid "Executing: %s"
+msgstr "Կատարվում է։ %s"
+
+msgid "End of sourced file"
+msgstr "Կցված ֆայլի վերջում"
+
+msgid "End of function"
+msgstr "Ֆունկցիայի վերջը"
+
+msgid "Backwards range given, OK to swap"
+msgstr "Տրված է հակադարձ միջակայք, անցնել սվեփ"
+
+#, c-format
+msgid "%d more file to edit.  Quit anyway?"
+msgid_plural "%d more files to edit.  Quit anyway?"
+msgstr[0] "%d֊ից շատ խմբագրվող ֆայլեր. Վերջացնե՞լ?"
+msgstr[1] "%d֊ից շատ խմբագրվող ֆայլեր. Վերջացնե՞լ?"
+
+msgid "unknown"
+msgstr "անծանոթ"
+
+msgid "Greetings, Vim user!"
+msgstr "Ողջույն Vim-ի օգտատեր!"
+
+msgid "Already only one tab page"
+msgstr "Մնացել է միայն մեկ բացված թաբի էջ"
+
+msgid "Edit File in new tab page"
+msgstr "Խմբագրել ֆայլը նոր թաբի էջում"
+
+msgid "Edit File in new window"
+msgstr "Խմբագրել ֆայլը նոր պատուհանում"
+
+#, c-format
+msgid "Tab page %d"
+msgstr "Թաբ էջ %d"
+
+msgid "No swap file"
+msgstr "Առանց սվեփ ֆայլ"
+
+msgid "Append File"
+msgstr "Կցել ֆայլին"
+
+#, c-format
+msgid "Window position: X %d, Y %d"
+msgstr "Նոր պատուհան: X %d, Y %d"
+
+msgid "Save Redirection"
+msgstr "ՈՒղղղորդման պահպանում"
+
+msgid "Untitled"
+msgstr "Անանուն"
+
+#, c-format
+msgid "Exception thrown: %s"
+msgstr "Բացառում է նետվել: %s"
+
+#, c-format
+msgid "Exception finished: %s"
+msgstr "Բացառումը ավարտվել է: %s"
+
+#, c-format
+msgid "Exception discarded: %s"
+msgstr "Բացառումը անտեսվել է: %s"
+
+#, c-format
+msgid "%s, line %ld"
+msgstr "%s, տող %ld"
+
+#, c-format
+msgid "Exception caught: %s"
+msgstr "Բացառում է առաջացել: %s"
+
+#, c-format
+msgid "%s made pending"
+msgstr "%s սպասում է"
+
+#, c-format
+msgid "%s resumed"
+msgstr "%s բաց է թողնված"
+
+#, c-format
+msgid "%s discarded"
+msgstr "%s անտեսված է"
+
+msgid "Exception"
+msgstr "Բացառման իրավիճակ"
+
+msgid "Error and interrupt"
+msgstr "Սխալ և ընդհատում"
+
+msgid "Error"
+msgstr "Սխալ"
+
+msgid "Interrupt"
+msgstr "Ընդհատում"
+
+msgid "is a directory"
+msgstr "թղթապանակ է"
+
+msgid "Illegal file name"
+msgstr "Չթույլատրված ֆայլի անուն"
+
+msgid "is not a file"
+msgstr "ֆայլ չէ"
+
+msgid "is a device (disabled with 'opendevice' option)"
+msgstr "սարք է ('opendevice' կարգանշանն անջատված է)"
+
+msgid "[New DIRECTORY]"
+msgstr "[Նոր ցանկ]"
+
+msgid "[File too big]"
+msgstr "[ֆայլը շատ մեծ է]"
+
+msgid "[Permission Denied]"
+msgstr "[Թույլատրված չէ]"
+
+msgid ""
+"Vim: Reading from stdin...\n"
+msgstr ""
+"Vim: Ընթերցում ստանդարտ մուտքից...\n"
+
+msgid "Reading from stdin..."
+msgstr "Ընթերցում ստանդարտ մուտքից..."
+
+msgid "[fifo]"
+msgstr "[ֆիֆո]"
+
+msgid "[socket]"
+msgstr "[վարդակ]"
+
+msgid "[character special]"
+msgstr "[նշանին հատուկ]"
+
+msgid "[CR missing]"
+msgstr "[Բացակայող CR]"
+
+msgid "[long lines split]"
+msgstr "[երկար տողերի բաժանում]"
+
+#, c-format
+msgid "[CONVERSION ERROR in line %ld]"
+msgstr "[ՓՈԽԱԿԵՐՊՄԱՆ ՍԽԱԼ %ld տողում]"
+
+#, c-format
+msgid "[ILLEGAL BYTE in line %ld]"
+msgstr "[ԱՆԹՈՒՅԼԱՏՐԵԼԻ ԲԱՅԹ %ld տողում]"
+
+msgid "[READ ERRORS]"
+msgstr "[ԿԱՐԴԱԼՈՒ ՍԽԱԼ]"
+
+msgid "Can't find temp file for conversion"
+msgstr "Փոխակերպման Ժամանակավոր ֆայլը չի գտնվել"
+
+msgid "Conversion with 'charconvert' failed"
+msgstr "Փոխակերպումն անհաջող է ավարտվել'charconvert'-ի հետ"
+
+msgid "can't read output of 'charconvert'"
+msgstr "անհնար է ընթերցել 'charconvert'-ի ելքը"
+
+msgid "[dos]"
+msgstr "[դոս]"
+
+msgid "[dos format]"
+msgstr "[format dos]"
+
+msgid "[mac]"
+msgstr "[mac]"
+
+msgid "[mac format]"
+msgstr "[format mac]"
+
+msgid "[unix]"
+msgstr "[յունիքս]"
+
+msgid "[unix format]"
+msgstr "[format unix]"
+
+#, c-format
+msgid "%ld line, "
+msgid_plural "%ld lines, "
+msgstr[0] "տող: %ld, "
+msgstr[1] "տողեր: %ld, "
+
+#, c-format
+msgid "%lld byte"
+msgid_plural "%lld bytes"
+msgstr[0] "%lld բայթ"
+msgstr[1] "%lld բայթեր"
+
+msgid "[noeol]"
+msgstr "[նոոլ]"
+
+msgid "[Incomplete last line]"
+msgstr "[Չվերջացած վերջին տող]"
+
+#, c-format
+msgid ""
+"W12: Warning: File \"%s\" has changed and the buffer was changed in Vim as "
+"well"
+msgstr "W12: Զգուշացում: \"%s\" ֆայլն ու բուֆերը փոփոխվել են միմյանցից անկախ"
+
+msgid "See \":help W12\" for more info."
+msgstr "Տես. \":help W12\" հավելյալ տեղեկատվության համար."
+
+#, c-format
+msgid "W11: Warning: File \"%s\" has changed since editing started"
+msgstr "W11: Զգուշացում: \"%s\" ֆայլը փոփոխվել է խմբագրման սկսվելու ժամանակ"
+
+msgid "See \":help W11\" for more info."
+msgstr "Տես. \":help W11\" հավելյալ տեղեկատվությոան համար."
+
+#, c-format
+msgid "W16: Warning: Mode of file \"%s\" has changed since editing started"
+msgstr ""
+"W16: Զգուշացում: \"%s\" ֆայլին դիմելու մոդը փոփոխվել է խմբագրման սկսվելու "
+"ժամանակредактирования"
+
+msgid "See \":help W16\" for more info."
+msgstr "Տես. \":help W16\" հավելյալ տեղեկատվության համար."
+
+#, c-format
+msgid "W13: Warning: File \"%s\" has been created after editing started"
+msgstr "W13: Զգուշացում: \"%s\" ֆայլը ստեղծել է խմբագրման սկսվելուց հետո"
+
+msgid "Warning"
+msgstr "Զգուշացում"
+
+msgid ""
+"&OK\n"
+"&Load File\n"
+"Load File &and Options"
+msgstr ""
+"&Լավ\n"
+"&Բեռնել ֆայլը\n"
+"Բեռնել ֆայլը և ընտրանքները"
+
+msgid "<empty>"
+msgstr "<դատարկ>"
+
+msgid "writefile() first argument must be a List or a Blob"
+msgstr "writefile()-ի առաջին պարամետրը պետք է լինի Cանկ"
+
+msgid "Select Directory dialog"
+msgstr "Նշել թղթապանակը"
+
+msgid "Save File dialog"
+msgstr "Ֆայլ պահպանելու դիալոգ"
+
+msgid "Open File dialog"
+msgstr "Ֆայլ բացելու դիալոգ"
+
+msgid "no matches"
+msgstr "չկան համընկնումներ"
+
+#, c-format
+msgid "+--%3ld line folded "
+msgid_plural "+--%3ld lines folded "
+msgstr[0] "+--%3ld տող փաթաթվել է "
+msgstr[1] "+--%3ld տողեր փաթաթվել են "
+
+#, c-format
+msgid "+-%s%3ld line: "
+msgid_plural "+-%s%3ld lines: "
+msgstr[0] "+-%s%3ld տող: "
+msgstr[1] "+-%s%3ld տողեր: "
+
+msgid "Not enough memory to set references, garbage collection aborted!"
+msgstr ""
+"Հիշողությունը բավարար չէ հղումներ սահմանելու համար, աղբահանությունն "
+"ընդհատվել է!"
+
+msgid "No match at cursor, finding next"
+msgstr "Կուրսորի դիրքում չկա համընկնում, հաջորդի որոնում"
+
+msgid "_Save"
+msgstr "_Պահպանել"
+
+msgid "_Open"
+msgstr "_Բացել"
+
+msgid "_Cancel"
+msgstr "_Չեղարկել"
+
+msgid "_OK"
+msgstr "_Այո"
+
+msgid ""
+"&Yes\n"
+"&No\n"
+"&Cancel"
+msgstr ""
+"&Այո\n"
+"&Ոչ\n"
+"&Թողնել"
+
+msgid "OK"
+msgstr "Այո"
+
+msgid "Yes"
+msgstr "Այո"
+
+msgid "No"
+msgstr "Ոչ"
+
+msgid "Cancel"
+msgstr "Չեղարկել"
+
+msgid "Input _Methods"
+msgstr "Զետեղման եղանակ"
+
+msgid "VIM - Search and Replace..."
+msgstr "VIM - Որոնում և փոխարինում..."
+
+msgid "VIM - Search..."
+msgstr "VIM - Որոնում..."
+
+msgid "Find what:"
+msgstr "Ինչ փնտրել:"
+
+msgid "Replace with:"
+msgstr "Փոխարինել:"
+
+msgid "Match whole word only"
+msgstr "Համապատասխանեցնել միայն ամբողջ բառը"
+
+msgid "Match case"
+msgstr "Համընկնման դեպք"
+
+msgid "Direction"
+msgstr "Ուղղություն"
+
+msgid "Up"
+msgstr "Վերև"
+
+msgid "Down"
+msgstr "Ներքև"
+
+msgid "Find Next"
+msgstr "Փնտրել հաջորդը"
+
+msgid "Replace"
+msgstr "Փոխարինում"
+
+msgid "Replace All"
+msgstr "Փոխարինել բոլորը"
+
+msgid "_Close"
+msgstr "_Փակել"
+
+msgid ""
+"Vim: Received \"die\" request from session manager\n"
+msgstr ""
+"Vim: Սեսսիայի զեկավարությունից ստացվել է մահվան պահանջ\n"
+
+msgid "Close tab"
+msgstr "Փակել թաբը"
+
+msgid "New tab"
+msgstr "Նոր թաբ"
+
+msgid "Open Tab..."
+msgstr "Բացել թաբ..."
+
+msgid ""
+"Vim: Main window unexpectedly destroyed\n"
+msgstr ""
+"Vim: Գլխավոր պատուհանն անսպասելի ավերվել է\n"
+
+msgid "&Filter"
+msgstr "&Ֆիլտր"
+
+msgid "&Cancel"
+msgstr "&Թողնել"
+
+msgid "Directories"
+msgstr "Թղթապանակ"
+
+msgid "Filter"
+msgstr "Ֆիլտր"
+
+msgid "&Help"
+msgstr "&Օգնություն"
+
+msgid "Files"
+msgstr "Ֆայլեր"
+
+msgid "&OK"
+msgstr "&Այո"
+
+msgid "Selection"
+msgstr "Նշել"
+
+msgid "Vim dialog"
+msgstr "Vim դիալոգ"
+
+msgid "Find &Next"
+msgstr "Փնտրել հաջորդը"
+
+msgid "&Replace"
+msgstr "Փոխարինել"
+
+msgid "Replace &All"
+msgstr "Փոխարինել &բոլորը"
+
+msgid "&Undo"
+msgstr "Չեղարկել"
+
+msgid "Open tab..."
+msgstr "Բացել թաբը..."
+
+msgid "Find string"
+msgstr "Փնտրել տողը"
+
+msgid "Find & Replace"
+msgstr "Փնտրել և Փոխարինել"
+
+msgid "Not Used"
+msgstr "Օգտագործված չէ"
+
+msgid ""
+"Directory\t*.nothing\n"
+msgstr ""
+"Թղթապանակ\t*.ոչինչ\n"
+
+#, c-format
+msgid "Font0: %s"
+msgstr "Ֆոնտ0: %s"
+
+#, c-format
+msgid "Font%d: %s"
+msgstr "Ֆոնտ%d: %s"
+
+#, c-format
+msgid "Font%d width is not twice that of font0"
+msgstr "Font%d-ի երկարությունը font0 ֆոնտի երկարության կրկնակին չէ"
+
+#, c-format
+msgid "Font0 width: %d"
+msgstr "Font0-ի երկարությունը: %d"
+
+#, c-format
+msgid "Font%d width: %d"
+msgstr "Font%d-ի երկարությունը: %d"
+
+msgid "Invalid font specification"
+msgstr "Անվավեր տառատեսակ"
+
+msgid "&Dismiss"
+msgstr "Թաքցնել"
+
+msgid "no specific match"
+msgstr "հատուկ համընկնում չկա"
+
+msgid "Vim - Font Selector"
+msgstr "Vim - տառատեսակի ընտրող"
+
+msgid "Name:"
+msgstr "Անվանում:"
+
+msgid "Show size in Points"
+msgstr "Ցուդադրել կետային չափը"
+
+msgid "Encoding:"
+msgstr "Կոդավորում:"
+
+msgid "Font:"
+msgstr "Տառատեսակ:"
+
+msgid "Style:"
+msgstr "Ստիլ:"
+
+msgid "Size:"
+msgstr "Չափ:"
+
+#, c-format
+msgid "Page %d"
+msgstr "Էջ %d"
+
+msgid "No text to be printed"
+msgstr "Արտածվելիք տեքստ չկա"
+
+#, c-format
+msgid "Printing page %d (%d%%)"
+msgstr "Էջի տպագրում։ %d (%d%%)"
+
+#, c-format
+msgid " Copy %d of %d"
+msgstr " Պատճենել %d-ը %d֊ից"
+
+#, c-format
+msgid "Printed: %s"
+msgstr "Պատճենված: %s"
+
+msgid "Printing aborted"
+msgstr "Պատճենումը ընդհատված է"
+
+msgid "Sending to printer..."
+msgstr "Ուղարկվում է պատճենահանողին..."
+
+msgid "Print job sent."
+msgstr "Պատճենման հրամանն ուղարկվել է."
+
+#, c-format
+msgid "Sorry, help file \"%s\" not found"
+msgstr "Ներողություն, '%s' օգնության էջը չի հայտնաբերվել"
+
+msgid "W18: Invalid character in group name"
+msgstr "W18: Անվավեր նշան՝ խմբի անվանման մեջ"
+
+msgid "Add a new database"
+msgstr "Ավելացնել նոր տվյալների բազա"
+
+msgid "Query for a pattern"
+msgstr "Հարցում նմուշի համար"
+
+msgid "Show this message"
+msgstr "Ցուցադրել այս հաղորդագրությունը"
+
+msgid "Kill a connection"
+msgstr "Վթարել կապը"
+
+msgid "Reinit all connections"
+msgstr "Վերանախապատրաստել կապերը"
+
+msgid "Show connections"
+msgstr "Ցուցադրել կապերը"
+
+msgid ""
+"This cscope command does not support splitting the window.\n"
+msgstr ""
+"Այս cscope հրամանը պատուհանի բաժանմանը չի աջակցում.\n"
+
+#, c-format
+msgid "Added cscope database %s"
+msgstr "Ավելացվել է %s cscope տվյալների բազան"
+
+msgid "cs_create_connection setpgid failed"
+msgstr "cs_create_connection: setpgid֊ն հնարավոր չի եղել կատարել"
+
+msgid "cs_create_connection exec failed"
+msgstr "cs_create_connection: exec֊ն հնարավոր չի եղել կատարել"
+
+msgid "cs_create_connection: fdopen for to_fp failed"
+msgstr "cs_create_connection: fdopen֊ն հնարավոր չի կատարել to_fp֊ի համար"
+
+msgid "cs_create_connection: fdopen for fr_fp failed"
+msgstr "cs_create_connection: հնարավոր չի կատարել fr_fp֊ի համար"
+
+msgid ""
+"cscope commands:\n"
+msgstr ""
+"cscope հրամանները:\n"
+
+#, c-format
+msgid "%-5s: %s%*s (Usage: %s)"
+msgstr "%-5s: %s%*s (Օգտագործում: %s)"
+
+msgid ""
+"\n"
+"       a: Find assignments to this symbol\n"
+"       c: Find functions calling this function\n"
+"       d: Find functions called by this function\n"
+"       e: Find this egrep pattern\n"
+"       f: Find this file\n"
+"       g: Find this definition\n"
+"       i: Find files #including this file\n"
+"       s: Find this C symbol\n"
+"       t: Find this text string\n"
+msgstr ""
+"\n"
+"       a: Փնտրել այս նշանի վերագրումները\n"
+"       c: Փնտրել այս ֆունկցիան կանչող ֆունկցիանները\n"
+"       d: Փնտրել այս ֆունկցիայից կանչվող ֆունկցիաները\n"
+"       e: Փնտրել այս egrep նմուշը\n"
+"       f: Փնտրել այս ֆայլը\n"
+"       g: Փնտրել այս սահմանումը\n"
+"       s: Փնտրելայս C-նշանը\n"
+"       t: Փնտրել այս տեքստը\n"
+
+#, c-format
+msgid "cscope connection %s closed"
+msgstr "cscope %s կապը չի փակվել է"
+
+#, c-format
+msgid "Cscope tag: %s"
+msgstr "Cscope պիտակ: %s"
+
+msgid ""
+"\n"
+"   #   line"
+msgstr ""
+"\n"
+"   #   տող"
+
+msgid ""
+"filename / context / line\n"
+msgstr ""
+"ֆայլի անուն / կոնտեքստ / տող\n"
+
+msgid "All cscope databases reset"
+msgstr "Ողջ cscope տվյալների բազաների վերաբեռնում"
+
+msgid ""
+"no cscope connections\n"
+msgstr ""
+"չկան cscope կապեր\n"
+
+msgid ""
+" # pid    database name                       prepend path\n"
+msgstr ""
+" # pid տվյալների բազայի անվանումը prepend path\n"
+
+msgid "Lua library cannot be loaded."
+msgstr "Հնարավոր չէ բեռնել Lua գրադարանը."
+
+msgid "cannot save undo information"
+msgstr "հնարավոր չէ պահպանել չեղարկման տեղեկատվությոանը"
+
+msgid "invalid expression"
+msgstr "անվավեր արտահայտություն"
+
+msgid "expressions disabled at compile time"
+msgstr "արտահայտոթյուններն անջատված են կառուցման ժամանակ"
+
+msgid "hidden option"
+msgstr "թաքցված կարգանշան"
+
+msgid "unknown option"
+msgstr "անծանոթ կարգանշան"
+
+msgid "window index is out of range"
+msgstr "պատուհանի համարն միջակայքից դուրս է եկել"
+
+msgid "couldn't open buffer"
+msgstr "հնարավոր չէ բացել բուֆերը"
+
+msgid "cannot delete line"
+msgstr "հնարավոր չէ ջնջել տողը"
+
+msgid "cannot replace line"
+msgstr "հնարավոր չէ փոխարինել տողը"
+
+msgid "cannot insert line"
+msgstr "հնարավոր չէ զետեղել տողը"
+
+msgid "string cannot contain newlines"
+msgstr "տողը չի կարող պարունակել տողանցումներ"
+
+msgid "error converting Scheme values to Vim"
+msgstr "scheme արժեքների փոխակերպման սխալ"
+
+msgid "Vim error: ~a"
+msgstr "Vim սխալ: ~a"
+
+msgid "Vim error"
+msgstr "Vim սխալ"
+
+msgid "buffer is invalid"
+msgstr "բուֆերն անվավեր է"
+
+msgid "window is invalid"
+msgstr "պատուհանն անվավեր է"
+
+msgid "linenr out of range"
+msgstr "տողի համարը միջակայքից դուրս է եկել"
+
+msgid "not allowed in the Vim sandbox"
+msgstr "չի թույլատրվում Vim sandbox"
+
+#, c-format
+msgid "E370: Could not load library %s"
+msgstr "E370: Հնարավոր չէր բեռնել %s գրադարանը"
+
+msgid "Sorry, this command is disabled: the Perl library could not be loaded."
+msgstr ""
+"Ներողություն, այս հրամանն անջատված է: հնարավոր չէ բեռնել Perl գրադարանը."
+
+msgid "invalid buffer number"
+msgstr "անվավեր բուֆերի համար"
+
+msgid "not implemented yet"
+msgstr "իրականացված չէ դեռևս"
+
+msgid "cannot set line(s)"
+msgstr "հնարավոր չէ նշանակել տողը(երը)"
+
+msgid "invalid mark name"
+msgstr "անվավեր  նշակման անուն"
+
+msgid "mark not set"
+msgstr "նշակումը սահմանած չէ"
+
+#, c-format
+msgid "row %d column %d"
+msgstr "տող %d սյուն %d"
+
+msgid "cannot insert/append line"
+msgstr "հնարավոր չէ զետեղել/կցել տողը"
+
+msgid "line number out of range"
+msgstr "տողի համարը միջակայքից անցել է"
+
+msgid "unknown flag: "
+msgstr "անծանոթ դրոշմանիշ: "
+
+msgid "unknown vimOption"
+msgstr "անծանոթ vimOption"
+
+msgid "keyboard interrupt"
+msgstr "ստեղնաշարային ընդհատում"
+
+msgid "cannot create buffer/window command: object is being deleted"
+msgstr "հնարավորչէ կատարել բուֆերի/պատուհանի հարամանը: օբյեկտը ջնջվում է"
+
+msgid ""
+"cannot register callback command: buffer/window is already being deleted"
+msgstr "հնարավորչէ ռեգիստրացնել մշակման հրամանը․ բուֆերը/պատուհանը ջնջվում է"
+
+msgid "cannot register callback command: buffer/window reference not found"
+msgstr ""
+"հնարավորչէ ռեգիստրացնել մշակման հրամանը․ բուֆերի/պատուհանի հղումը չի "
+"հայտնաբերվել"
+
+msgid "cannot get line"
+msgstr "հանրավոր չէ ստանալ տողը"
+
+msgid "Unable to register a command server name"
+msgstr "Հնարավոր չէ ռեգիստրացնել server name հրամանը"
+
+#, c-format
+msgid "%ld lines to indent... "
+msgstr "%ld տողեր խորացման համար․.. "
+
+#, c-format
+msgid "%ld line indented "
+msgid_plural "%ld lines indented "
+msgstr[0] "%ld տող խորացվել է "
+msgstr[1] "%ld տողեր խորացվել են "
+
+msgid " Keyword completion (^N^P)"
+msgstr "Հիմնաբառերի ավտոմատ լրացում (^N^P)"
+
+msgid " ^X mode (^]^D^E^F^I^K^L^N^O^Ps^U^V^Y)"
+msgstr " ^X ավտոմատ լրացման ռեժիմ (^]^D^E^F^I^K^L^N^O^Ps^U^V^Y)"
+
+msgid " Whole line completion (^L^N^P)"
+msgstr " Տողի ամբողջական լրացում (^L^N^P)"
+
+msgid " File name completion (^F^N^P)"
+msgstr " Ֆայլի անունի ավոտմատ լրացում (^F^N^P)"
+
+msgid " Tag completion (^]^N^P)"
+msgstr " Պիտակի ավտոմատ լրացում (^]^N^P)"
+
+msgid " Path pattern completion (^N^P)"
+msgstr " Ճանապարհի ավոտմատ լրացում (^N^P)"
+
+msgid " Definition completion (^D^N^P)"
+msgstr " Սահմանման ավտոմատ լրացում (^D^N^P)"
+
+msgid " Dictionary completion (^K^N^P)"
+msgstr " Բառարանի ավտոմատ լրացում (^K^N^P)"
+
+msgid " Thesaurus completion (^T^N^P)"
+msgstr " Հոմանիշների ավտոմատ լրացում (^T^N^P)"
+
+msgid " Command-line completion (^V^N^P)"
+msgstr " Հրամանի տողի ավտոմատ լրացում (^V^N^P)"
+
+msgid " User defined completion (^U^N^P)"
+msgstr " Օգտագործողի սահմանած ավտոմատ լրացում (^U^N^P)"
+
+msgid " Omni completion (^O^N^P)"
+msgstr " Omni-լրացում (^O^N^P)"
+
+msgid " Spelling suggestion (^S^N^P)"
+msgstr " Ուղղագրական ճշգրտում (^S^N^P)"
+
+msgid " Keyword Local completion (^N^P)"
+msgstr "Հիմնաբառերի ավտոմատ լրացում (^N^P)"
+
+msgid "'dictionary' option is empty"
+msgstr "'dictionary' կարգանշանը դատարկ է"
+
+msgid "'thesaurus' option is empty"
+msgstr "'thesaurus' կարգանշանը դատարկ է"
+
+#, c-format
+msgid "Scanning dictionary: %s"
+msgstr "Բառարանի ընթերցում: %s"
+
+msgid " (insert) Scroll (^E/^Y)"
+msgstr " (զետեղել) Փաթաթ (^E/^Y)"
+
+msgid " (replace) Scroll (^E/^Y)"
+msgstr " (փոխարինել) Փաթաթ (^E/^Y)"
+
+#, c-format
+msgid "Scanning: %s"
+msgstr "Ընթերցում: %s"
+
+msgid "Scanning tags."
+msgstr "Կատարվում է պիտակների ընթերցում."
+
+msgid "match in file"
+msgstr "համընկնում ֆայլում"
+
+msgid " Adding"
+msgstr " Ավելացում"
+
+msgid "-- Searching..."
+msgstr "-- Որոնում..."
+
+msgid "Hit end of paragraph"
+msgstr "Պարագրաֆի վերջը"
+
+msgid "Pattern not found"
+msgstr "Նմուշը չի հայտնաբերվել"
+
+msgid "Back at original"
+msgstr "Վերադարձ նախնական վիճակին"
+
+msgid "Word from other line"
+msgstr "Այլ տողի բառ"
+
+msgid "The only match"
+msgstr "Միակ համընկնումը"
+
+#, c-format
+msgid "match %d of %d"
+msgstr "%d համընկնում %d հնարավորից"
+
+#, c-format
+msgid "match %d"
+msgstr "համընկնում %d"
+
+msgid "flatten() argument"
+msgstr "flatten() արգումենտ"
+
+msgid "sort() argument"
+msgstr "sort() արգումենտ"
+
+msgid "uniq() argument"
+msgstr "uniq() արգումենտ"
+
+msgid "map() argument"
+msgstr "map() արգումենտ"
+
+msgid "mapnew() argument"
+msgstr "mapnew() արգումենտ"
+
+msgid "filter() argument"
+msgstr "filter() արգումենտ"
+
+msgid "foreach() argument"
+msgstr "foreach() արգումենտ"
+
+msgid "extendnew() argument"
+msgstr "extendnew() արգումենտ"
+
+msgid "remove() argument"
+msgstr "remove() արգումենտ"
+
+msgid "reverse() argument"
+msgstr "reverse() արգումենտ"
+
+#, c-format
+msgid "Current %slanguage: \"%s\""
+msgstr "Օգտագործվող %sլեզուն: \"%s\""
+
+msgid "Unknown option argument"
+msgstr "Անծանոթ կարգանշման արգումենտ"
+
+msgid "Too many edit arguments"
+msgstr "Աննախադեպ շատ խմբագրման արգումենտներ"
+
+msgid "Argument missing after"
+msgstr "Արգումենտը տրված չէ"
+
+msgid "Garbage after option argument"
+msgstr "Աղբ, կարգանշման արգումենտից հետո"
+
+msgid "Too many \"+command\", \"-c command\" or \"--cmd command\" arguments"
+msgstr "Աննախադեպ շատ \"+command\", \"-c command\" կամ \"--cmd command\""
+
+msgid "Invalid argument for"
+msgstr "Անվավեր արգումենտ"
+
+#, c-format
+msgid ""
+"%d files to edit\n"
+msgstr ""
+"խմագրվելիք ֆայլերի քանակը: %d\n"
+
+msgid ""
+"netbeans is not supported with this GUI\n"
+msgstr ""
+"netbeans-ը չի աջակցվում այս գրաֆիկական ինտերֆեյսի հետ\n"
+
+msgid ""
+"'-nb' cannot be used: not enabled at compile time\n"
+msgstr ""
+"'-nb'֊ն չի կարող օգտագործվել: չի միացվել կառուցման ժամանակ\n"
+
+msgid "This Vim was not compiled with the diff feature."
+msgstr "Այս Vim-ը չի կառուցվել diff հատկությամբ."
+
+msgid "Attempt to open script file again: \""
+msgstr "Սկրիտպային ֆայլի կրկնակի բացման փորձ։ \""
+
+msgid "Cannot open for reading: \""
+msgstr "Հնարավոր չէ բացել ընթերցման համար: \""
+
+msgid "Cannot open for script output: \""
+msgstr "Հնարավոր չէ բացել սկրիպտի ելքի համար : \""
+
+msgid ""
+"Vim: Error: Failure to start gvim from NetBeans\n"
+msgstr ""
+"Vim: Սխալ: հնարավոր չէ բացել gvim֊ը NetBeans֊ից\n"
+
+msgid ""
+"Vim: Error: This version of Vim does not run in a Cygwin terminal\n"
+msgstr ""
+"Vim. Սխալ. Vim-ի այս տարբերակը չի աշխատում Cygwin տերմինալում\n"
+
+msgid ""
+"Vim: Warning: Output is not to a terminal\n"
+msgstr ""
+"Vim: Զգուշացում: Ելքը տերմինալ չէ\n"
+
+msgid ""
+"Vim: Warning: Input is not from a terminal\n"
+msgstr ""
+"Vim: Զգուշացում: Մուտքը տերմինալից չէ\n"
+
+msgid "pre-vimrc command line"
+msgstr "pre-vimrc հրամանային տող"
+
+msgid ""
+"\n"
+"More info with: \"vim -h\"\n"
+msgstr ""
+"\n"
+"Հավելյալ տեղեկատվություն: \"vim -h\"\n"
+
+msgid "[file ..]       edit specified file(s)"
+msgstr "[ֆայլ ..] խմբագրել նշված ֆայլերը"
+
+msgid "-               read text from stdin"
+msgstr "-           տեքստի ընթերցում stdin֊ից"
+
+msgid "-t tag          edit file where tag is defined"
+msgstr "-t պիտակ    խմբագրել ֆայլը որտեղ սահմանված է պիտակը"
+
+msgid "-q [errorfile]  edit file with first error"
+msgstr ""
+"-q [ֆայլ֊սխալ]\n"
+"\t\t\t\t    ֆայլի խմբագրում առաջին սխալով"
+
+msgid ""
+"\n"
+"\n"
+"Usage:"
+msgstr ""
+"\n"
+"\n"
+"Օգտագործում:"
+
+msgid " vim [arguments] "
+msgstr " vim [արգումնետներ] "
+
+msgid ""
+"\n"
+"   or:"
+msgstr ""
+"\n"
+"   կամ:"
+
+msgid ""
+"\n"
+"Where case is ignored prepend / to make flag upper case"
+msgstr ""
+"\n"
+"Where դեպքն անտեսվել է, ավելացրեք ՛/՛՝ դրոշմանիշը մեծատառ դարձնելու համար"
+
+msgid ""
+"\n"
+"\n"
+"Arguments:\n"
+msgstr ""
+"\n"
+"\n"
+"Արգումենտներ:\n"
+
+msgid "--\t\t\tOnly file names after this"
+msgstr "--\t\t\tԱյնուհետև նշվում են ֆայլի անունները"
+
+msgid "--literal\t\tDon't expand wildcards"
+msgstr "--literal\t\tՉբացել wildcard-ները"
+
+msgid "-register\t\tRegister this gvim for OLE"
+msgstr "-register\t\tՌեգիստրացնել այս gvim֊ը OLE֊ի համար"
+
+msgid "-unregister\t\tUnregister gvim for OLE"
+msgstr "-unregister\t\tանռեգիստրացնել այս gvim֊ը OLE֊ի համար"
+
+msgid "-g\t\t\tRun using GUI (like \"gvim\")"
+msgstr "-g\t\t\tԿատարել գրաֆիկական ինտերֆեյսով (ինչպես \"gvim\")"
+
+msgid "-f  or  --nofork\tForeground: Don't fork when starting GUI"
+msgstr "-f  կամ --nofork\tԱկտիվ: Չկատարել fork֊ը GUI֊ն սկսելու ժամանակ"
+
+msgid "-v\t\t\tVi mode (like \"vi\")"
+msgstr "-v\t\t\tVi ռեժիմ (ինչպես \"vi\")"
+
+msgid "-e\t\t\tEx mode (like \"ex\")"
+msgstr "-e\t\t\tEx ռեժիմ (ինչպես \"ex\")"
+
+msgid "-E\t\t\tImproved Ex mode"
+msgstr "-E\t\t\tԿատաելագործված Ex ռեժիմ"
+
+msgid "-s\t\t\tSilent (batch) mode (only for \"ex\")"
+msgstr "-s\t\t\tԼուռ (ծրարված) ռեժիմ (միայն \"ex\"-ի համար)"
+
+msgid "-d\t\t\tDiff mode (like \"vimdiff\")"
+msgstr "-d\t\t\tDiff ռեժիմ (ինչպես \"vimdiff\")"
+
+msgid "-y\t\t\tEasy mode (like \"evim\", modeless)"
+msgstr "-y\t\t\tEasy ռեժիմ (ինչպես \"evim\", modeless)"
+
+msgid "-R\t\t\tReadonly mode (like \"view\")"
+msgstr "-R\t\t\tReadonly ռեժիմ (ինչպես \"view\")"
+
+msgid "-Z\t\t\tRestricted mode (like \"rvim\")"
+msgstr "-Z\t\t\tՍահմանափակված ռեժիմ (ինչպես \"rvim\")"
+
+msgid "-m\t\t\tModifications (writing files) not allowed"
+msgstr "-m\t\t\tՓոփոխումները թույլատրված չեն (ֆայլում պահպանելը)"
+
+msgid "-M\t\t\tModifications in text not allowed"
+msgstr "-M\t\t\tՏողում փոփոխումները թույլատրված չեն"
+
+msgid "-b\t\t\tBinary mode"
+msgstr "-b\t\t\tԵրկուական չեժիմ"
+
+msgid "-l\t\t\tLisp mode"
+msgstr "-l\t\t\tLisp Ռեժիմ"
+
+msgid "-C\t\t\tCompatible with Vi: 'compatible'"
+msgstr "-C\t\t\tVi համապատասխանեցված: 'compatible'"
+
+msgid "-N\t\t\tNot fully Vi compatible: 'nocompatible'"
+msgstr "-N\t\t\tVi մասնակի համապատասխանեցված: 'nocompatible'"
+
+msgid "-V[N][fname]\t\tBe verbose [level N] [log messages to fname]"
+msgstr ""
+"-V[N][ֆայլ]\t\tԱրտածել լրացուցիչ հաղորդագրություններ\n"
+"\t\t\t\t[կարգ N] [արտածել ֆայլում]"
+
+msgid "-D\t\t\tDebugging mode"
+msgstr "-D\t\t\tԶննման ռեժիմ"
+
+msgid "-n\t\t\tNo swap file, use memory only"
+msgstr "-n\t\t\tԱռանց սվեփ ֆայլի, օգտագործել միայն հիշողությունը"
+
+msgid "-r\t\t\tList swap files and exit"
+msgstr "-r\t\t\tՑուցադրել սվեփ ֆայլերն ու ավարտել"
+
+msgid "-r (with file name)\tRecover crashed session"
+msgstr "-r (ֆայլի անուն)\tՎերկանգնել վթարված սեսիան"
+
+msgid "-L\t\t\tSame as -r"
+msgstr "-L\t\t\tՆույնն է ինչպես -r֊ը"
+
+msgid "-f\t\t\tDon't use newcli to open window"
+msgstr "-f\t\t\tՉօգտագօրծել newcli֊ը պատուհան բացելու համար"
+
+msgid "-dev <device>\t\tUse <device> for I/O"
+msgstr "-dev <սարք>\t\tՕգտագործեք <սարք>֊ը ներմուծման/արտածման համար"
+
+msgid "-A\t\t\tStart in Arabic mode"
+msgstr "-A\t\t\tԱրաբական ռեժիմով սկսում"
+
+msgid "-H\t\t\tStart in Hebrew mode"
+msgstr "-H\t\t\tHebrew ռեժիմով սկսում"
+
+msgid "-T <terminal>\tSet terminal type to <terminal>"
+msgstr "-T <տերմինալ>\tՏերմինալի տիպը դնել <տերմինալ>"
+
+msgid "--not-a-term\t\tSkip warning for input/output not being a terminal"
+msgstr ""
+"--ոչ մի ժամկետ Բաց թողնել նախազգուշացումը մուտքի/ելքի տերմինալ չլինելու համար"
+
+msgid "--gui-dialog-file {fname}  For testing: write dialog text"
+msgstr "--gui-dialog-file {fname} Փորձարկման համար գրեք երկխոսության տեքստ"
+
+msgid "--ttyfail\t\tExit if input or output is not a terminal"
+msgstr "--ttyfail Ելք, եթե մուտքը կամ ելքը տերմինալ չէ"
+
+msgid "-u <vimrc>\t\tUse <vimrc> instead of any .vimrc"
+msgstr "-u <vimrc>\t\tՕգտագործեկ <vimrc>֊ն ցանկացած ․vimrc֊ու փոխարեն"
+
+msgid "-U <gvimrc>\t\tUse <gvimrc> instead of any .gvimrc"
+msgstr "-U <gvimrc>\t\tՕգտագործեկ <gvimrc>֊ն ցանկացած ․gvimrc֊ու փոխարեն"
+
+msgid "--noplugin\t\tDon't load plugin scripts"
+msgstr "--noplugin\t\tՉբեռնել կցման մոդուլները"
+
+msgid "-p[N]\t\tOpen N tab pages (default: one for each file)"
+msgstr ""
+"-p[N]\t\tԲացել N թաբեր (լռելիությամբ: ամեն մեկում\n"
+"\t\t\t\tմեկ ֆայլ)"
+
+msgid "-o[N]\t\tOpen N windows (default: one for each file)"
+msgstr ""
+"-o[N]\t\tԲացել N պատուհաններ (լռելիությամբ: ամեն մեկում\n"
+"\t\t\t\tմեկ ֆայլ)"
+
+msgid "-O[N]\t\tLike -o but split vertically"
+msgstr "-O[N]\t\tԻնչպես -o, բայց բայց բաժանել ուղղահայաց"
+
+msgid "+\t\t\tStart at end of file"
+msgstr "+\t\t\tՖայլի վերջից սկսում"
+
+msgid "+<lnum>\t\tStart at line <lnum>"
+msgstr "+<lnum>\t\t<lnum>-ի տողից սկսում"
+
+msgid "--cmd <command>\tExecute <command> before loading any vimrc file"
+msgstr ""
+"--cmd <հրաման>\tԿատարել <հրաման>֊ը նախքան ցանկացախ vimrc ֆայլի բեռնումը"
+
+msgid "-c <command>\t\tExecute <command> after loading the first file"
+msgstr "-c <հրաման>\t\tԿատարել <հրաման>֊ը առաջին ֆայլի բեռնումից հետո"
+
+msgid "-S <session>\t\tSource file <session> after loading the first file"
+msgstr "-S <session>\t\tԿարդալ <session> ֆայլն առաջին ֆայլի բեռնումից հետո"
+
+msgid "-s <scriptin>\tRead Normal mode commands from file <scriptin>"
+msgstr "-s <scriptin>\tԿարդալ Normal ռեժիմի հրամանները <scriptin> ֆայլից"
+
+msgid "-w <scriptout>\tAppend all typed commands to file <scriptout>"
+msgstr "-w <scriptout>\tԿցել բոլոր հրամանները <scriptout> ֆայլին"
+
+msgid "-W <scriptout>\tWrite all typed commands to file <scriptout>"
+msgstr "-W <scriptout>\tԳրել բոլոր հրամանները <scriptout> ֆայլում"
+
+msgid "-x\t\t\tEdit encrypted files"
+msgstr "-x\t\t\tԽմբագրել կոդավորված ֆայլերը"
+
+msgid "-display <display>\tConnect Vim to this particular X-server"
+msgstr "-display <էկրան>\tԿպցել Vim-ն այս X-server-ին"
+
+msgid "-X\t\t\tDo not connect to X server"
+msgstr "-X\t\t\tՉկպցնել X-server֊ին"
+
+msgid "--remote <files>\tEdit <files> in a Vim server if possible"
+msgstr "--remote <ֆայլեր>\tԽմբագրել <ֆայլեր>֊ը Vim server֊ում, եթե հնարավոր է"
+
+msgid "--remote-silent <files>  Same, don't complain if there is no server"
+msgstr "--remote-silent <ֆայլեր>  Նույնն ինչպես, չբողոքել եթե սերվեր չկա"
+
+msgid ""
+"--remote-wait <files>  As --remote but wait for files to have been edited"
+msgstr "--remote-wait <files>  Նույնն ինչպես --remote, բայց ավրտման սպասումով"
+
+msgid ""
+"--remote-wait-silent <files>  Same, don't complain if there is no server"
+msgstr "--remote-wait-silent <files>  Նույնն ինչպես, չբողոքել եթե սերվեր չկա"
+
+msgid ""
+"--remote-tab[-wait][-silent] <files>  As --remote but use tab page per file"
+msgstr ""
+"--remote-tab[-wait][-silent] <files> Նույնն ինչպես --remote, բայց օգտագործել "
+"թաբ ամեն մի ֆայլի համար"
+
+msgid "--remote-send <keys>\tSend <keys> to a Vim server and exit"
+msgstr "--remote-send <տառեր>\tՈւղարկել <տառեր>֊ը Vim server֊ին և ավարտել"
+
+msgid "--remote-expr <expr>\tEvaluate <expr> in a Vim server and print result"
+msgstr ""
+"--remote-expr <արտահայտոթյուն>\tՀաշվել <արտահայտոթյուն>֊ը Vim server֊ում և "
+"արտածել արդյունքը"
+
+msgid "--serverlist\t\tList available Vim server names and exit"
+msgstr ""
+"--serverlist\t\tՑուցադրել հասանելի Vim server֊ների անուններն ու ավարտել"
+
+msgid "--servername <name>\tSend to/become the Vim server <name>"
+msgstr "--servername <անուն>\tՈւղարկել/լինել <անուն>֊ով Vim server"
+
+msgid "--startuptime <file>\tWrite startup timing messages to <file>"
+msgstr ""
+"--startuptime <ֆայլ>\tԳրել սկսման ժամանակային հաղորդագրությունները <ֆայլ>֊ում"
+
+msgid "--log <file>\t\tStart logging to <file> early"
+msgstr "--log<file> Սկսեք մուտք գործել<file> վաղ"
+
+msgid "-i <viminfo>\t\tUse <viminfo> instead of .viminfo"
+msgstr "-i <viminfo>\t\tՕգտագործել <viminfo>, ․viminfo փոխարեն"
+
+msgid "--clean\t\t'nocompatible', Vim defaults, no plugins, no viminfo"
+msgstr ""
+"--clean\t\t'nocompatible', Vim լռելյայն, առանց պլագինների, առանց viminfo-ի"
+
+msgid "-h  or  --help\tPrint Help (this message) and exit"
+msgstr "-h կամ --help\tԱրտածել Օգնություն (այս հաղորդագրությունը) և ավարտել"
+
+msgid "--version\t\tPrint version information and exit"
+msgstr "--version\t\tԱրտածել տարբերակի մասին հաղորդագրություն և ավարտել"
+
+msgid ""
+"\n"
+"Arguments recognised by gvim (Motif version):\n"
+msgstr ""
+"\n"
+"gvim-ի կողմից ճանաչված արգումենտներ (Motif տարբերակ):\n"
+
+msgid "-display <display>\tRun Vim on <display>"
+msgstr "-display <էկրան>\tԲացել Vim-ը <էկրան>-ի վրա"
+
+msgid "-iconic\t\tStart Vim iconified"
+msgstr "-iconic\t\tՍկսել Vim-ը նկարով"
+
+msgid "-background <color>\tUse <color> for the background (also: -bg)"
+msgstr "-background <գույն>\tՕգտագործել <գույն>֊ը ներքին ֆոնում (նաև: -bg)"
+
+msgid "-foreground <color>\tUse <color> for normal text (also: -fg)"
+msgstr ""
+"-foreground <գույն>\tՕգտագործել <գույն>֊ը նորմալ տեքստերի համար (նաև: -fg)"
+
+msgid "-font <font>\t\tUse <font> for normal text (also: -fn)"
+msgstr ""
+"-font <տառատեսակ>\t\tՕգտագործել <տառատեսակ>֊ը նորմալ տեքստերի համար (նաև: -"
+"fn)"
+
+msgid "-boldfont <font>\tUse <font> for bold text"
+msgstr "-boldfont <տառատեսակ>\tՕգտագործել <տառատեսակ>֊ը չաղ տեքստերի համար"
+
+msgid "-italicfont <font>\tUse <font> for italic text"
+msgstr "-italicfont <տառատեսակ>\tՕգտագործել <տառատեսակ>֊ը թեք տեքստերի համար"
+
+msgid "-geometry <geom>\tUse <geom> for initial geometry (also: -geom)"
+msgstr "-geometry <geom>\tՕգտագործել նախնական չափերի համար <geom> (նաև: -geom)"
+
+msgid "-borderwidth <width>\tUse a border width of <width> (also: -bw)"
+msgstr "-borderwidth <երկարություն>\tՕգտագործել <երկարություն> եզր (նաև: -bw)"
+
+msgid "-scrollbarwidth <width>  Use a scrollbar width of <width> (also: -sw)"
+msgstr ""
+"-scrollbarwidth <երկարություն> Օգտագործել երկարությամբ փաթաթ (նաև: -sw)"
+
+msgid "-reverse\t\tUse reverse video (also: -rv)"
+msgstr "-reverse\t\tՕգտագործել հակադարձված վիդեո ռեժիմ (նաև: -rv)"
+
+msgid "+reverse\t\tDon't use reverse video (also: +rv)"
+msgstr "+reverse\t\tՉօգտագործել հակադարձված վիդեո ռեժիմ (նաև: +rv)"
+
+msgid "-xrm <resource>\tSet the specified resource"
+msgstr "-xrm <ռեսուրս>\tԿարգավորել տրված <ռեսուրս>֊ը"
+
+msgid ""
+"\n"
+"Arguments recognised by gvim (GTK+ version):\n"
+msgstr ""
+"\n"
+"Ճանաչելի արգումենտներ՝ gvim-ի համար (GTK+ տարբերակ):\n"
+
+msgid "-display <display>\tRun Vim on <display> (also: --display)"
+msgstr "-display <էկրան>\tԲացել Vim-ը <էկրան>֊ում (Նաև։ --display)"
+
+msgid "--role <role>\tSet a unique role to identify the main window"
+msgstr "--role <դեր>\tԳլխավոր պատուհանի ճանաչման համար վերագրել միարժեք <դեր>"
+
+msgid "--socketid <xid>\tOpen Vim inside another GTK widget"
+msgstr "--socketid <xid>\tԲացել Vim֊ը ուրիշ GTK֊ի ներսում"
+
+msgid "--echo-wid\t\tMake gvim echo the Window ID on stdout"
+msgstr ""
+"--echo-wid\t\tԹույլատրել gvim֊ին արտածել պատուհանի համարը ստանդարտ ելքում"
+
+msgid "-P <parent title>\tOpen Vim inside parent application"
+msgstr "-P <ծնողի անուն>\tԲացել Vim֊ը ծնող ծրագրի ներսում"
+
+msgid "--windowid <HWND>\tOpen Vim inside another win32 widget"
+msgstr "--windowid <HWND>\tԲացել Vim֊ը այլ win32 ծրագրի ներսում"
+
+msgid ""
+"Seen modifyOtherKeys: true\n"
+msgstr ""
+"Տեսել է modifyOtherKeys՝ ճշմարիտ\n"
+
+msgid "Unknown"
+msgstr "Անծանոթ"
+
+msgid "Off"
+msgstr "Անջատել"
+
+msgid "On"
+msgstr "Միացնել"
+
+msgid "Disabled"
+msgstr "Ապաակտիվացված"
+
+msgid "Cleared"
+msgstr "Մաքրված"
+
+#, c-format
+msgid ""
+"modifyOtherKeys detected: %s\n"
+msgstr ""
+"modifyOtherKeys-ը հայտնաբերվեց՝ %s\n"
+
+#, c-format
+msgid ""
+"Kitty keyboard protocol: %s\n"
+msgstr ""
+"Kitty ստեղնաշարի արձանագրություն՝ %s\n"
+
+msgid "No abbreviation found"
+msgstr "Հապավումը չի հայտնաբերվել"
+
+msgid "No mapping found"
+msgstr "Համապատասխանեցումը չի հայտնաբերվել"
+
+msgid "No marks set"
+msgstr "Նշակներ չկան"
+
+msgid ""
+"\n"
+"mark line  col file/text"
+msgstr ""
+"\n"
+"նշում տող սյուն ֆայլ/տեքստ"
+
+msgid ""
+"\n"
+" jump line  col file/text"
+msgstr ""
+"\n"
+"ցատկ տող  սյուն ֆայլ/տեքստ"
+
+msgid ""
+"\n"
+"change line  col text"
+msgstr ""
+"\n"
+"փոփոխել  տող  սյուն տեքստ"
+
+msgid "Enter number of swap file to use (0 to quit): "
+msgstr "Տալ սվեփ ֆայլերի քանակությունը (0 - ավարտելու դեպքում): "
+
+msgid "Unable to read block 0 from "
+msgstr "Հնարավոր չէ կարդալ 0 բլոկը "
+
+msgid ""
+"\n"
+"Maybe no changes were made or Vim did not update the swap file."
+msgstr ""
+"\n"
+"Փոփոխություններ չկան, կամ Vim-ը չի թարմացրել սվեփ ֆայլը."
+
+msgid ""
+" cannot be used with this version of Vim.\n"
+msgstr ""
+" հնարավոր չէ օգտագործել այս տարբերակի Vim-ի հետ.\n"
+
+msgid ""
+"Use Vim version 3.0.\n"
+msgstr ""
+"Օգտագերծել 3.0 Vim տարբերակը.\n"
+
+msgid ""
+" cannot be used on this computer.\n"
+msgstr ""
+" հնարավոր չէ օգտագործել այս համակարգչում.\n"
+
+msgid "The file was created on "
+msgstr "Ֆայլը ստեղծվել է  "
+
+msgid ""
+",\n"
+"or the file has been damaged."
+msgstr ""
+",\n"
+"կամ ֆայլը վնասված է."
+
+msgid ""
+" has been damaged (page size is smaller than minimum value).\n"
+msgstr ""
+" վնասված է (էջի չափը ավելի փոքր է քան մինիմում արժեքը).\n"
+
+#, c-format
+msgid "Using swap file \"%s\""
+msgstr "Օգտագործվում է սվեփ ֆայլ - \"%s\""
+
+#, c-format
+msgid "Original file \"%s\""
+msgstr "Իրական ֆայլ \"%s\""
+
+#, c-format
+msgid "Swap file is encrypted: \"%s\""
+msgstr "Սվեփ ֆայլը կոդավորված է: \"%s\""
+
+msgid ""
+"\n"
+"If you entered a new crypt key but did not write the text file,"
+msgstr ""
+"\n"
+"եթե ներկայացրեք եք նոր բանալի, բայց չեք գրել ֆայլում,"
+
+msgid ""
+"\n"
+"enter the new crypt key."
+msgstr ""
+"\n"
+"ավելացրեք նոր կոդավորման բանալին."
+
+msgid ""
+"\n"
+"If you wrote the text file after changing the crypt key press enter"
+msgstr ""
+"\n"
+"Եթե գրում եք ֆայլում կոդավորման բանալու փոփոխումից հետ, ապա սեղմեք նոր տող"
+
+msgid ""
+"\n"
+"to use the same key for text file and swap file"
+msgstr ""
+"\n"
+"նույն բանալին տեքստային և սվեփ ֆայլի համար"
+
+msgid "???MANY LINES MISSING"
+msgstr "???ՇԱՏ ՏՈՂԵՐ ԲԱՑԱԿԱՅՈՒՄ ԵՆ"
+
+msgid "???LINE COUNT WRONG"
+msgstr "???ՏՈՂԵՐԻ ՀԱՇՎԻՉԻ ՍԽԱԼ ԱՐԺԵՔ"
+
+msgid "???EMPTY BLOCK"
+msgstr "???ԴԱՏԱՐԿ ԲԼՈԿ"
+
+msgid "???LINES MISSING"
+msgstr "???ՏՈՂԵՐ ԵՆ ԲԱՑԱԿԱՅՈՒՄ"
+
+msgid "???BLOCK MISSING"
+msgstr "???ԲԱՑԱԿԱՅՈՂ ԲԼՈԿ"
+
+msgid "??? from here until ???END lines may be messed up"
+msgstr "???այստեղից մինչև վերջ??? տողեր են պակասում"
+
+msgid "??? from here until ???END lines may have been inserted/deleted"
+msgstr "???այստեղից մինչև վերջ??? տողեր են ավելացվել/ջնջվել"
+
+msgid "??? lines may be missing"
+msgstr "??? տողերը կարող են բացակայել"
+
+msgid "???END"
+msgstr "???ՎԵՐՋ"
+
+msgid "See \":help E312\" for more information."
+msgstr "Տես. \":help E312\" հավելյալ տեղեկատվության համար."
+
+msgid "Recovery completed. You should check if everything is OK."
+msgstr "Վերականգնումն ավարտված է. Ստուգեք արդյո՞ք ամեն ինչ կարգին է."
+
+msgid ""
+"\n"
+"(You might want to write out this file under another name\n"
+msgstr ""
+"\n"
+"(Կարող եք ֆայլն ամրագրել այլ անունով\n"
+
+msgid "and run diff with the original file to check for changes)"
+msgstr "կատարել diff֊ը սկզբնական ֆայլի հետ՝ փոփխությունները ստուգելու համար)"
+
+msgid "Recovery completed. Buffer contents equals file contents."
+msgstr ""
+"Վերականգնումն ավարտված է. Ֆայլի պարունակությունն ու բուֆերը համարժեք են."
+
+msgid ""
+"\n"
+"You may want to delete the .swp file now."
+msgstr ""
+"\n"
+"Միգուցե ցանկանաք ջնջել .swp. ֆայլը."
+
+msgid ""
+"\n"
+"Note: process STILL RUNNING: "
+msgstr ""
+"\n"
+"Նշում. գործընթացը ԴԵՌ ԿԱՏԱՐՎՈՒՄ Է. "
+
+msgid ""
+"Using crypt key from swap file for the text file.\n"
+msgstr ""
+"Տեքստ ֆայլի համար օգտագործվում է կոդավորման բանալի սվեփ ֆայլից.\n"
+
+msgid "Swap files found:"
+msgstr "Հայտնավերված սվեփ ֆայլեր:"
+
+msgid ""
+"   In current directory:\n"
+msgstr ""
+"   Այս թղթապանակում:\n"
+
+msgid ""
+"   Using specified name:\n"
+msgstr ""
+"   Տրված անվանմամբ:\n"
+
+msgid "   In directory "
+msgstr "   Թղթապանակ   "
+
+msgid ""
+"      -- none --\n"
+msgstr ""
+"      -- ոչ --\n"
+
+msgid "          owned by: "
+msgstr "  պատկանելիություն: "
+
+msgid "   dated: "
+msgstr "   ամսաթիվ: "
+
+msgid "             dated: "
+msgstr "           ամսաթիվ: "
+
+msgid "         [from Vim version 3.0]"
+msgstr "         [3.0 Vim տարբերակից]"
+
+msgid "         [does not look like a Vim swap file]"
+msgstr "         [Vim-ի սվեփ ֆայլ չէ]"
+
+msgid "         file name: "
+msgstr "       ֆայլի անուն: "
+
+msgid ""
+"\n"
+"          modified: "
+msgstr ""
+"\n"
+"          փոփոխված: "
+
+msgid "YES"
+msgstr "ԱՅՈ"
+
+msgid "no"
+msgstr "ոչ"
+
+msgid ""
+"\n"
+"         user name: "
+msgstr ""
+"\n"
+"           օգտատեր: "
+
+msgid "   host name: "
+msgstr "       հոսթ: "
+
+msgid ""
+"\n"
+"         host name: "
+msgstr ""
+"\n"
+"              հոսթ: "
+
+msgid ""
+"\n"
+"        process ID: "
+msgstr ""
+"\n"
+"           պրոցես: "
+
+msgid " (STILL RUNNING)"
+msgstr " (ԴԵՌ ԿԱՏԱՐՎՈՒՄ Է)"
+
+msgid ""
+"\n"
+"         [not usable with this version of Vim]"
+msgstr ""
+"\n"
+"         [օգտագործելի չէ այս տարբերակի Vim-ի հետ]"
+
+msgid ""
+"\n"
+"         [not usable on this computer]"
+msgstr ""
+"\n"
+"         [օգտագործելի չէ այս համակարգչում]"
+
+msgid "         [cannot be read]"
+msgstr "         [չի կարող ըթերցվել]"
+
+msgid "         [cannot be opened]"
+msgstr "         [չի կարող բացվել]"
+
+msgid "File preserved"
+msgstr "Սվեփ ֆայլը թարմացվել է"
+
+msgid "stack_idx should be 0"
+msgstr "stack_idx արժեքը պետք է 0 լինի"
+
+msgid "deleted block 1?"
+msgstr "բլոկ 1-ը ջնջվել է?"
+
+msgid "pe_line_count is zero"
+msgstr "pe_line_count֊ի արժեքը 0 է"
+
+msgid "Stack size increases"
+msgstr "Ստեկի չափը մեծանում է"
+
+msgid ""
+"\n"
+"Found a swap file by the name \""
+msgstr ""
+"\n"
+"Հայտնաբերվել է սվեփ ֆայլ \""
+
+msgid "While opening file \""
+msgstr "Ֆայլը բացելու դեպքում \""
+
+msgid "      CANNOT BE FOUND"
+msgstr "      ՀԱՅՏՆԱԲԵՐՎԱԾ ՉԷ"
+
+msgid ""
+"      NEWER than swap file!\n"
+msgstr ""
+"                    Ավելի ՆՈՐ, քան սվեփ ֆայլը!\n"
+
+msgid ""
+"\n"
+"(1) Another program may be editing the same file.  If this is the case,\n"
+"    be careful not to end up with two different instances of the same\n"
+"    file when making changes.  Quit, or continue with caution.\n"
+msgstr ""
+"\n"
+"(1) Հնարավոր է, որ մեկ այլ ծրագիր խմբագրում է այս ֆայլը․ Եթե այդպես է,\n"
+"    ապա հոգ տարեք որ խմբագրելուց հետո չունենաք նույն ֆայլի երկու տարբեր\n"
+"    խմբագրված օրինակներ.\n"
+
+msgid ""
+"(2) An edit session for this file crashed.\n"
+msgstr ""
+"(2) Այս ֆայլի խմբագրման սեանսը ավարտվել է անհաջողությամբ.\n"
+
+msgid "    If this is the case, use \":recover\" or \"vim -r "
+msgstr ""
+"    Եթե այդպես է, ապա կատարել հետևյալ հրամանները - \":recover\" կամ \"vim -r "
+
+msgid ""
+"\"\n"
+"    to recover the changes (see \":help recovery\").\n"
+msgstr ""
+"\"\n"
+"    փոփոխությունները վերականգնելու համար (կատարել \":help recovery\").\n"
+
+msgid "    If you did this already, delete the swap file \""
+msgstr "    Եթե սա արդեն կատարել եք, ապա ջնջեք սվեփ ֆայլը \""
+
+msgid ""
+"\"\n"
+"    to avoid this message.\n"
+msgstr ""
+"\"\n"
+"    այս հաղորդագրությունը հետագայում չստանալու համար.\n"
+
+msgid "Found a swap file that is not useful, deleting it"
+msgstr "Գտնվել է փոխանակման ֆայլ, որն օգտակար չէ, ջնջում ենք այն"
+
+msgid "Swap file \""
+msgstr "Սվեփ ֆայլ \""
+
+msgid "\" already exists!"
+msgstr "\" արդեն գոյություն ունի!"
+
+msgid "VIM - ATTENTION"
+msgstr "VIM - ՈՒՇԱԴՐՈՒԹՅՈՒՆ"
+
+msgid "Swap file already exists!"
+msgstr "Սվեփ ֆայլն արդեն գոյություն ունի!"
+
+msgid ""
+"&Open Read-Only\n"
+"&Edit anyway\n"
+"&Recover\n"
+"&Quit\n"
+"&Abort"
+msgstr ""
+"&Բացել միայն կարդալու համար\n"
+"&Խմբագրել\n"
+"&Վերականգնել\n"
+"&Դուրս գալ\n"
+"&Ընդհատել"
+
+msgid ""
+"&Open Read-Only\n"
+"&Edit anyway\n"
+"&Recover\n"
+"&Delete it\n"
+"&Quit\n"
+"&Abort"
+msgstr ""
+"&OԲացել միայն կարդալու համար\n"
+"&E Խմբագրել\n"
+"&R Վերականգնել\n"
+"&D Ջնջել\n"
+"&Q Դուրս գալ\n"
+"&A Ընդհատել"
+
+msgid ""
+"\n"
+"--- Menus ---"
+msgstr ""
+"\n"
+"--- Ցանկ ---"
+
+msgid "Tear off this menu"
+msgstr "Անջատել այս մենյուն"
+
+#, c-format
+msgid "Error detected while compiling %s:"
+msgstr "Հայտնաբերվել է սխալ մշակման ժամանակ: %s:"
+
+#, c-format
+msgid "Error detected while processing %s:"
+msgstr "Հայտնաբերվել է սխալ %s մշակման ժամանակ:"
+
+#, c-format
+msgid "line %4ld:"
+msgstr "տող %4ld:"
+
+msgid "Messages maintainer: The Vim Project"
+msgstr "Հայերեն թարգմանության հեղինակ։ Գագիկ Հակոբյան<hakgagik@yahoo.com>"
+
+msgid "Interrupt: "
+msgstr "Ընդհատում: "
+
+msgid "Press ENTER or type command to continue"
+msgstr "Շարունակելու համար սեղմել ENTER կամ տալ որևէ այլ հրաման"
+
+#, c-format
+msgid "%s line %ld"
+msgstr "%s տող %ld"
+
+msgid "-- More --"
+msgstr "-- Տեսնել ավելին --"
+
+msgid " SPACE/d/j: screen/page/line down, b/u/k: up, q: quit "
+msgstr " SPACE/d/j: էկրան/էջ/տողը ներքևից, b/u/k: վերև, q: ելք "
+
+msgid "Question"
+msgstr "Հարց"
+
+msgid ""
+"&Yes\n"
+"&No"
+msgstr ""
+"&Այո\n"
+"&Ոչ"
+
+msgid ""
+"&Yes\n"
+"&No\n"
+"Save &All\n"
+"&Discard All\n"
+"&Cancel"
+msgstr ""
+"&Այո\n"
+"&Ոչ\n"
+"&Պահպանել բոլորը\n"
+"&Կորցնել բոլորը\n"
+"&Ընդհատել"
+
+msgid "Type number and <Enter> or click with the mouse (q or empty cancels): "
+msgstr ""
+"Մուտքագրել թիվ և <Enter> կամ կտտացնել մկնիկով (q կամ դատարկ՝ չեղարկման համար)"
+": "
+
+msgid "Type number and <Enter> (q or empty cancels): "
+msgstr "Մուտքագրել թիվ և <Enter> (դատարկ՝ չեղարկման համար): "
+
+#, c-format
+msgid "%ld more line"
+msgid_plural "%ld more lines"
+msgstr[0] "ավելացված տողերի քանակը: %ld"
+msgstr[1] "ավելացված տողերի քանակը: %ld"
+
+#, c-format
+msgid "%ld line less"
+msgid_plural "%ld fewer lines"
+msgstr[0] "մեկ տող ջնջվել է"
+msgstr[1] "%ld տողեր ջնջվել են"
+
+msgid " (Interrupted)"
+msgstr " (Ընդհատված)"
+
+msgid "Beep!"
+msgstr "Ազդանշան!"
+
+#, c-format
+msgid "Calling shell to execute: \"%s\""
+msgstr "Հրամանի կատարման համար կանչվում է տերմինալը: \"%s\""
+
+msgid "Warning: terminal cannot highlight"
+msgstr "Զգուշացում: տերմինալը չի կարող գունանշել"
+
+msgid "Type  :qa!  and press <Enter> to abandon all changes and exit Vim"
+msgstr "Vim-ն ընդհատելու համար մուտքագրել :qa! <Enter> հրամանը"
+
+msgid "Type  :qa  and press <Enter> to exit Vim"
+msgstr "Vim-ն ընդհատելու համար մուտքագրել :qa<Enter> հրամանը"
+
+#, c-format
+msgid "%ld line %sed %d time"
+msgid_plural "%ld line %sed %d times"
+msgstr[0] "%ld տող %sed %d անգամ"
+msgstr[1] "%ld տողեր %sed %d անգամ"
+
+#, c-format
+msgid "%ld lines %sed %d time"
+msgid_plural "%ld lines %sed %d times"
+msgstr[0] "%ld տող %sed %d անգամ"
+msgstr[1] "%ld տողեր %sed %d անգամ"
+
+msgid "cannot yank; delete anyway"
+msgstr "պատճենել հնարավոր չէ, ամեն դեպքում ջնջել"
+
+#, c-format
+msgid "%ld line changed"
+msgid_plural "%ld lines changed"
+msgstr[0] "փոփոխվել է %ld հատ տող"
+msgstr[1] "փոփոխվել են %ld հատ տողեր"
+
+#, c-format
+msgid "%d line changed"
+msgid_plural "%d lines changed"
+msgstr[0] "փոփոխվել է %d հատ տող"
+msgstr[1] "փոփոխվել են %d հատ տողեր"
+
+#, c-format
+msgid "%ld Cols; "
+msgstr "Սյուն: %ld; "
+
+#, c-format
+msgid "Selected %s%ld of %ld Lines; %lld of %lld Words; %lld of %lld Bytes"
+msgstr "Նշված է %s%ld %ld տողերից; %lld %lld բառերից; %lld %lld բայթերից"
+
+#, c-format
+msgid ""
+"Selected %s%ld of %ld Lines; %lld of %lld Words; %lld of %lld Chars; %lld of "
+"%lld Bytes"
+msgstr ""
+"Նշված %s%ld-ից %ld տողեր; %lld %lld բառեր; %lld %lld տառեր; %lld %lld բայթեր"
+
+#, c-format
+msgid "Col %s of %s; Line %ld of %ld; Word %lld of %lld; Byte %lld of %lld"
+msgstr "Սյուն %s %s֊ից; Տող %ld %ld-ից; Բառեր %lld %lld֊ից; Բայթ %lld %lld-ից"
+
+#, c-format
+msgid ""
+"Col %s of %s; Line %ld of %ld; Word %lld of %lld; Char %lld of %lld; Byte "
+"%lld of %lld"
+msgstr ""
+"Սյուն %s %s-ից; Տող %ld %ld-ից; Բառեր %lld %lld-ից; Տառեր %lld %lld-ից; Բայթ "
+"%lld %lld-ից"
+
+#, c-format
+msgid "(+%lld for BOM)"
+msgstr "(+%lld BOM-ի համար)"
+
+msgid "W17: Arabic requires UTF-8, do ':set encoding=utf-8'"
+msgstr ""
+"W17: Արաբերենը պահանջում է UTF-8, կատարել ':set encoding=UTF-8' հրամանը"
+
+msgid ""
+"\n"
+"--- Terminal codes ---"
+msgstr ""
+"\n"
+"--- Տերմինալային կոդեր ---"
+
+msgid ""
+"\n"
+"--- Global option values ---"
+msgstr ""
+"\n"
+"--- Գլոբալ կարգանշման արժեքները ---"
+
+msgid ""
+"\n"
+"--- Local option values ---"
+msgstr ""
+"\n"
+"---  Լոկալ կարգանշման արժեքները ---"
+
+msgid ""
+"\n"
+"--- Options ---"
+msgstr ""
+"\n"
+"--- Կարգանշաններ ---"
+
+msgid "cannot open "
+msgstr "չի կարող բացվել "
+
+msgid ""
+"VIM: Can't open window!\n"
+msgstr ""
+"VIM: Հնարավոր չէ բացել պատուհանը!\n"
+
+msgid ""
+"Need Amigados version 2.04 or later\n"
+msgstr ""
+"Պետք է Amigados տարբերակ 2.04 կամ ավելի նոր տարբերակ\n"
+
+#, c-format
+msgid ""
+"Need %s version %ld\n"
+msgstr ""
+"Անհրաժեշտ է %s տարբերակ %ld\n"
+
+msgid ""
+"Cannot open NIL:\n"
+msgstr ""
+"Անհնար է բացել NIL:\n"
+
+msgid "Cannot create "
+msgstr "Անհնար է ստեղծել "
+
+#, c-format
+msgid ""
+"Vim exiting with %d\n"
+msgstr ""
+"Vim-ը ավարտվում է %d-ով\n"
+
+msgid ""
+"cannot change console mode ?!\n"
+msgstr ""
+"չեք կարող փոխել վահանակի ռեժիմը ?!\n"
+
+msgid ""
+"mch_get_shellsize: not a console??\n"
+msgstr ""
+"mch_get_shellsize: не в консоли??\n"
+
+msgid "Cannot execute "
+msgstr "Անհնար է կատարել "
+
+msgid "shell "
+msgstr "տերմինալ "
+
+msgid ""
+" returned\n"
+msgstr ""
+" ավարտել է\n"
+
+msgid "ANCHOR_BUF_SIZE too small."
+msgstr "ANCHOR_BUF_SIZE չափազանց փոքր է:"
+
+msgid "I/O ERROR"
+msgstr "I/O ՍԽԱԼ"
+
+msgid "Message"
+msgstr "Հաղորդում"
+
+#, c-format
+msgid "to %s on %s"
+msgstr "to %s on %s"
+
+#, c-format
+msgid "Printing '%s'"
+msgstr "'%s'-ի տպում"
+
+msgid "DefaultFontNameForWindows"
+msgstr "DefaultFontNameForWindows"
+
+#, c-format
+msgid "Opening the X display took %ld msec"
+msgstr "X էկրանը բացելը տևեց %ld վրկ"
+
+msgid ""
+"\n"
+"Vim: Got X error\n"
+msgstr ""
+"\n"
+"Vim: X-ի սխալ\n"
+
+#| msgid "Testing the X display failed"
+msgid "restoring display %s"
+msgstr "էկրանի վերականգնում %s"
+
+msgid "Testing the X display failed"
+msgstr "X էկրանի փորձարկումը ձախողվեց"
+
+msgid "Opening the X display timed out"
+msgstr "X էկրանը բացելու ժամանակը սպառվել է"
+
+msgid ""
+"\n"
+"Could not get security context for "
+msgstr ""
+"\n"
+"Հնարավոր չէ ստանալ գաղտնի կոտնտեքստ "
+
+msgid ""
+"\n"
+"Could not set security context for "
+msgstr ""
+"\n"
+"Հնարավոր չէ կարգավորել գաղտնի կոտնտեքստ  "
+
+#| msgid ""
+#| "\n"
+#| "Could not set security context for "
+msgid "Could not set security context %s for %s"
+msgstr "Հնարավոր չէ %s-ի համար կարգավորել գաղտնի կոնտեքստ %s-ը"
+
+#| msgid ""
+#| "\n"
+#| "Could not get security context for "
+msgid "Could not get security context %s for %s. Removing it!"
+msgstr ""
+"Չհաջողվեց ստանալ անվտանգության համատեքստ %s %s-ի համար: Հեռացնում ենք այն!"
+
+msgid ""
+"\n"
+"Cannot execute shell sh\n"
+msgstr ""
+"\n"
+"Հնարավոր չէ կատարել sh տերմինալը\n"
+
+msgid ""
+"\n"
+"shell returned "
+msgstr ""
+"\n"
+"տերմինալը վերադարձրել է "
+
+msgid ""
+"\n"
+"Cannot create pipes\n"
+msgstr ""
+"\n"
+"Հնարավոր չէ ստեղծէլ սրնգափող\n"
+
+msgid ""
+"\n"
+"Cannot fork\n"
+msgstr ""
+"\n"
+"Հնարավոր չէ կատարել fork()\n"
+
+msgid ""
+"\n"
+"Cannot execute shell "
+msgstr ""
+"\n"
+"Հնարավոր չէ կատարել տերմինալը "
+
+msgid ""
+"\n"
+"Command terminated\n"
+msgstr ""
+"\n"
+"Հրամանն ընդհատված է\n"
+
+msgid "XSMP lost ICE connection"
+msgstr "XSMP ICE կապակցման կորուստ"
+
+#, c-format
+msgid "Could not load gpm library: %s"
+msgstr "Հնարավոր չէր բեռնել %s գրադարանը"
+
+#, c-format
+msgid "dlerror = \"%s\""
+msgstr "dlerror = \"%s\""
+
+msgid "Opening the X display failed"
+msgstr "X էկրանի բացումը ձախողվեց"
+
+msgid "XSMP handling save-yourself request"
+msgstr "XSMP կատարում է ինքնապահպանում"
+
+msgid "XSMP opening connection"
+msgstr "XSMP֊ն կապակցում է բացում"
+
+msgid "XSMP ICE connection watch failed"
+msgstr "XSMP ICE կապակցման դիտարկումն անհաջող է ավարտվել"
+
+#, c-format
+msgid "XSMP SmcOpenConnection failed: %s"
+msgstr "XSMP SmcOpenConnection անհաջող է ավարտվել: %s"
+
+msgid "At line"
+msgstr "Տողում"
+
+#, c-format
+msgid ""
+"Vim: Caught %s event\n"
+msgstr ""
+"Vim: Բռնվել է %s բացառումը\n"
+
+msgid "close"
+msgstr "փակել"
+
+msgid "logoff"
+msgstr "անջատում"
+
+msgid "shutdown"
+msgstr "ելք"
+
+msgid ""
+"VIMRUN.EXE not found in your $PATH.\n"
+"External commands will not pause after completion.\n"
+"See  :help win32-vimrun  for more information."
+msgstr ""
+"VIMRUN.EXE֊ն չի հայտնաբերվել $PATH ճանապարհներում.\n"
+"Արտաքին հրամանները կանգ չեն առնի ավարտից հետո.\n"
+"Հավելյալ տեղեկատվության համար տես :help win32-vimrun."
+
+msgid "Vim Warning"
+msgstr "Vim Զգուշացում"
+
+#, c-format
+msgid "shell returned %d"
+msgstr "shell վերադարձել է %d"
+
+#, c-format
+msgid "(%d of %d)%s%s: "
+msgstr "(%d %d֊ից)%s%s: "
+
+msgid " (line deleted)"
+msgstr " (տողը ջնջվել է)"
+
+#, c-format
+msgid "%serror list %d of %d; %d errors "
+msgstr "%sսխալների ցանկ %d %d-ից; %d սխալներ "
+
+msgid "No entries"
+msgstr "Գրառումներ չկան"
+
+msgid "Error file"
+msgstr "Ֆայլի սխալ"
+
+#, c-format
+msgid "Cannot open file \"%s\""
+msgstr "Հնարավոր չէ բացել \"%s\" ֆայլը"
+
+msgid "cannot have both a list and a \"what\" argument"
+msgstr "չի կարող ունենալ և՛ ցուցակ, և՛ \"what\" փաստարկ"
+
+msgid "Switching to backtracking RE engine for pattern: "
+msgstr "Նախշի համար անցում կատարվող RE շարժիչին. "
+
+msgid ""
+"External submatches:\n"
+msgstr ""
+"Արտաքին ենթահամընկնում:\n"
+
+msgid "Could not open temporary log file for writing, displaying on stderr... "
+msgstr ""
+"Չհաջողվեց բացել ժամանակավոր գրանցամատյանի ֆայլը գրելու համար, որը "
+"ցուցադրվում է stderr... "
+
+#, c-format
+msgid " into \"%c"
+msgstr " մեջ \"%c\""
+
+#, c-format
+msgid "block of %ld line yanked%s"
+msgid_plural "block of %ld lines yanked%s"
+msgstr[0] "պատճենվել է %ld տողանոց բլոկ%s"
+msgstr[1] "պատճենվել է %ld տողանոց բլոկ%s"
+
+#, c-format
+msgid "%ld line yanked%s"
+msgid_plural "%ld lines yanked%s"
+msgstr[0] "%ld տող պատճենվել է%s"
+msgstr[1] "%ld տողեր պատճենվել են%s"
+
+msgid ""
+"\n"
+"Type Name Content"
+msgstr ""
+"\n"
+"Տիպ Անուն Պարունակություն"
+
+msgid " VREPLACE"
+msgstr " ԶՆՆԱԿԱՆ ՓՈԽԱՐԻՆՈՒՄ"
+
+msgid " REPLACE"
+msgstr " ՓՈԽԱՐԻՆՈՒՄ"
+
+msgid " REVERSE"
+msgstr " ՀԱԿԱԴԱՐՁ"
+
+msgid " INSERT"
+msgstr " ԶԵՏԵՂՈՒՄ"
+
+msgid " (insert)"
+msgstr " (զետեղում)"
+
+msgid " (replace)"
+msgstr " (փոխարինում)"
+
+msgid " (vreplace)"
+msgstr " (զննական փոխարինում)"
+
+msgid " Hebrew"
+msgstr " Եբրայական"
+
+msgid " Arabic"
+msgstr " Արաբական"
+
+msgid " (paste)"
+msgstr " (փակցնել)"
+
+msgid " VISUAL"
+msgstr " ԶՆՆԱԿԱՆ ՌԵԺԻՄ"
+
+msgid " VISUAL LINE"
+msgstr " ԶՆՆԱԿԱՆ ՏՈՂ"
+
+msgid " VISUAL BLOCK"
+msgstr " ԶՆՆԱԿԱՆ ԲԼՈԿ"
+
+msgid " SELECT"
+msgstr " ՆՇՄԱՆ ՌԵԺԻՄ"
+
+msgid " SELECT LINE"
+msgstr " ՆՇՄԱՆ ՏԵՂ"
+
+msgid " SELECT BLOCK"
+msgstr " ՆՇՄԱՆ ԲԼՈԿ"
+
+msgid "recording"
+msgstr "գրառում"
+
+#, c-format
+msgid "Searching for \"%s\" under \"%s\" in \"%s\""
+msgstr "Որոնում \"%s\" \"%s\"֊ում \"%s\"-ի մեջ"
+
+#, c-format
+msgid "Searching for \"%s\" in \"%s\""
+msgstr "Որոնում \"%s\" \"%s\"֊ում"
+
+#, c-format
+msgid "Searching for \"%s\""
+msgstr "Որոնում \"%s\""
+
+#, c-format
+msgid "not found in '%s': \"%s\""
+msgstr "չի հայտնաբերվել: '%s': \"%s\""
+
+msgid "Source Vim script"
+msgstr "Կցել Vim սկրիպտ"
+
+#, c-format
+msgid "Cannot source a directory: \"%s\""
+msgstr "Անհնար է կցել թղթապանակ: \"%s\""
+
+#, c-format
+msgid "could not source \"%s\""
+msgstr "անհնար է կցել \"%s\""
+
+#, c-format
+msgid "line %ld: could not source \"%s\""
+msgstr "տող %ld: Անհնար է կցել \"%s\""
+
+#, c-format
+msgid "sourcing \"%s\""
+msgstr "\"%s\"-ի կցում"
+
+#, c-format
+msgid "line %ld: sourcing \"%s\""
+msgstr "տող %ld: \"%s\"-ի կցում"
+
+#, c-format
+msgid "finished sourcing %s"
+msgstr "%s֊ի կցումն ավարտվել է"
+
+#, c-format
+msgid "continuing in %s"
+msgstr "շարունակվում է %s"
+
+msgid "modeline"
+msgstr "տողային ռեժիմ"
+
+msgid "--cmd argument"
+msgstr "--cmd արգումենտ"
+
+msgid "-c argument"
+msgstr "-c արգումենտ"
+
+msgid "environment variable"
+msgstr "շրջապատման արգումենտ"
+
+msgid "error handler"
+msgstr "սխալի մշակիչ"
+
+msgid "changed window size"
+msgstr "պատուհանի չափը փոխվել է"
+
+msgid "W15: Warning: Wrong line separator, ^M may be missing"
+msgstr ""
+"W15: Զգուշացում: Սխալ տրված տողի բաժանիչ. Հնարավոր է ^M֊ը բաց է թողնված"
+
+msgid " (includes previously listed match)"
+msgstr " (ընդգրկում է նախկինում ցուցադրված համընկնումը)"
+
+msgid "--- Included files "
+msgstr "--- Կցաֆայլեր "
+
+msgid "not found "
+msgstr "չի հայտնաբերվել "
+
+msgid ""
+"in path ---\n"
+msgstr ""
+"ճանապարհում ---\n"
+
+msgid "  (Already listed)"
+msgstr " (Արդեն ցուցադրված է)"
+
+msgid "  NOT FOUND"
+msgstr " ՀԱՅՏՆԱԲԵՐՎԱԾ ՉԷ"
+
+#, c-format
+msgid "Scanning included file: %s"
+msgstr "Կցվաֆայլերի ցուցադրում: %s"
+
+#, c-format
+msgid "Searching included file %s"
+msgstr "%s կցաֆայլի որոնում"
+
+msgid "All included files were found"
+msgstr "Բոլոր կցաֆայլերն հայտնաբերվել են"
+
+msgid "No included files"
+msgstr "Կցաֆայլեր չկան"
+
+msgid "Save View"
+msgstr "Դիտման պահպանում"
+
+msgid "Save Session"
+msgstr "Սեսսիայի պահպանում"
+
+msgid "Save Setup"
+msgstr "Կարգավորման պահպանում"
+
+msgid "[Deleted]"
+msgstr "[Ջնջված է]"
+
+msgid ""
+"\n"
+"--- Signs ---"
+msgstr ""
+"\n"
+"--- Նշաններ ---"
+
+#, c-format
+msgid "Signs for %s:"
+msgstr "%s-ի նշաններ:"
+
+#, c-format
+msgid "  group=%s"
+msgstr "  group=%s"
+
+#, c-format
+msgid "    line=%ld  id=%d%s  name=%s  priority=%d"
+msgstr "    տող=%ld  համար=%d%s  անուն=%s  կարգ=%d"
+
+msgid " (NOT FOUND)"
+msgstr " (ՉԻ ՀԱՅՏՆԱԲԵՐՎԵԼ)"
+
+msgid " (not supported)"
+msgstr " (չի աջակցվում)"
+
+#, c-format
+msgid "Warning: Cannot find word list \"%s_%s.spl\" or \"%s_ascii.spl\""
+msgstr ""
+"Զգուշացում. հնարավոր չէ գտնել \"%s_%s.spl\" կամ \"%s_ascii.spl\" բառերի ցանկը"
+
+#, c-format
+msgid "Warning: Cannot find word list \"%s.%s.spl\" or \"%s.a

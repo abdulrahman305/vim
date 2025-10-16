@@ -2,7 +2,6 @@
 
 
 % START_INDENT
-% INDENT_EXE let b:html_indent_line_limit = 64
 <html>
     <body>
 	<style>

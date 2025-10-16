@@ -21,8 +21,7 @@ SCRIPTS_TINY = \
 	test25 \
 	test26 \
 	test27 \
-	test28 \
-	test29
+	test28
 
 SCRIPTS_TINY_OUT = \
 	test10.out \
@@ -34,8 +33,7 @@ SCRIPTS_TINY_OUT = \
 	test25.out \
 	test26.out \
 	test27.out \
-	test28.out \
-	test29.out
+	test28.out
 
 # Tests for Vim9 script.
 TEST_VIM9 = \
@@ -48,9 +46,7 @@ TEST_VIM9 = \
 	test_vim9_expr \
 	test_vim9_fails \
 	test_vim9_func \
-	test_vim9_generics \
 	test_vim9_import \
-	test_vim9_python3 \
 	test_vim9_script \
 	test_vim9_typealias
 
@@ -64,9 +60,7 @@ TEST_VIM9_RES = \
 	test_vim9_expr.res \
 	test_vim9_fails.res \
 	test_vim9_func.res \
-	test_vim9_generics.res \
 	test_vim9_import.res \
-	test_vim9_python3.res \
 	test_vim9_script.res \
 	test_vim9_typealias.res
 
@@ -104,8 +98,6 @@ NEW_TESTS = \
 	test_cindent \
 	test_cjk_linebreak \
 	test_clientserver \
-	test_clipmethod \
-	test_clipboard_provider \
 	test_close_count \
 	test_cmd_lists \
 	test_cmdline \
@@ -215,6 +207,7 @@ NEW_TESTS = \
 	test_listlbr_utf8 \
 	test_lua \
 	test_makeencoding \
+	test_man \
 	test_map_functions \
 	test_mapping \
 	test_marks \
@@ -222,6 +215,7 @@ NEW_TESTS = \
 	test_matchadd_conceal \
 	test_matchadd_conceal_utf8 \
 	test_matchfuzzy \
+	test_matchparen \
 	test_memory_usage \
 	test_menu \
 	test_messages \
@@ -243,16 +237,6 @@ NEW_TESTS = \
 	test_partial \
 	test_paste \
 	test_perl \
-	test_plugin_comment \
-	test_plugin_glvs \
-	test_plugin_helptoc \
-	test_plugin_man \
-	test_plugin_matchparen \
-	test_plugin_tar \
-	test_plugin_termdebug \
-	test_plugin_tohtml \
-	test_plugin_tutor \
-	test_plugin_zip \
 	test_plus_arg_edit \
 	test_popup \
 	test_popupwin \
@@ -303,7 +287,6 @@ NEW_TESTS = \
 	test_spell_utf8 \
 	test_spellfile \
 	test_spellrare \
-	test_stacktrace \
 	test_startup \
 	test_startup_utf8 \
 	test_stat \
@@ -317,13 +300,13 @@ NEW_TESTS = \
 	test_tab \
 	test_tabline \
 	test_tabpage \
-	test_tabpanel \
 	test_tagcase \
 	test_tagfunc \
 	test_tagjump \
 	test_taglist \
 	test_tcl \
 	test_termcodes \
+	test_termdebug \
 	test_termencoding \
 	test_terminal \
 	test_terminal2 \
@@ -333,11 +316,10 @@ NEW_TESTS = \
 	test_textobjects \
 	test_textprop \
 	test_timers \
+	test_tohtml \
 	test_true_false \
 	test_trycatch \
-	test_tuple \
 	test_undo \
-	test_uniq \
 	test_unlet \
 	test_user_func \
 	test_usercommands \
@@ -350,7 +332,6 @@ NEW_TESTS = \
 	test_vimscript \
 	test_virtualedit \
 	test_visual \
-	test_wayland \
 	test_winbar \
 	test_winbuf_close \
 	test_window_cmd \
@@ -362,6 +343,7 @@ NEW_TESTS = \
 	test_writefile \
 	test_xdg \
 	test_xxd \
+	test_zip_plugin \
 	test_alot_latin \
 	test_alot_utf8 \
 	test_alot
@@ -395,8 +377,6 @@ NEW_TESTS_RES = \
 	test_cindent.res \
 	test_cjk_linebreak.res \
 	test_clientserver.res \
-	test_clipmethod.res \
-	test_clipboard_provider.res \
 	test_close_count.res \
 	test_cmd_lists.res \
 	test_cmdline.res \
@@ -446,7 +426,6 @@ NEW_TESTS_RES = \
 	test_float_func.res \
 	test_fnameescape.res \
 	test_fold.res \
-	test_format.res \
 	test_functions.res \
 	test_function_lists.res \
 	test_getcwd.res \
@@ -491,6 +470,7 @@ NEW_TESTS_RES = \
 	test_listlbr_utf8.res \
 	test_lua.res \
 	test_makeencoding.res \
+	test_man.res \
 	test_map_functions.res \
 	test_mapping.res \
 	test_marks.res \
@@ -498,6 +478,7 @@ NEW_TESTS_RES = \
 	test_matchadd_conceal.res \
 	test_matchadd_conceal_utf8.res \
 	test_matchfuzzy.res \
+	test_matchparen.res \
 	test_memory_usage.res \
 	test_menu.res \
 	test_messages.res \
@@ -517,16 +498,6 @@ NEW_TESTS_RES = \
 	test_partial.res \
 	test_paste.res \
 	test_perl.res \
-	test_plugin_comment.res \
-	test_plugin_glvs.res \
-	test_plugin_helptoc.res \
-	test_plugin_man.res \
-	test_plugin_matchparen.res \
-	test_plugin_tar.res \
-	test_plugin_termdebug.res \
-	test_plugin_tohtml.res \
-	test_plugin_tutor.res \
-	test_plugin_zip.res \
 	test_plus_arg_edit.res \
 	test_popup.res \
 	test_popupwin.res \
@@ -568,7 +539,6 @@ NEW_TESTS_RES = \
 	test_spell_utf8.res \
 	test_spellfile.res \
 	test_spellrare.res \
-	test_stacktrace.res \
 	test_startup.res \
 	test_stat.res \
 	test_statusline.res \
@@ -580,11 +550,11 @@ NEW_TESTS_RES = \
 	test_system.res \
 	test_tab.res \
 	test_tabpage.res \
-	test_tabpanel.res \
 	test_tagjump.res \
 	test_taglist.res \
 	test_tcl.res \
 	test_termcodes.res \
+	test_termdebug.res \
 	test_termencoding.res \
 	test_terminal.res \
 	test_terminal2.res \
@@ -594,11 +564,10 @@ NEW_TESTS_RES = \
 	test_textobjects.res \
 	test_textprop.res \
 	test_timers.res \
+	test_tohtml.res \
 	test_true_false.res \
 	test_trycatch.res \
-	test_tuple.res \
 	test_undo.res \
-	test_uniq.res \
 	test_user_func.res \
 	test_usercommands.res \
 	test_vartabs.res \
@@ -607,7 +576,6 @@ NEW_TESTS_RES = \
 	test_vimscript.res \
 	test_virtualedit.res \
 	test_visual.res \
-	test_wayland.res \
 	test_winbar.res \
 	test_winbuf_close.res \
 	test_window_cmd.res \
@@ -618,6 +586,7 @@ NEW_TESTS_RES = \
 	test_writefile.res \
 	test_xdg.res \
 	test_xxd.res \
+	test_zip_plugin.res \
 	test_alot_latin.res \
 	test_alot_utf8.res \
 	test_alot.res

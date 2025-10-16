@@ -1,7 +1,7 @@
 " Vim :def command
 
 
-" List
+" list
 
 def
 def Foo
@@ -13,7 +13,7 @@ def Foo | echo "Foo"
 def Foo " comment
 
 
-" Definition
+" definition
 
 " empty definition
 def Foo()
@@ -60,7 +60,7 @@ def s:ls()
 enddef
 
 
-" Return types
+" return types
 
 def Foo(): void
 enddef
@@ -88,7 +88,7 @@ def Foo()
 enddef # comment
 
 
-" Parameters
+" parameters
 
 def Foo(x: bool, y = 42, z: string = "zed")
 enddef
@@ -99,13 +99,8 @@ def Foo(
     z: string = "zed")
 enddef
 
-" Issue #16243 (Vim script def parameters syntax highlight is wrong)
 
-def Test(lines: list<number> = [line('.'), line('.')]): void
-enddef
-
-
-" Comments
+" comments
 
 def Foo()
   # Vim9-script comment
@@ -113,13 +108,13 @@ def Foo()
 enddef
 
 
-" Leading command separator
+" leading command separator
 
 echo "Foo" | def Foo()
 enddef
 
 
-" Command modifiers
+" command modifiers
 
 silent! def Foo()
 enddef

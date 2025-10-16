@@ -89,7 +89,7 @@ alist_new(void)
     }
 }
 
-#if !defined(UNIX)
+#if !defined(UNIX) || defined(PROTO)
 /*
  * Expand the file names in the global argument list.
  * If "fnum_list" is not NULL, use "fnum_list[fnum_len]" as a list of buffer
@@ -213,7 +213,7 @@ alist_add(
     curwin->w_locked = FALSE;
 }
 
-#if defined(BACKSLASH_IN_FILENAME)
+#if defined(BACKSLASH_IN_FILENAME) || defined(PROTO)
 /*
  * Adjust slashes in file names.  Called after 'shellslash' was set.
  */
@@ -299,7 +299,7 @@ get_arglist(garray_T *gap, char_u *str, int escaped)
     return OK;
 }
 
-#if defined(FEAT_QUICKFIX) || defined(FEAT_SYN_HL) || defined(FEAT_SPELL)
+#if defined(FEAT_QUICKFIX) || defined(FEAT_SYN_HL) || defined(FEAT_SPELL) || defined(PROTO)
 /*
  * Parse a list of arguments (file names), expand them and return in
  * "fnames[fcountp]".  When "wig" is TRUE, removes files matching 'wildignore'.
@@ -561,7 +561,7 @@ check_arg_idx(win_T *win)
 }
 
 /*
- * ":args", ":arglocal" and ":argglobal".
+ * ":args", ":argslocal" and ":argsglobal".
  */
     void
 ex_args(exarg_T *eap)
@@ -1258,10 +1258,6 @@ do_arg_all(
 
     tabpage_T *new_lu_tp = curtab;
 
-    // Stop Visual mode, the cursor and "VIsual" may very well be invalid after
-    // switching to another buffer.
-    reset_VIsual_and_resel();
-
     // Try closing all windows that are not in the argument list.
     // Also close windows that are not full width;
     // When 'hidden' or "forceit" set the buffer becomes hidden.
@@ -1394,7 +1390,7 @@ arg_all(void)
     return retval;
 }
 
-#if defined(FEAT_EVAL)
+#if defined(FEAT_EVAL) || defined(PROTO)
 /*
  * "argc([window id])" function
  */

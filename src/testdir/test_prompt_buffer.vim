@@ -1,8 +1,10 @@
 " Tests for setting 'buftype' to "prompt"
 
+source check.vim
 CheckFeature channel
 
-source util/screendump.vim
+source shared.vim
+source screendump.vim
 
 func CanTestPromptBuffer()
   " We need to use a terminal window to be able to feed keys without leaving

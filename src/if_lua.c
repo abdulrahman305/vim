@@ -24,7 +24,7 @@
 
 // Only do the following when the feature is enabled.  Needed for "make
 // depend".
-#if defined(FEAT_LUA)
+#if defined(FEAT_LUA) || defined(PROTO)
 
 #define LUAVIM_CHUNKNAME "vim chunk"
 #define LUAVIM_NAME "vim"
@@ -472,7 +472,7 @@ lua_link_init(char *libname, int verbose)
 }
 #endif // DYNAMIC_LUA
 
-#if defined(DYNAMIC_LUA)
+#if defined(DYNAMIC_LUA) || defined(PROTO)
     int
 lua_enabled(int verbose)
 {
@@ -595,7 +595,7 @@ luaV_pushtypval(lua_State *L, typval_T *tv)
 	case VAR_BOOL:
 	case VAR_SPECIAL:
 	    if (tv->vval.v_number <= VVAL_TRUE)
-		lua_pushboolean(L, (int) tv->vval.v_number);
+		lua_pushinteger(L, (int) tv->vval.v_number);
 	    else
 		lua_pushnil(L);
 	    break;

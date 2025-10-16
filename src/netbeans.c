@@ -25,7 +25,7 @@
 
 #include "vim.h"
 
-#if defined(FEAT_NETBEANS_INTG)
+#if defined(FEAT_NETBEANS_INTG) || defined(PROTO)
 
 #ifndef MSWIN
 # include <netdb.h>
@@ -1747,9 +1747,6 @@ nb_do_cmd(
 	    {
 		check_status(buf->bufp);
 		redraw_tabline = TRUE;
-#if defined(FEAT_TABPANEL)
-		redraw_tabpanel = TRUE;
-#endif
 		maketitle();
 		update_screen(0);
 	    }
@@ -2449,7 +2446,7 @@ netbeans_keyname(int key, char *buf)
     strcat(buf, name);
 }
 
-#if defined(FEAT_BEVAL)
+#if defined(FEAT_BEVAL) || defined(PROTO)
 /*
  * Function to be called for balloon evaluation.  Grabs the text under the
  * cursor and sends it to the debugger for evaluation.  The debugger should
@@ -2552,7 +2549,7 @@ netbeans_send_disconnect(void)
     }
 }
 
-#if defined(FEAT_EVAL)
+#if defined(FEAT_EVAL) || defined(PROTO)
     int
 set_ref_in_nb_channel(int copyID)
 {
@@ -2564,12 +2561,12 @@ set_ref_in_nb_channel(int copyID)
 
     tv.v_type = VAR_CHANNEL;
     tv.vval.v_channel = nb_channel;
-    abort = set_ref_in_item(&tv, copyID, NULL, NULL, NULL);
+    abort = set_ref_in_item(&tv, copyID, NULL, NULL);
     return abort;
 }
 #endif
 
-#if defined(FEAT_GUI_X11) || defined(FEAT_GUI_MSWIN)
+#if defined(FEAT_GUI_X11) || defined(FEAT_GUI_MSWIN) || defined(PROTO)
 /*
  * Tell netbeans that the window was moved or resized.
  */
@@ -3004,7 +3001,7 @@ netbeans_is_guarded(linenr_T top, linenr_T bot)
     return FALSE;
 }
 
-#if defined(FEAT_GUI_X11)
+#if defined(FEAT_GUI_X11) || defined(PROTO)
 /*
  * We have multiple signs to draw at the same location. Draw the
  * multi-sign indicator instead. This is the Motif version.

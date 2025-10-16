@@ -1,5 +1,8 @@
 " Tests for the sound feature
 
+source check.vim
+source shared.vim
+
 CheckFeature sound
 
 func PlayCallback(id, result)

@@ -1,6 +1,7 @@
 " Tests for window cmd (:wincmd, :split, :vsplit, :resize and etc...)
 
-source util/screendump.vim
+source check.vim
+source screendump.vim
 
 func Test_window_cmd_ls0_with_split()
   set ls=0
@@ -67,7 +68,7 @@ func Test_cmdheight_not_changed()
 
   tabonly!
   only
-  set winminheight& cmdheight&
+  set winminwidth& cmdheight&
   augroup Maximize
     au!
   augroup END
@@ -1257,7 +1258,6 @@ func Run_noroom_for_newwindow_test(dir_arg)
 
     " Preview window
     call assert_fails(dir .. 'pedit Xnorfile2', 'E36:')
-    call assert_fails(dir .. 'pbuffer', 'E36:')
     call setline(1, 'abc')
     call assert_fails(dir .. 'psearch abc', 'E36:')
   endif
@@ -1978,18 +1978,6 @@ func Test_splitkeep_misc()
   set splitkeep&
 endfunc
 
-func Test_splitkeep_screen_cursor_pos()
-  new
-  set splitkeep=screen
-  call setline(1, ["longer than the last", "shorter"])
-  norm! $
-  wincmd s
-  close
-  call assert_equal([0, 1, 20, 0], getpos('.'))
-  %bwipeout!
-  set splitkeep&
-endfunc
-
 func Test_splitkeep_cursor()
   CheckScreendump
   let lines =<< trim END
@@ -2117,24 +2105,6 @@ func Test_splitkeep_skipcol()
   let buf = RunVimInTerminal('-S XTestSplitkeepSkipcol', #{rows: 12, cols: 40})
 
   call VerifyScreenDump(buf, 'Test_splitkeep_skipcol_1', {})
-endfunc
-
-func Test_splitkeep_line()
-  CheckScreendump
-
-  let lines =<< trim END
-    set splitkeep=screen nosplitbelow
-    autocmd WinResized * call line('w0', 1000)
-    call setline(1, range(1000))
-  END
-
-  call writefile(lines, 'XTestSplitkeepSkipcol', 'D')
-  let buf = RunVimInTerminal('-S XTestSplitkeepSkipcol', #{rows: 6, cols: 40})
-
-  call VerifyScreenDump(buf, 'Test_splitkeep_line_1', {})
-
-  call term_sendkeys(buf, ":wincmd s\<CR>")
-  call VerifyScreenDump(buf, 'Test_splitkeep_line_2', {})
 endfunc
 
 func Test_new_help_window_on_error()
@@ -2303,71 +2273,6 @@ func Test_winfixsize_positions()
   call assert_equal(info, s:win_layout_info())
 
   %bwipe
-endfunc
-
-func Test_winfixsize_vsep_statusline()
-  CheckScreendump
-
-  let lines =<< trim END
-    set noequalalways splitbelow splitright
-    vsplit
-    setlocal winfixwidth
-    vsplit
-    func SetupWfh()
-      set laststatus=0
-      only
-      split
-      set winfixheight
-      split
-    endfunc
-  END
-  call writefile(lines, 'XTestWinfixsizeVsepStatusline', 'D')
-  let buf = RunVimInTerminal('-S XTestWinfixsizeVsepStatusline', #{rows: 8})
-
-  call term_sendkeys(buf, ":echo winwidth(1) winwidth(2) winwidth(3)\n")
-  call WaitForAssert({-> assert_match('^16 37 20\>', term_getline(buf, 8))})
-
-  call term_sendkeys(buf, ":quit\n")
-  call VerifyScreenDump(buf, 'Test_winfixsize_vsep_statusline_1', {})
-
-  " Reported widths should be consistent with the screen dump.
-  call term_sendkeys(buf, ":echo winwidth(1) winwidth(2)\n")
-  " (May be better if 'wfw' window remains at 37 columns, but the resize is
-  " consistent with how things currently work for 'winfix*' windows)
-  call WaitForAssert({-> assert_match('^36 38\>', term_getline(buf, 8))})
-
-  " For good measure, also check bottom-most 'winfixheight' windows don't leave
-  " stray statuslines with &laststatus=0.
-  call term_sendkeys(buf,
-        \ ":call SetupWfh() | echo winheight(1) winheight(2) winheight(3)\n")
-  call WaitForAssert({-> assert_match('^1 3 1\>', term_getline(buf, 8))})
-
-  call term_sendkeys(buf, ":quit\n")
-  call VerifyScreenDump(buf, 'Test_winfixsize_vsep_statusline_2', {})
-
-  call term_sendkeys(buf, ":echo winheight(1) winheight(2)\n")
-  " (Likewise, may be better if 'wfh' window remains at 3 rows)
-  call WaitForAssert({-> assert_match('^2 4\>', term_getline(buf, 8))})
-
-  call StopVimInTerminal(buf)
-endfunc
-
-func Test_resize_from_another_tabpage()
-  CheckScreendump
-
-  let lines =<< trim END
-    set laststatus=2
-    vnew
-    let w = win_getid()
-    tabnew
-    call win_execute(w, 'vertical resize 20')
-    tabprev
-  END
-  call writefile(lines, 'XTestResizeFromAnotherTabpage', 'D')
-  let buf = RunVimInTerminal('-S XTestResizeFromAnotherTabpage', #{rows: 8})
-  call VerifyScreenDump(buf, 'Test_resize_from_another_tabpage_1', {})
-
-  call StopVimInTerminal(buf)
 endfunc
 
 " vim: shiftwidth=2 sts=2 expandtab

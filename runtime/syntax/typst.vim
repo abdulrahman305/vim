@@ -1,16 +1,12 @@
 " Vim syntax file
-" Previous Maintainer:  Luca Saccarola <github.e41mv@aleeas.com>
-" Maintainer:  This runtime file is looking for a new maintainer.
 " Language:    Typst
-" Based On:    https://github.com/kaarmu/typst.vim
-" Last Change: 2025 Aug 05
+" Maintainer:  Gregory Anders <greg@gpanders.com>
+" Last Change: 2024-07-14
+" Based on:    https://github.com/kaarmu/typst.vim
 
 if exists('b:current_syntax')
     finish
 endif
-
-let s:cpo_save = &cpo
-set cpo&vim
 
 syntax sync fromstart
 syntax spell toplevel
@@ -22,8 +18,8 @@ syntax cluster typstCommon
 " Common > Comment {{{2
 syntax cluster typstComment
     \ contains=typstCommentBlock,typstCommentLine
-syntax region typstCommentBlock
-    \ start="/\*" end="\*/" keepend
+syntax match typstCommentBlock
+    \ #/\*\%(\_.\{-}\)\*/#
     \ contains=typstCommentTodo,@Spell
 syntax match typstCommentLine
     \ #//.*#
@@ -472,8 +468,5 @@ highlight default typstMarkupItalic                     term=italic             
 highlight default typstMarkupBoldItalic                 term=bold,italic        cterm=bold,italic       gui=bold,italic
 
 let b:current_syntax = 'typst'
-
-let &cpo = s:cpo_save
-unlet s:cpo_save
 
 " }}}1

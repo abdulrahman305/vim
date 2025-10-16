@@ -1,8 +1,11 @@
 " Test for timers
 
+source check.vim
 CheckFeature timers
 
-source util/screendump.vim
+source screendump.vim
+source shared.vim
+source term_util.vim
 
 func SetUp()
   " The tests here use timers, thus are sensitive to timing.
@@ -41,15 +44,11 @@ func Test_timer_repeat_three()
   let slept = WaitFor('g:val == 3')
   call assert_equal(3, g:val)
   if has('reltime')
-    " Timer has an internal 1ms allowance in calculating due time, so it's
-    " possible for each timer to undershoot by 1ms resulting in only 49*3=147
-    " ms elapsed. Additionally we started the timer before we called
-    " WaitFor(), so the reported time could be a couple more ms below 147.
     if has('mac')
-      " Mac in CI can be slow.
-      call assert_inrange(145, 400, slept)
+      " Mac on Travis can be slow.
+      call assert_inrange(149, 400, slept)
     else
-      call assert_inrange(145, 250, slept)
+      call assert_inrange(149, 250, slept)
     endif
   else
     call assert_inrange(80, 200, slept)
@@ -144,13 +143,13 @@ def Test_timer_stopall_with_popup()
   # Another timer will fire in half a second and close it early after stopping
   # all timers.
   var pop = popup_create('Popup', {time: 10000})
-  var tmr = timer_start(100, (_) => {
+  var tmr = timer_start(500, (_) => {
     timer_stopall()
     popup_clear()
   })
-  sleep 100m
-  g:WaitForAssert(() => assert_equal([], popup_list()), 1000)
+  sleep 1
   assert_equal([], timer_info(tmr))
+  assert_equal([], popup_list())
 enddef
 
 func Test_timer_paused()

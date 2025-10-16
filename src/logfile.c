@@ -14,7 +14,7 @@
 
 #include "vim.h"
 
-#if defined(FEAT_EVAL)
+#if defined(FEAT_EVAL) || defined(PROTO)
 
 // Log file opened with ch_logfile().
 static FILE *log_fd = NULL;
@@ -136,7 +136,7 @@ ch_error(channel_T *ch, const char *fmt, ...)
 }
 #endif
 
-#if defined(FEAT_JOB_CHANNEL)
+#if defined(FEAT_JOB_CHANNEL) || defined(PROTO)
 /*
  * Log a message "buf[len]" for channel "ch" part "part".
  * Only to be called when ch_log_active() returns TRUE.

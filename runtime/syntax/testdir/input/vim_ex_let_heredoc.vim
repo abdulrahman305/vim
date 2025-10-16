@@ -13,62 +13,8 @@ line1
 line2
 END
 
-let [foo, bar] =<< EOS
-line1
-line2
-EOS
 
-  let [foo, bar] =<< EOS
-line1
-line2
-EOS
-
-let [foo,
-      \ bar] =<< EOS
-line1
-line2
-EOS
-
-  let [foo,
-	\ bar] =<< EOS
-line1
-line2
-EOS
-
-let g:foo =<< END
-line1
-line2
-END
-
-  let g:foo =<< END
-line1
-line2
-END
-
-let [g:foo, g:bar] =<< EOS
-line1
-line2
-EOS
-
-  let [g:foo, g:bar] =<< EOS
-line1
-line2
-EOS
-
-let [g:foo,
-      \ g:bar] =<< EOS
-line1
-line2
-EOS
-
-  let [g:foo,
-	\ g:bar] =<< EOS
-line1
-line2
-EOS
-
-
-" Trim
+" trim
 
 let foo =<< trim END
   line1
@@ -81,7 +27,7 @@ END
   END
 
 
-" Interpolation
+" interpolation
 
 let foo =<< eval END
 line{1 + 0}
@@ -103,7 +49,7 @@ END
     line{1 + 1}
   END
 
-" No interpolation (escaped { and })
+" no interpolation (escaped { and })
 
 let foo =<< eval END
 line{{1 + 0}}
@@ -126,7 +72,7 @@ END
   END
 
 
-" No interpolation
+" no interpolation
 
 let foo =<< END
 line{1 + 0}
@@ -149,7 +95,7 @@ END
   END
 
 
-" End marker must not be followed by whitespace
+" end marker must not be followed by whitespace
 
 " assert_equal(foo, ["END "])
 let foo =<< END
@@ -225,7 +171,7 @@ END
 END
 
 
-" End markers
+" end markers
 
 let foo =<< !@#$%^&*()_+
 line1

@@ -1,6 +1,7 @@
 " Test Vim9 type aliases
 
-import './util/vim9.vim' as v9
+source check.vim
+import './vim9.vim' as v9
 
 " Test for :type command to create type aliases
 def Test_typealias()
@@ -46,13 +47,6 @@ def Test_typealias()
     type Index = number
   END
   v9.CheckSourceFailure(lines, 'E1393: Type can only be defined in Vim9 script', 1)
-
-  # The complete "type" should be specified
-  lines =<< trim END
-    vim9script
-    typ Index = number
-  END
-  v9.CheckSourceFailure(lines, 'E1065: Command cannot be shortened: typ Index = number', 2)
 
   # Use :type without any arguments
   lines =<< trim END

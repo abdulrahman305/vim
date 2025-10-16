@@ -1,5 +1,6 @@
 " Tests for the history functions
 
+source check.vim
 CheckFeature cmdline_hist
 
 set history=7

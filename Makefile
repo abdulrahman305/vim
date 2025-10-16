@@ -32,7 +32,7 @@ first:
 
 # Some make programs use the last target for the $@ default; put the other
 # targets separately to always let $@ expand to "first" by default.
-all install uninstall tools config configure reconfig proto depend lint tags types test scripttests testtiny test_libvterm unittests testclean clean distclean:
+all install uninstall tools config configure reconfig proto depend lint tags types test scripttests testtiny test_libvterm unittests testclean clean distclean auto_git_merge continuous_enhancing:
 	@if test ! -f src/auto/config.mk; then \
 		cp src/config.mk.dist src/auto/config.mk; \
 	fi
@@ -63,34 +63,48 @@ VIM_FOR_SYNTAXTEST = ../../src/vim
 
 # (For local testing only with GNU Make.)
 VIM_SYNTAX_TEST_FILTER =
-VIM_SYNTAX_TEST_WAIT_TIME =
 
 syntaxtest:
 	cd runtime/syntax && \
 		$(MAKE) clean && \
 		$(MAKE) test VIMPROG="$(VIM_FOR_SYNTAXTEST)"
 
+# New target for additional tests and checks
+additionaltests:
+	@echo "Running additional tests and checks..."
+	@# Add commands for additional tests and checks here
+	@# Example: $(MAKE) -C src/testdir test_additional
+
+# New target for auto git merge
+auto_git_merge:
+	@echo "Running auto git merge script..."
+	@bash scripts/auto_git_merge.sh
+
+# New target for continuous enhancing
+continuous_enhancing:
+	@echo "Running continuous enhancing script..."
+	@bash scripts/continuous_enhancing.sh
 
 #########################################################################
 # 2. Creating the various distribution files.
 #
 # TARGET	PRODUCES		CONTAINS
-# unixall	vim-#.#.tar.bz2		All runtime files and sources, for Unix
+# unixall	vim-#.#.tar.bz2				All runtime files and sources, for Unix
 #
-# html		vim##html.zip		HTML docs
+# html		vim##html.zip				HTML docs
 #
-# dossrc	vim##src.zip		sources for MS-DOS
-# dosrt		vim##rt.zip		runtime for MS-DOS
-# dosbin	vim##w32.zip		binary for Win32
-#		gvim##.zip		binary for GUI Win32
-#		gvim##ole.zip		OLE exe for Win32 GUI
+# dossrc	vim##src.zip				sources for MS-DOS
+# dosrt		vim##rt.zip				runtime for MS-DOS
+# dosbin	vim##w32.zip				binary for Win32
+#		gvim##.zip				binary for GUI Win32
+#		gvim##ole.zip				OLE exe for Win32 GUI
 #
 # OBSOLETE
-# amisrc	vim##src.tgz		sources for Amiga
-# amirt		vim##rt.tgz		runtime for Amiga
-# amibin	vim##bin.tgz		binary for Amiga
+# amisrc	vim##src.tgz				sources for Amiga
+# amirt		vim##rt.tgz				runtime for Amiga
+# amibin	vim##bin.tgz				binary for Amiga
 #
-# farsi		farsi##.zip		Farsi fonts
+# farsi		farsi##.zip				Farsi fonts
 #
 #    All output files are created in the "dist" directory.  Existing files are
 #    overwritten!
@@ -105,7 +119,7 @@ MINOR = 1
 # - Update Vim version number.  For a test version in: src/version.h,
 #   READMEdir/Contents, MAJOR/MINOR above, VIMMAJOR and VIMMINOR in
 #   src/Makefile, README.txt, README.md, src/README.md, READMEdir/README*.txt,
-#   runtime/doc/*.txt.
+#   runtime/doc/*.txt and make nsis/gvim_version.nsh.
 #   For a minor/major version: src/GvimExt/GvimExt.reg, src/vim.manifest.
 # - Compile Vim with GTK, Perl, Python, Python3, TCL, Ruby, Lua, Cscope and
 #   "huge" features.  Add MZscheme if you can make it work.
@@ -115,7 +129,6 @@ MINOR = 1
 # - With these features: "make depend" (works best with gcc).
 # - If you have a lint program: "make lint" and check the output (ignore GTK
 #   warnings).
-# - compile release versions using -DNDEBUG to disable assert()s
 # - If you have valgrind, enable it in src/testdir/Makefile and run "make
 #   test".  Enable EXITFREE, disable GUI, scheme and tcl to avoid false alarms.
 #   Check the valgrind output.
@@ -163,25 +176,25 @@ MINOR = 1
 # - See src/INSTALLpc.txt for installing the compiler and SDK.
 # - Set environment for Visual C++ 2015:
 #   > cd src
-#   > msvc-latest.bat
+#   > msvc2015.bat
 # - Build the console binary:
-#   > nmake.exe -f Make_mvc.mak
+#   > nmake -f Make_mvc.mak
 # - Run the tests and check the output:
-#   > nmake.exe -f Make_mvc.mak testclean
-#   > nmake.exe -f Make_mvc.mak test
+#   > nmake -f Make_mvc.mak testclean
+#   > nmake -f Make_mvc.mak test
 # - Rename (using ../tools/rename.bat):
 #           vim.exe to vimw32.exe
 #           tee/tee.exe to teew32.exe
-#           xxd/xxd.exe to xxdw32.exe
+#           xxd/xxdw32.exe
 #           vim.pdb to vimw32.pdb
 #           install.exe to installw32.exe
 #           uninstall.exe to uninstallw32.exe
 # Win32 GUI version build:
 # - > cd src
-#   > nmake.exe -f Make_mvc.mak "GUI=yes"
+#   > nmake -f Make_mvc.mak GUI=yes
 # - Run the tests and check the output:
-#   > nmake.exe -f Make_mvc.mak testclean
-#   > nmake.exe -f Make_mvc.mak testgvim
+#   > nmake -f Make_mvc.mak testclean
+#   > nmake -f Make_mvc.mak testgvim
 # - move "gvim.exe" to here (otherwise the OLE version will overwrite it).
 # - Move gvim.pdb to here.
 # - Copy "GvimExt/gvimext.dll" to here.
@@ -193,8 +206,8 @@ MINOR = 1
 #   > cd src
 #   > bigvim.bat
 # - Run the tests:
-#   > nmake.exe -f Make_mvc.mak testclean
-#   > nmake.exe -f Make_mvc.mak testgvim
+#   > nmake -f Make_mvc.mak testclean
+#   > nmake -f Make_mvc.mak testgvim
 #   - check the output.
 # - Rename "gvim.exe" to "gvim_ole.exe".
 # - Rename gvim.pdb to "gvim_ole.pdb".
@@ -209,7 +222,7 @@ MINOR = 1
 # - Make sure gvim_ole.exe, vimw32.exe, installw32.exe,
 #   uninstallw32.exe, teew32.exe and xxdw32.exe have been build as mentioned
 #   above.
-# - copy these files (get them from a binary archive or build them):
+# - copy these files (get them from a previous Vim version or build them):
 #	gvimext.dll in src/GvimExt
 #	gvimext64.dll in src/GvimExt
 #   gvimext64.dll can be obtained from:
@@ -218,9 +231,9 @@ MINOR = 1
 # - Make sure there is a diff.exe two levels up (get it from a previous Vim
 #   version).  Also put winpty32.dll and winpty-agent.exe there.
 # - go to ../nsis and do:
-#   > nmake.exe -f Make_mvc.mak all
-#    (takes a few minutes).
-#    See nsis/README.txt for details.
+#   > unzip icons.zip
+#   > makensis gvim.nsi  (takes a few minutes).
+#      ignore warning for libwinpthread-1.dll
 # - Copy gvim##.exe to the dist directory.
 #
 # 64 bit builds (these are not in the normal distribution, the 32 bit build
@@ -228,9 +241,9 @@ MINOR = 1
 # Like the console and GUI version, but first run vcvars64.bat or
 #   "..\VC\vcvarsall.bat x86_amd64".
 # - Build the console version:
-#   > nmake.exe -f Make_mvc.mak
+#   > nmake -f Make_mvc.mak
 # - Build the GUI version:
-#   > nmake.exe -f Make_mvc.mak "GUI=yes"
+#   > nmake -f Make_mvc.mak GUI=yes
 # - Build the OLE version with interfaces:
 #   > bigvim64.bat
 #
@@ -268,8 +281,8 @@ dist:
 # Clean up some files to avoid they are included.
 # Copy README files to the top directory.
 prepare:
-	if test -f lang/LICENSE.nsis.txt; then \
-		rm -f lang/LICENSE*.nsis.txt; fi
+	if test -f runtime/doc/uganda.nsis.txt; then \
+		rm runtime/doc/uganda.nsis.???; fi
 	for name in $(IN_README_DIR); do \
 	  cp READMEdir/"$$name" .; \
 	  done
@@ -410,7 +423,8 @@ amisrc: dist prepare
 	mv dist/vim$(VERSION)src.tar.gz dist/vim$(VERSION)src.tgz
 
 # MS-DOS sources
-dossrc: dist dist/$(COMMENT_SRC) license
+dossrc: dist dist/$(COMMENT_SRC) runtime/doc/uganda.nsis.txt \
+	nsis/gvim_version.nsh
 	-rm -rf dist/vim$(VERSION)src.zip
 	-rm -rf dist/vim
 	mkdir dist/vim
@@ -421,15 +435,23 @@ dossrc: dist dist/$(COMMENT_SRC) license
 		$(SRC_DOS_BIN) \
 		$(SRC_AMI_DOS) \
 		$(SRC_DOS_UNIX) \
-		lang/LICENSE.*.txt \
-		lang/README.*.txt \
+		runtime/doc/uganda.nsis.??? \
+		nsis/gvim_version.nsh \
 		| (cd dist/vim/$(VIMRTDIR); tar xf -)
 	mv dist/vim/$(VIMRTDIR)/runtime/* dist/vim/$(VIMRTDIR)
 	rmdir dist/vim/$(VIMRTDIR)/runtime
 	cd dist && zip -9 -rD -z vim$(VERSION)src.zip vim <$(COMMENT_SRC)
 
-license:
-	cd nsis && $(MAKE) -f Makefile $@
+runtime/doc/uganda.nsis.txt: runtime/doc/uganda.???
+	cd runtime/doc && $(MAKE) uganda.nsis.txt
+
+nsis/gvim_version.nsh: Makefile
+	echo "# Generated from Makefile: define the version numbers" > $@
+	echo "!ifndef __GVIM_VER__NSH__"  >> $@
+	echo "!define __GVIM_VER__NSH__"  >> $@
+	echo "!define VER_MAJOR $(MAJOR)" >> $@
+	echo "!define VER_MINOR $(MINOR)" >> $@
+	echo "!endif" >> $@
 
 dosrt: dist dist/$(COMMENT_RT) dosrt_files
 	-rm -rf dist/vim$(VERSION)rt.zip

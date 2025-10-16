@@ -13,7 +13,7 @@
 
 #include "vim.h"
 
-#if defined(FEAT_SESSION)
+#if defined(FEAT_SESSION) || defined(PROTO)
 
 static int did_lcd;	// whether ":lcd" was produced for a session
 
@@ -301,7 +301,6 @@ put_view_curpos(FILE *fd, win_T *wp, char *spaces)
 put_view(
     FILE	*fd,
     win_T	*wp,
-    tabpage_T	*tp,
     int		add_edit,	     // add ":edit" command to view
     unsigned	*flagp,		     // vop_flags or ssop_flags
     int		current_arg_idx,     // current argument index of the window,
@@ -329,7 +328,6 @@ put_view(
 	if (ses_arglist(fd, "arglocal", &wp->w_alist->al_ga,
 			flagp == &vop_flags
 			|| !(*flagp & SSOP_CURDIR)
-			|| tp->tp_localdir != NULL
 			|| wp->w_localdir != NULL, flagp) == FAIL)
 	    return FAIL;
     }
@@ -682,13 +680,17 @@ makeopens(
     if (put_line(fd, "endif") == FAIL)
 	goto fail;
 
-    // Save 'shortmess' if not storing options.
+    // save 'shortmess' if not storing options
     if ((ssop_flags & SSOP_OPTIONS) == 0
 	    && put_line(fd, "let s:shortmess_save = &shortmess") == FAIL)
 	goto fail;
 
-    // Set 'shortmess' for the following.
-    if (put_line(fd, "set shortmess+=aoO") == FAIL)
+    // set 'shortmess' for the following.  Add the 'A' flag if it was there
+    if (put_line(fd, "if &shortmess =~ 'A'") == FAIL
+	    || put_line(fd, "  set shortmess=aoOA") == FAIL
+	    || put_line(fd, "else") == FAIL
+	    || put_line(fd, "  set shortmess=aoO") == FAIL
+	    || put_line(fd, "endif") == FAIL)
 	goto fail;
 
     // Now save the current files, current buffer first.
@@ -901,8 +903,7 @@ makeopens(
 	{
 	    if (!ses_do_win(wp))
 		continue;
-	    if (put_view(fd, wp, tp, wp != edited_win, &ssop_flags,
-							 cur_arg_idx,
+	    if (put_view(fd, wp, wp != edited_win, &ssop_flags, cur_arg_idx,
 #ifdef FEAT_TERMINAL
 							 &terminal_bufs
 #else
@@ -1071,12 +1072,13 @@ ex_loadview(exarg_T *eap)
     if (fname == NULL)
 	return;
 
-    (void)do_source(fname, FALSE, DOSO_NONE, NULL);
+    do_source(fname, FALSE, DOSO_NONE, NULL);
     vim_free(fname);
 }
 
 # if defined(FEAT_GUI_GNOME) \
-	|| (defined(GUI_MAY_SPAWN) && defined(EXPERIMENTAL_GUI_CMD))
+	|| (defined(GUI_MAY_SPAWN) && defined(EXPERIMENTAL_GUI_CMD)) \
+	|| defined(PROTO)
 /*
  * Generate a script that can be used to restore the current editing session.
  * Save the value of v:this_session before running :mksession in order to make
@@ -1337,8 +1339,8 @@ ex_mkrc(exarg_T	*eap)
 	    }
 	    else
 	    {
-		failed |= (put_view(fd, curwin, curtab, !using_vdir, flagp, -1,
-								NULL) == FAIL);
+		failed |= (put_view(fd, curwin, !using_vdir, flagp, -1, NULL)
+								      == FAIL);
 	    }
 	    if (put_line(fd, "let &g:so = s:so_save | let &g:siso = s:siso_save")
 								      == FAIL)
@@ -1394,7 +1396,7 @@ theend:
     apply_autocmds(EVENT_SESSIONWRITEPOST, NULL, NULL, FALSE, curbuf);
 }
 
-#if defined(FEAT_VIMINFO) || defined(FEAT_SESSION)
+#if (defined(FEAT_VIMINFO) || defined(FEAT_SESSION)) || defined(PROTO)
     var_flavour_T
 var_flavour(char_u *varname)
 {

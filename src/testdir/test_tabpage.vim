@@ -1,6 +1,7 @@
 " Tests for tabpage
 
-source util/screendump.vim
+source screendump.vim
+source check.vim
 
 function Test_tabpage()
   CheckFeature quickfix
@@ -687,7 +688,6 @@ func Test_tabs()
 endfunc
 
 func Test_tabpage_cmdheight()
-  CheckScreendump
   CheckRunVimInTerminal
   call writefile([
         \ 'set laststatus=2',

@@ -1,8 +1,10 @@
 " Tests for ":highlight" and highlighting.
 
-source util/screendump.vim
-source util/script_util.vim
-import './util/vim9.vim' as v9
+source view_util.vim
+source screendump.vim
+source check.vim
+source script_util.vim
+import './vim9.vim' as v9
 
 func ClearDict(d)
   for k in keys(a:d)
@@ -779,8 +781,8 @@ func Test_1_highlight_Normalgroup_exists()
   if !has('gui_running')
     call assert_match('hi Normal\s*clear', hlNormal)
   elseif has('gui_gtk2') || has('gui_gnome') || has('gui_gtk3')
-    " expect is DEFAULT_FONT of gui_gtk_x11.c (any size)
-    call assert_match('hi Normal\s*font=Monospace\>', hlNormal)
+    " expect is DEFAULT_FONT of gui_gtk_x11.c
+    call assert_match('hi Normal\s*font=Monospace 10', hlNormal)
   elseif has('gui_motif')
     " expect is DEFAULT_FONT of gui_x11.c
     call assert_match('hi Normal\s*font=7x13', hlNormal)
@@ -820,7 +822,7 @@ endfunc
 " Test for 'highlight' option
 func Test_highlight_opt()
   let save_hl = &highlight
-  call assert_fails('set highlight=K:b', 'E474:')
+  call assert_fails('set highlight=j:b', 'E474:')
   set highlight=f\ r
   call assert_equal('f r', &highlight)
   set highlight=fb
@@ -1085,7 +1087,7 @@ func Test_colornames_assignment_and_unassignment()
   let v:colornames['x1'] = '#111111'
   call assert_equal(v:colornames['x1'], '#111111')
   unlet v:colornames['x1']
-  call assert_fails("echo v:colornames['x1']", 'E716: Key not present in Dictionary: "x1"')
+  call assert_fails("echo v:colornames['x1']")
 endfunc
 
 " Test for the hlget() function
@@ -1142,17 +1144,6 @@ endfunc
 
 " Test for the hlset() function
 func Test_hlset()
-  " FIXME: With GVim, _current_ test cases that are run before this one may
-  "	influence the result of calling "hlset(hlget())", depending on what
-  "	"&guifont" is set to.  For example, introduce SetUp() as follows:
-  "
-  " if CanRunVimInTerminal() && has('gui_running') && has('gui_gtk')
-  "   def SetUp()
-  "     set guifont=Monospace\ 10
-  "   enddef
-  " endif
-  "
-  "	and see "E416: Missing equal sign: ... line 4" for this test case.
   let lines =<< trim END
     call assert_equal(0, hlset(test_null_list()))
     call assert_equal(0, hlset([]))

@@ -1,16 +1,17 @@
 " Tests for the Vim script debug commands
 
-source util/screendump.vim
+source shared.vim
+source screendump.vim
+source check.vim
 
 CheckRunVimInTerminal
 
 func CheckCWD()
   " Check that the longer lines don't wrap due to the length of the script name
-  " in cwd. Need to subtract by 1 since Vim will still wrap the message if it
-  " just fits.
+  " in cwd
   let script_len = len( getcwd() .. '/Xtest1.vim' )
   let longest_line = len( 'Breakpoint in "" line 1' )
-  if script_len > ( 75 - longest_line - 1 )
+  if script_len > ( 75 - longest_line )
     throw 'Skipped: Your CWD has too many characters'
   endif
 endfunc

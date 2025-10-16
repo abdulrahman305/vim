@@ -2,7 +2,8 @@
 " Language:            C#
 " Maintainer:          Nick Jensen <nickspoon@gmail.com>
 " Former Maintainer:   Johannes Zellner <johannes@zellner.org>
-" Last Change:         2025-03-14
+" Last Change:         2022-11-16
+"                      2024 Jan 14 by Vim Project (browsefilter)
 " License:             Vim (see :h license)
 " Repository:          https://github.com/nickspoons/vim-cs
 
@@ -20,11 +21,8 @@ setlocal formatoptions-=t formatoptions+=croql
 
 " Set 'comments' to format dashed lists in comments.
 setlocal comments=sO:*\ -,mO:*\ \ ,exO:*/,s1:/*,mb:*,ex:*/,:///,://
-setlocal commentstring=//\ %s
 
-setlocal cinoptions=J1
-
-let b:undo_ftplugin = 'setl com< fo< cino<'
+let b:undo_ftplugin = 'setl com< fo<'
 
 if exists('loaded_matchit') && !exists('b:match_words')
   " #if/#endif support included by default

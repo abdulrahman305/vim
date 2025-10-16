@@ -2,7 +2,6 @@
 " Language:	rasi (Rofi Advanced Style Information)
 " Maintainer:	Pierrick Guillaume  <pierguill@gmail.com>
 " Last Change:	2024 May 21
-" 2025 Apr 16 by Vim Project (set 'cpoptions' for line continuation, #17121)
 "
 " Syntax support for rasi config file
 
@@ -13,8 +12,6 @@ if exists('b:current_syntax')
   finish
 endif
 let b:current_syntax = 'rasi'
-let s:cpo_save = &cpo
-set cpo&vim
 
 " String {{{
 syn region rasiString    start=+"+ skip=+\\"+ end=+"+ oneline contained
@@ -297,8 +294,5 @@ hi def link rasiInvProperty     rasiError
 hi def link rasiInvPropertyId   rasiError
 hi def link rasiInvPropertyVal  rasiError
 " }}}
-
-let &cpo = s:cpo_save
-unlet s:cpo_save
 
 " vim:ts=8

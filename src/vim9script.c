@@ -13,6 +13,11 @@
 
 #include "vim.h"
 
+// When not generating protos this is included in proto.h
+#ifdef PROTO
+# include "vim9.h"
+#endif
+
 /*
  * Return TRUE when currently using Vim9 script syntax.
  * Does not go up the stack, a ":function" inside vim9script uses legacy
@@ -28,7 +33,7 @@ in_vim9script(void)
 		&& !(cmdmod.cmod_flags & CMOD_LEGACY);
 }
 
-#if defined(FEAT_EVAL)
+#if defined(FEAT_EVAL) || defined(PROTO)
 /*
  * Return TRUE when currently in a script with script version smaller than
  * "max_version" or command modifiers forced it.
@@ -141,7 +146,7 @@ ex_vim9script(exarg_T *eap UNUSED)
 #endif
 }
 
-#if defined(FEAT_EVAL)
+#if defined(FEAT_EVAL) || defined(PROTO)
 /*
  * When in Vim9 script give an error and return FAIL.
  */
@@ -205,7 +210,7 @@ vim9_comment_start(char_u *p)
 #endif
 }
 
-#if defined(FEAT_EVAL)
+#if defined(FEAT_EVAL) || defined(PROTO)
 
 /*
  * "++nr" and "--nr" commands.
@@ -474,7 +479,13 @@ handle_import(
 	res = handle_import_fname(from_name, is_autoload, &sid);
 	vim_free(from_name);
     }
-    else if (mch_isFullName(tv.vval.v_string))
+    else if (mch_isFullName(tv.vval.v_string)
+#ifdef BACKSLASH_IN_FILENAME
+	    // On MS-Windows omitting the drive is still handled like an
+	    // absolute path, not using 'runtimepath'.
+	    || *tv.vval.v_string == '/' || *tv.vval.v_string == '\\'
+#endif
+	    )
     {
 	// Absolute path: "/tmp/name.vim"
 	res = handle_import_fname(tv.vval.v_string, is_autoload, &sid);
@@ -835,10 +846,8 @@ vim9_declare_scriptvar(exarg_T *eap, char_u *arg)
 
     // parse type, check for reserved name
     p = skipwhite(p + 1);
-    type = parse_type(&p, &si->sn_type_list, NULL, NULL, TRUE);
-    if (type == NULL
-	    || check_reserved_name(name, FALSE) == FAIL
-	    || !valid_declaration_type(type))
+    type = parse_type(&p, &si->sn_type_list, TRUE);
+    if (type == NULL || check_reserved_name(name, FALSE) == FAIL)
     {
 	vim_free(name);
 	return p;
@@ -1110,52 +1119,35 @@ check_script_var_type(
 }
 
 // words that cannot be used as a variable
-// Keep this array sorted, as bsearch() is used to search this array.
 static char *reserved[] = {
+    "true",
     "false",
     "null",
     "null_blob",
-    "null_channel",
-    "null_class",
     "null_dict",
     "null_function",
-    "null_job",
     "null_list",
-    "null_object",
     "null_partial",
     "null_string",
-    "null_tuple",
+    "null_channel",
+    "null_job",
     "super",
     "this",
-    "true",
+    NULL
 };
 
-/*
- * String compare function used for bsearch()
- */
-    static int
-comp_names(const void *s1, const void *s2)
-{
-    return STRCMP(*(char **)s1, *(char **)s2);
-}
-
-/*
- * Returns OK if "name" is not a reserved keyword.  Otherwise returns FAIL.
- */
     int
 check_reserved_name(char_u *name, int is_objm_access)
 {
-    // "this" can be used in an object method
-    if (is_objm_access && STRCMP("this", name) == 0)
-	return OK;
+    int idx;
 
-    if (bsearch(&name, reserved, ARRAY_LENGTH(reserved),
-				sizeof(reserved[0]), comp_names) != NULL)
-    {
-	semsg(_(e_cannot_use_reserved_name_str), name);
-	return FAIL;
-    }
-
+    for (idx = 0; reserved[idx] != NULL; ++idx)
+	if (STRCMP(reserved[idx], name) == 0
+		&& !(STRCMP("this", name) == 0 && is_objm_access))
+	{
+	    semsg(_(e_cannot_use_reserved_name_str), name);
+	    return FAIL;
+	}
     return OK;
 }
 

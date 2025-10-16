@@ -1,4 +1,4 @@
-/* manually generated if_perl.c from if_perl.xs */
+/* auto/if_perl.c */
 int perl_enabled(int verbose);
 void perl_end(void);
 void msg_split(char_u *s, int attr);

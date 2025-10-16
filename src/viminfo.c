@@ -41,7 +41,7 @@ typedef struct {
     int		bv_allocated;	// bv_string was allocated
 } bval_T;
 
-#if defined(FEAT_VIMINFO)
+#if defined(FEAT_VIMINFO) || defined(PROTO)
 
 static int  viminfo_errcnt;
 
@@ -99,8 +99,6 @@ viminfo_filename(char_u *file)
 {
     if (file == NULL || *file == NUL)
     {
-	size_t  len;
-
 	if (*p_viminfofile != NUL)
 	    file = p_viminfofile;
 	else if ((file = find_viminfo_parameter('n')) == NULL || *file == NUL)
@@ -129,12 +127,9 @@ viminfo_filename(char_u *file)
 #endif
 		file = (char_u *)VIMINFO_FILE;
 	}
-	len = expand_env(file, NameBuff, MAXPATHL);
+	expand_env(file, NameBuff, MAXPATHL);
 	file = NameBuff;
-
-	return vim_strnsave(file, len);
     }
-
     return vim_strsave(file);
 }
 
@@ -1147,7 +1142,7 @@ barline_parse(vir_T *virp, char_u *text, garray_T *values)
 			// freed later, also need to free "buf" later
 			value->bv_tofree = buf;
 		    s = sconv;
-		    len = (int)STRLEN(s);
+		    len = STRLEN(s);
 		    converted = TRUE;
 		}
 	    }
@@ -1242,7 +1237,7 @@ viminfo_encoding(vir_T *virp)
     return viminfo_readline(virp);
 }
 
-#if defined(FEAT_EVAL)
+#if defined(FEAT_EVAL) || defined(PROTO)
 /*
  * Restore global vars that start with a capital from the viminfo file
  */
@@ -1268,7 +1263,6 @@ read_viminfo_varlist(vir_T *virp, int writing)
 		case 'L': type = VAR_LIST; break;
 		case 'B': type = VAR_BLOB; break;
 		case 'X': type = VAR_SPECIAL; break;
-		case 'T': type = VAR_TUPLE; break;
 	    }
 
 	    tab = vim_strchr(tab, '\t');
@@ -1276,8 +1270,7 @@ read_viminfo_varlist(vir_T *virp, int writing)
 	    {
 		tv.v_type = type;
 		if (type == VAR_STRING || type == VAR_DICT
-			|| type == VAR_LIST || type == VAR_BLOB
-			|| type == VAR_TUPLE)
+			|| type == VAR_LIST || type == VAR_BLOB)
 		    tv.vval.v_string = viminfo_readstring(virp,
 				       (int)(tab - virp->vir_line + 1), TRUE);
 		else if (type == VAR_FLOAT)
@@ -1289,7 +1282,7 @@ read_viminfo_varlist(vir_T *virp, int writing)
 					     || tv.vval.v_number == VVAL_TRUE))
 			tv.v_type = VAR_BOOL;
 		}
-		if (type == VAR_DICT || type == VAR_LIST || type == VAR_TUPLE)
+		if (type == VAR_DICT || type == VAR_LIST)
 		{
 		    typval_T *etv = eval_expr(tv.vval.v_string, NULL);
 
@@ -1377,7 +1370,7 @@ write_viminfo_varlist(FILE *fp)
 
 			      s = "DIC";
 			      if (di != NULL && !set_ref_in_ht(
-					 &di->dv_hashtab, copyID, NULL, NULL)
+						 &di->dv_hashtab, copyID, NULL)
 				      && di->dv_copyID == copyID)
 				  // has a circular reference, can't turn the
 				  // value into a string
@@ -1391,22 +1384,8 @@ write_viminfo_varlist(FILE *fp)
 
 			      s = "LIS";
 			      if (l != NULL && !set_ref_in_list_items(
-						       l, copyID, NULL, NULL)
+							       l, copyID, NULL)
 				      && l->lv_copyID == copyID)
-				  // has a circular reference, can't turn the
-				  // value into a string
-				  continue;
-			      break;
-			  }
-		    case VAR_TUPLE:
-			  {
-			      tuple_T	*tuple = this_var->di_tv.vval.v_tuple;
-			      int	copyID = get_copyID();
-
-			      s = "TUP";
-			      if (tuple != NULL && !set_ref_in_tuple_items(
-					       tuple, copyID, NULL, NULL)
-				      && tuple->tv_copyID == copyID)
 				  // has a circular reference, can't turn the
 				  // value into a string
 				  continue;
@@ -1611,7 +1590,7 @@ static yankreg_T *y_read_regs = NULL;
     static void
 prepare_viminfo_registers(void)
 {
-    y_read_regs = ALLOC_CLEAR_MULT(yankreg_T, NUM_REGISTERS);
+     y_read_regs = ALLOC_CLEAR_MULT(yankreg_T, NUM_REGISTERS);
 }
 
     static void
@@ -1627,7 +1606,7 @@ finish_viminfo_registers(void)
 	if (y_read_regs[i].y_array != NULL)
 	{
 	    for (j = 0; j < y_read_regs[i].y_size; j++)
-		vim_free(y_read_regs[i].y_array[j].string);
+		vim_free(y_read_regs[i].y_array[j]);
 	    vim_free(y_read_regs[i].y_array);
 	}
     VIM_CLEAR(y_read_regs);
@@ -1643,7 +1622,7 @@ read_viminfo_register(vir_T *virp, int force)
     int		i;
     int		set_prev = FALSE;
     char_u	*str;
-    string_T	*array = NULL;
+    char_u	**array = NULL;
     int		new_type = MCHAR; // init to shut up compiler
     colnr_T	new_width = 0; // init to shut up compiler
     yankreg_T	*y_current_p;
@@ -1686,7 +1665,7 @@ read_viminfo_register(vir_T *virp, int force)
 	// array[] needs to be freed.
 	if (set_prev)
 	    set_y_previous(y_current_p);
-	array = ALLOC_MULT(string_T, limit);
+	array = ALLOC_MULT(char_u *, limit);
 	str = skipwhite(skiptowhite(str));
 	if (STRNCMP(str, "CHAR", 4) == 0)
 	    new_type = MCHAR;
@@ -1706,8 +1685,8 @@ read_viminfo_register(vir_T *virp, int force)
 	{
 	    if (size == limit)
 	    {
-		string_T *new_array = (string_T *)
-					   alloc(limit * 2 * sizeof(string_T));
+		char_u **new_array = (char_u **)
+					   alloc(limit * 2 * sizeof(char_u *));
 
 		if (new_array == NULL)
 		{
@@ -1722,11 +1701,7 @@ read_viminfo_register(vir_T *virp, int force)
 	    }
 	    str = viminfo_readstring(virp, 1, TRUE);
 	    if (str != NULL)
-	    {
-		array[size].string = str;
-		array[size].length = STRLEN(str);
-		++size;
-	    }
+		array[size++] = str;
 	    else
 		// error, don't store the result
 		do_it = FALSE;
@@ -1737,7 +1712,7 @@ read_viminfo_register(vir_T *virp, int force)
     {
 	// free y_array[]
 	for (i = 0; i < y_current_p->y_size; i++)
-	    vim_free(y_current_p->y_array[i].string);
+	    vim_free(y_current_p->y_array[i]);
 	vim_free(y_current_p->y_array);
 
 	y_current_p->y_type = new_type;
@@ -1751,18 +1726,13 @@ read_viminfo_register(vir_T *virp, int force)
 	else
 	{
 	    // Move the lines from array[] to y_array[].
-	    y_current_p->y_array = ALLOC_MULT(string_T, size);
+	    y_current_p->y_array = ALLOC_MULT(char_u *, size);
 	    for (i = 0; i < size; i++)
 	    {
 		if (y_current_p->y_array == NULL)
-		{
-		    VIM_CLEAR_STRING(array[i]);
-		}
+		    vim_free(array[i]);
 		else
-		{
-		    y_current_p->y_array[i].string = array[i].string;
-		    y_current_p->y_array[i].length = array[i].length;
-		}
+		    y_current_p->y_array[i] = array[i];
 	    }
 	}
     }
@@ -1770,7 +1740,7 @@ read_viminfo_register(vir_T *virp, int force)
     {
 	// Free array[] if it was filled.
 	for (i = 0; i < size; i++)
-	    vim_free(array[i].string);
+	    vim_free(array[i]);
     }
     vim_free(array);
 
@@ -1834,7 +1804,7 @@ handle_viminfo_register(garray_T *values, int force)
 
     if (y_ptr->y_array != NULL)
 	for (i = 0; i < y_ptr->y_size; i++)
-	    vim_free(y_ptr->y_array[i].string);
+	    vim_free(y_ptr->y_array[i]);
     vim_free(y_ptr->y_array);
 
     if (y_read_regs == NULL)
@@ -1853,7 +1823,7 @@ handle_viminfo_register(garray_T *values, int force)
 	y_ptr->y_array = NULL;
 	return;
     }
-    y_ptr->y_array = ALLOC_MULT(string_T, linecount);
+    y_ptr->y_array = ALLOC_MULT(char_u *, linecount);
     if (y_ptr->y_array == NULL)
     {
 	y_ptr->y_size = 0; // ensure object state is consistent
@@ -1863,8 +1833,7 @@ handle_viminfo_register(garray_T *values, int force)
     {
 	if (vp[i + 6].bv_allocated)
 	{
-	    y_ptr->y_array[i].string = vp[i + 6].bv_string;
-	    y_ptr->y_array[i].length = vp[i + 6].bv_len;
+	    y_ptr->y_array[i] = vp[i + 6].bv_string;
 	    vp[i + 6].bv_string = NULL;
 	}
 	else if (vp[i + 6].bv_type != BVAL_STRING)
@@ -1873,10 +1842,7 @@ handle_viminfo_register(garray_T *values, int force)
 	    y_ptr->y_array = NULL;
 	}
 	else
-	{
-	    y_ptr->y_array[i].string = vim_strnsave(vp[i + 6].bv_string, vp[i + 6].bv_len);
-	    y_ptr->y_array[i].length = vp[i + 6].bv_len;
-	}
+	    y_ptr->y_array[i] = vim_strsave(vp[i + 6].bv_string);
     }
 }
 
@@ -1933,7 +1899,7 @@ write_viminfo_registers(FILE *fp)
 	num_lines = y_ptr->y_size;
 	if (num_lines == 0
 		|| (num_lines == 1 && y_ptr->y_type == MCHAR
-					&& *y_ptr->y_array[0].string == NUL))
+					&& *y_ptr->y_array[0] == NUL))
 	    continue;
 
 	if (max_kbyte > 0)
@@ -1941,7 +1907,7 @@ write_viminfo_registers(FILE *fp)
 	    // Skip register if there is more text than the maximum size.
 	    len = 0;
 	    for (j = 0; j < num_lines; j++)
-		len += (long)y_ptr->y_array[j].length + 1L;
+		len += (long)STRLEN(y_ptr->y_array[j]) + 1L;
 	    if (len > (long)max_kbyte * 1024L)
 		continue;
 	}
@@ -1976,7 +1942,7 @@ write_viminfo_registers(FILE *fp)
 	for (j = 0; j < num_lines; j++)
 	{
 	    putc('\t', fp);
-	    viminfo_writestring(fp, y_ptr->y_array[j].string);
+	    viminfo_writestring(fp, y_ptr->y_array[j]);
 	}
 
 	{
@@ -2001,7 +1967,7 @@ write_viminfo_registers(FILE *fp)
 	    {
 		putc(',', fp);
 		--remaining;
-		remaining = barline_writestring(fp, y_ptr->y_array[j].string,
+		remaining = barline_writestring(fp, y_ptr->y_array[j],
 								   remaining);
 	    }
 	    putc('\n', fp);
@@ -2904,8 +2870,7 @@ read_viminfo_up_to_marks(
 		if (virp->vir_version < VIMINFO_VERSION_WITH_REGISTERS)
 		    eof = read_viminfo_register(virp, forceit);
 		else
-		    do
-		    {
+		    do {
 			eof = viminfo_readline(virp);
 		    } while (!eof && (virp->vir_line[0] == TAB
 						|| virp->vir_line[0] == '<'));

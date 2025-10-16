@@ -1,10 +1,11 @@
 " Tests for defining text property types and adding text properties to the
 " buffer.
 
+source check.vim
 CheckFeature textprop
 
-source util/screendump.vim
-import './util/vim9.vim' as v9
+source screendump.vim
+import './vim9.vim' as v9
 
 func Test_proptype_global()
   call prop_type_add('comment', {'highlight': 'Directory', 'priority': 123, 'start_incl': 1, 'end_incl': 1})
@@ -1255,7 +1256,6 @@ endfunc
 
 func Test_textprop_hl_override()
   CheckScreendump
-  CheckRunVimInTerminal
 
   let lines =<< trim END
       call setline(1, ['One one one one one', 'Two two two two two', 'Three three three three'])
@@ -1286,7 +1286,6 @@ func Test_textprop_hl_override()
 endfunc
 
 func RunTestVisualBlock(width, dump)
-  CheckScreendump
   call writefile([
 	\ "call setline(1, ["
 	\	.. "'xxxxxxxxx 123 x',"
@@ -1993,7 +1992,6 @@ def Test_delete_line_within_multiline_prop()
 enddef
 
 func Test_prop_in_linebreak()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -2019,7 +2017,6 @@ func Test_prop_in_linebreak()
 endfunc
 
 func Test_prop_with_linebreak()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -2039,7 +2036,6 @@ func Test_prop_with_linebreak()
 endfunc
 
 func Test_prop_with_wrap()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -2058,7 +2054,6 @@ func Test_prop_with_wrap()
 endfunc
 
 func Test_prop_after_tab()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -2075,7 +2070,6 @@ func Test_prop_after_tab()
 endfunc
 
 func Test_prop_before_tab()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -2115,7 +2109,6 @@ func Test_prop_before_tab()
 endfunc
 
 func Test_prop_after_linebreak()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -2565,7 +2558,6 @@ func Test_props_do_not_affect_byte_offsets_editline()
 endfunc
 
 func Test_prop_inserts_text()
-  CheckScreendump
   CheckRunVimInTerminal
 
   " Just a basic check for now
@@ -2617,7 +2609,6 @@ func Test_prop_inserts_text()
 endfunc
 
 func Test_prop_inserts_text_highlight()
-  CheckScreendump
   CheckRunVimInTerminal
 
   " Just a basic check for now
@@ -2653,7 +2644,6 @@ func Test_prop_inserts_text_highlight()
 endfunc
 
 func Test_prop_inserts_text_normal_gM()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -2671,7 +2661,6 @@ func Test_prop_inserts_text_normal_gM()
 endfunc
 
 func Run_test_prop_inserts_text_normal_gj_gk(cmd)
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -2706,7 +2695,6 @@ func Test_prop_inserts_text_normal_gj_gk()
 endfunc
 
 func Test_prop_normal_gj_gk_gM_with_outer_virtual_text()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -2749,7 +2737,6 @@ func Test_prop_normal_gj_gk_gM_with_outer_virtual_text()
 endfunc
 
 func Test_prop_inserts_text_visual_block()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -2778,7 +2765,6 @@ func Test_prop_inserts_text_visual_block()
 endfunc
 
 func Run_test_prop_inserts_text_showbreak(cmd)
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -2852,7 +2838,6 @@ func Test_prop_inserts_text_showbreak()
 endfunc
 
 func Test_prop_before_tab_skipcol()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -2890,7 +2875,6 @@ func Test_prop_before_tab_skipcol()
 endfunc
 
 func Test_prop_inserts_text_before_linebreak()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -2910,7 +2894,6 @@ func Test_prop_inserts_text_before_linebreak()
 endfunc
 
 func Test_prop_inserts_text_before_double_width_wrap()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -2931,7 +2914,6 @@ func Test_prop_inserts_text_before_double_width_wrap()
 endfunc
 
 func Test_prop_inserts_text_lcs_extends()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -2966,7 +2948,6 @@ func Test_prop_add_with_text_fails()
 endfunc
 
 func Test_props_with_text_right_align_twice()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -2992,7 +2973,6 @@ func Test_props_with_text_right_align_twice()
 endfunc
 
 func Test_props_with_text_after()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -3024,7 +3004,6 @@ func Test_props_with_text_after()
 endfunc
 
 func Test_props_with_text_after_and_list()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -3062,7 +3041,6 @@ func Test_props_with_text_after_and_list()
 endfunc
 
 func Test_props_with_text_after_below_trunc()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -3099,7 +3077,6 @@ func Test_props_with_text_after_below_trunc()
 endfunc
 
 func Test_props_with_text_truncated_just_before_after()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -3137,7 +3114,6 @@ func Test_props_with_text_truncated_just_before_after()
 endfunc
 
 func Test_prop_with_text_below_after_empty()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -3177,7 +3153,6 @@ func Test_prop_with_text_below_after_empty()
 endfunc
 
 func Test_prop_with_text_above_below_empty()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -3228,31 +3203,7 @@ func Test_prop_with_text_above_below_empty()
   call StopVimInTerminal(buf)
 endfunc
 
-func Test_prop_multiple_lines_above()
-  CheckScreendump
-  CheckRunVimInTerminal
-
-  let lines =<< trim END
-      setlocal number colorcolumn=10
-      call setline(1, ['11111111', '', '333333333', '', '55555555555'])
-
-      let vt = 'test'
-      call prop_type_add(vt, {'highlight': 'ToDo'})
-      for ln in range(1, line('$'))
-        call prop_add(ln, 0, {'type': vt, 'text': 'above1', 'text_align': 'above'})
-        call prop_add(ln, 0, {'type': vt, 'text': 'above2', 'text_align': 'above'})
-      endfor
-      normal G
-  END
-  call writefile(lines, 'XscriptPropMultipleLinesAbove', 'D')
-  let buf = RunVimInTerminal('-S XscriptPropMultipleLinesAbove', #{rows: 16, cols: 60})
-  call VerifyScreenDump(buf, 'Test_prop_multiple_lines_above_1', {})
-
-  call StopVimInTerminal(buf)
-endfunc
-
 func Test_prop_with_multibyte_above()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -3274,7 +3225,6 @@ func Test_prop_with_multibyte_above()
 endfunc
 
 func Test_prop_with_multibyte_below()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -3296,7 +3246,6 @@ func Test_prop_with_multibyte_below()
 endfunc
 
 func Test_prop_with_text_below_rightleft()
-  CheckScreendump
   CheckRunVimInTerminal
   CheckFeature rightleft
 
@@ -3314,7 +3263,6 @@ func Test_prop_with_text_below_rightleft()
 endfunc
 
 func Test_prop_with_text_above_empty()
-  CheckScreendump
   CheckRunVimInTerminal
 
   " check the cursor is in the correct line
@@ -3340,7 +3288,6 @@ func Test_prop_with_text_above_empty()
 endfunc
 
 func Test_prop_with_text_below_after_match()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -3364,7 +3311,6 @@ func Test_prop_with_text_below_after_match()
 endfunc
 
 func Test_props_with_text_after_joined()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -3390,7 +3336,6 @@ func Test_props_with_text_after_joined()
 endfunc
 
 func Test_props_with_text_after_truncated()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -3429,7 +3374,6 @@ func Test_props_with_text_after_truncated()
 endfunc
 
 func Test_props_with_text_after_truncated_and_ambiwidth_is_double()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -3456,7 +3400,6 @@ endfunc
 
 
 func Test_props_with_text_after_truncated_not_utf8()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -3482,7 +3425,6 @@ func Test_props_with_text_after_truncated_not_utf8()
 endfunc
 
 func Test_props_with_text_empty_line()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -3516,7 +3458,6 @@ func Test_props_with_text_empty_line()
 endfunc
 
 func Test_props_with_text_after_wraps()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -3541,7 +3482,6 @@ func Test_props_with_text_after_wraps()
 endfunc
 
 func Test_props_with_text_after_nowrap()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -3575,7 +3515,6 @@ func Test_props_with_text_after_nowrap()
 endfunc
 
 func Test_prop_with_text_below_cul()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -3599,7 +3538,6 @@ func Test_prop_with_text_below_cul()
 endfunc
 
 func Test_props_with_text_below_nowrap()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -3632,7 +3570,6 @@ func Test_props_with_text_below_nowrap()
 endfunc
 
 func Test_props_with_text_above()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -3695,7 +3632,6 @@ func Test_props_with_text_above()
 endfunc
 
 func Test_prop_with_text_above_padding()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -3732,7 +3668,6 @@ func Test_prop_above_with_indent()
 endfunc
 
 func Test_prop_above_with_number()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -3760,15 +3695,10 @@ func Test_prop_above_with_number()
   call term_sendkeys(buf, ":call OneMore()\<CR>")
   call VerifyScreenDump(buf, 'Test_prop_above_number_2', {})
 
-  call term_sendkeys(buf, ":setlocal cursorline cursorlineopt=number\<CR>")
-  call term_sendkeys(buf, 'j')
-  call VerifyScreenDump(buf, 'Test_prop_above_number_3', {})
-
   call StopVimInTerminal(buf)
 endfunc
 
 func Test_prop_above_with_linebreak()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -3788,7 +3718,6 @@ func Test_prop_above_with_linebreak()
 endfunc
 
 func Test_prop_above_and_before()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -3815,7 +3744,6 @@ func Test_prop_above_and_before()
 endfunc
 
 func Test_prop_below_split_line()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -3844,7 +3772,6 @@ func Test_prop_below_split_line()
 endfunc
 
 func Test_prop_above_below_smoothscroll()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -3873,7 +3800,6 @@ func Test_prop_above_below_smoothscroll()
 endfunc
 
 func Test_props_with_text_override()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -3897,7 +3823,6 @@ func Test_props_with_text_override()
 endfunc
 
 func Test_props_with_text_CursorMoved()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -3936,7 +3861,6 @@ func Test_props_with_text_CursorMoved()
 endfunc
 
 func Test_props_with_text_after_split_join()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -4006,7 +3930,6 @@ def Test_insert_text_before_virtual_text()
 enddef
 
 func Test_insert_text_start_incl()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -4048,7 +3971,6 @@ func Test_insert_text_start_incl()
 endfunc
 
 func Test_insert_text_list_mode()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -4078,7 +4000,6 @@ func Test_insert_text_list_mode()
 endfunc
 
 func Test_insert_text_with_padding()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -4131,7 +4052,6 @@ func Test_insert_text_with_padding()
 endfunc
 
 func Test_long_text_below_with_padding()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -4163,7 +4083,6 @@ func Test_long_text_below_with_padding()
 endfunc
 
 func Test_text_after_nowrap()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -4228,7 +4147,6 @@ func Test_text_after_nowrap()
 endfunc
 
 func Test_text_after_nowrap_list()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -4264,147 +4182,7 @@ func Test_text_after_nowrap_list()
   call StopVimInTerminal(buf)
 endfunc
 
-func Test_text_after_wrap_showbreak()
-  CheckScreendump
-  CheckRunVimInTerminal
-
-  let lines =<< trim END
-    set cursorline
-    set shiftwidth=4
-
-    set breakindent
-    set showbreak=>\ 
-    set breakindentopt=shift:2,min:64
-
-    call setline(1, ['        " 1234567890', 'foo', 'bar'])
-
-    call prop_type_add('Test', {
-          \ 'highlight': 'Visual',
-          \ 'priority': 10,
-          \ 'combine': v:true,
-          \ })
-    call prop_add(1, 0, #{
-          \ type: 'Test',
-          \ bufnr: bufnr('%'),
-          \ text: 'aaaa890 123 456 789',
-          \ text_wrap: 'wrap',
-          \ text_align: 'after'
-          \ })
-  END
-  call writefile(lines, 'XTestAfterWrapShowbreak', 'D')
-  let buf = RunVimInTerminal('-S XTestAfterWrapShowbreak', #{rows: 8, cols: 20})
-  call VerifyScreenDump(buf, 'Test_text_after_wrap_showbreak_01', {})
-  call term_sendkeys(buf, 'j')
-  call VerifyScreenDump(buf, 'Test_text_after_wrap_showbreak_02', {})
-  call term_sendkeys(buf, 'j')
-  call VerifyScreenDump(buf, 'Test_text_after_wrap_showbreak_03', {})
-  call term_sendkeys(buf, 'k')
-  call VerifyScreenDump(buf, 'Test_text_after_wrap_showbreak_02', {})
-  call term_sendkeys(buf, 'k')
-  call VerifyScreenDump(buf, 'Test_text_after_wrap_showbreak_01', {})
-
-  call term_sendkeys(buf, '$x0')
-  call VerifyScreenDump(buf, 'Test_text_after_wrap_showbreak_04', {})
-  call term_sendkeys(buf, 'j')
-  call VerifyScreenDump(buf, 'Test_text_after_wrap_showbreak_05', {})
-  call term_sendkeys(buf, 'j')
-  call VerifyScreenDump(buf, 'Test_text_after_wrap_showbreak_06', {})
-  call term_sendkeys(buf, 'k')
-  call VerifyScreenDump(buf, 'Test_text_after_wrap_showbreak_05', {})
-  call term_sendkeys(buf, 'k')
-  call VerifyScreenDump(buf, 'Test_text_after_wrap_showbreak_04', {})
-
-  call term_sendkeys(buf, ":set list listchars=eol:$\<CR>")
-  call VerifyScreenDump(buf, 'Test_text_after_wrap_showbreak_07', {})
-  call term_sendkeys(buf, 'j')
-  call VerifyScreenDump(buf, 'Test_text_after_wrap_showbreak_08', {})
-  call term_sendkeys(buf, 'j')
-  call VerifyScreenDump(buf, 'Test_text_after_wrap_showbreak_09', {})
-  call term_sendkeys(buf, 'k')
-  call VerifyScreenDump(buf, 'Test_text_after_wrap_showbreak_08', {})
-  call term_sendkeys(buf, 'k')
-  call VerifyScreenDump(buf, 'Test_text_after_wrap_showbreak_07', {})
-
-  call term_sendkeys(buf, '$x0')
-  call VerifyScreenDump(buf, 'Test_text_after_wrap_showbreak_10', {})
-  call term_sendkeys(buf, 'j')
-  call VerifyScreenDump(buf, 'Test_text_after_wrap_showbreak_11', {})
-  call term_sendkeys(buf, 'j')
-  call VerifyScreenDump(buf, 'Test_text_after_wrap_showbreak_12', {})
-  call term_sendkeys(buf, 'k')
-  call VerifyScreenDump(buf, 'Test_text_after_wrap_showbreak_11', {})
-  call term_sendkeys(buf, 'k')
-  call VerifyScreenDump(buf, 'Test_text_after_wrap_showbreak_10', {})
-
-  call StopVimInTerminal(buf)
-endfunc
-
-func Test_text_eol_long_wrap_smoothscroll()
-  CheckScreendump
-  CheckRunVimInTerminal
-
-  let lines =<< trim END
-    call setline(1, [repeat('0123456789', 5), 'foo', 'bar'])
-    normal! G$
-    call prop_type_add('Test', #{highlight: 'ErrorMsg'})
-    call prop_add(1, 51, #{type: 'Test', text: repeat('x', 145), text_wrap: 'wrap'})
-
-    set cursorline scrolloff=0 showbreak=>\  smoothscroll
-  END
-  call writefile(lines, 'XTestEolLongWrapSms', 'D')
-  let buf = RunVimInTerminal('-S XTestEolLongWrapSms', #{rows: 8, cols: 50})
-  call VerifyScreenDump(buf, 'Test_text_eol_long_wrap_sms_01', {})
-  call term_sendkeys(buf, "\<C-E>")
-  call VerifyScreenDump(buf, 'Test_text_eol_long_wrap_sms_02', {})
-  call term_sendkeys(buf, "\<C-E>")
-  call VerifyScreenDump(buf, 'Test_text_eol_long_wrap_sms_03', {})
-  call term_sendkeys(buf, "\<C-E>")
-  call VerifyScreenDump(buf, 'Test_text_eol_long_wrap_sms_04', {})
-  call term_sendkeys(buf, "\<C-E>")
-  call VerifyScreenDump(buf, 'Test_text_eol_long_wrap_sms_05', {})
-  call term_sendkeys(buf, "\<C-E>")
-  call VerifyScreenDump(buf, 'Test_text_eol_long_wrap_sms_06', {})
-
-  call term_sendkeys(buf, 'gg$xG$')
-  call VerifyScreenDump(buf, 'Test_text_eol_long_wrap_sms_07', {})
-  call term_sendkeys(buf, "\<C-E>")
-  call VerifyScreenDump(buf, 'Test_text_eol_long_wrap_sms_08', {})
-  call term_sendkeys(buf, "\<C-E>")
-  call VerifyScreenDump(buf, 'Test_text_eol_long_wrap_sms_09', {})
-  call term_sendkeys(buf, "\<C-E>")
-  call VerifyScreenDump(buf, 'Test_text_eol_long_wrap_sms_10', {})
-  call term_sendkeys(buf, "\<C-E>")
-  call VerifyScreenDump(buf, 'Test_text_eol_long_wrap_sms_11', {})
-
-  call term_sendkeys(buf, "zb:set list listchars=eol:$ | echo\<CR>")
-  call VerifyScreenDump(buf, 'Test_text_eol_long_wrap_sms_12', {})
-  call term_sendkeys(buf, "\<C-E>")
-  call VerifyScreenDump(buf, 'Test_text_eol_long_wrap_sms_13', {})
-  call term_sendkeys(buf, "\<C-E>")
-  call VerifyScreenDump(buf, 'Test_text_eol_long_wrap_sms_14', {})
-  call term_sendkeys(buf, "\<C-E>")
-  call VerifyScreenDump(buf, 'Test_text_eol_long_wrap_sms_15', {})
-  call term_sendkeys(buf, "\<C-E>")
-  call VerifyScreenDump(buf, 'Test_text_eol_long_wrap_sms_16', {})
-  call term_sendkeys(buf, "\<C-E>")
-  call VerifyScreenDump(buf, 'Test_text_eol_long_wrap_sms_17', {})
-
-  call term_sendkeys(buf, 'gg$xG$')
-  call VerifyScreenDump(buf, 'Test_text_eol_long_wrap_sms_18', {})
-  call term_sendkeys(buf, "\<C-E>")
-  call VerifyScreenDump(buf, 'Test_text_eol_long_wrap_sms_19', {})
-  call term_sendkeys(buf, "\<C-E>")
-  call VerifyScreenDump(buf, 'Test_text_eol_long_wrap_sms_20', {})
-  call term_sendkeys(buf, "\<C-E>")
-  call VerifyScreenDump(buf, 'Test_text_eol_long_wrap_sms_21', {})
-  call term_sendkeys(buf, "\<C-E>")
-  call VerifyScreenDump(buf, 'Test_text_eol_long_wrap_sms_22', {})
-
-  call StopVimInTerminal(buf)
-endfunc
-
 func Test_text_below_nowrap()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -4434,7 +4212,6 @@ func Test_text_below_nowrap()
 endfunc
 
 func Test_virtual_text_overlap_with_highlight()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -4475,7 +4252,6 @@ func Test_virtual_text_overlap_with_highlight()
 endfunc
 
 func Test_virtual_text_in_popup_highlight()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -4520,7 +4296,6 @@ func Test_virtual_text_in_popup_highlight()
 endfunc
 
 func Test_insert_text_change_arg()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -4582,7 +4357,6 @@ def Test_textprop_in_quickfix_window()
 enddef
 
 func Test_text_prop_delete_updates()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -4621,7 +4395,6 @@ func Test_text_prop_delete_updates()
 endfunc
 
 func Test_text_prop_diff_mode()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -4660,7 +4433,6 @@ func Test_error_when_using_negative_id()
 endfunc
 
 func Test_error_after_using_negative_id()
-  CheckScreendump
   " This needs to run a separate Vim instance because the
   " "did_use_negative_pop_id" will be set.
   CheckRunVimInTerminal
@@ -4697,7 +4469,6 @@ func Test_error_after_using_negative_id()
 endfunc
 
 func Test_modify_text_before_prop()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -4720,7 +4491,6 @@ func Test_modify_text_before_prop()
 endfunc
 
 func Test_overlong_textprop_above_crash()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -4742,7 +4512,6 @@ func Test_overlong_textprop_above_crash()
 endfunc
 
 func Test_text_prop_list_hl_and_sign_highlight()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -4837,7 +4606,6 @@ func Test_textprop_backspace_fo_aw()
 endfunc
 
 func Test_textprop_with_wincolor()
-  CheckScreendump
   CheckRunVimInTerminal
 
   let lines =<< trim END
@@ -4893,31 +4661,6 @@ func Test_textprop_with_wincolor()
   endif
 
   call StopVimInTerminal(buf)
-endfunc
-
-func Test_textprop_materialize_list()
-	let ids = range(3)
-	call assert_equal([], prop_list(1, #{ids: ids}))
-
-	let ids = range(3) + []
-	call assert_equal([], prop_list(1, #{ids: ids}))
-
-	let ids = range(3)
-	let ids[0] = ids[0]
-	call assert_equal([], prop_list(1, #{ids: ids}))
-
-	let ids = range(3)
-	call assert_equal([], prop_list(1, #{ids: ids}))
-
-	call assert_equal([], prop_list(1, #{ids: range(3) + [] }))
-
-	let ids = range(3)
-	call assert_equal([], prop_list(1, #{ids: ids}))
-
-	let ids = range(0, 3)
-	call assert_equal([], prop_list(1, #{ids: ids}))
-
-	call assert_equal([], prop_list(1, #{ids: 3->range()}))
 endfunc
 
 " vim: shiftwidth=2 sts=2 expandtab

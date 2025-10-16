@@ -1,6 +1,7 @@
 " Test for lambda and closure
 
-import './util/vim9.vim' as v9
+source check.vim
+import './vim9.vim' as v9
 
 func Test_lambda_feature()
   call assert_equal(1, has('lambda'))
@@ -361,7 +362,7 @@ endfunc
 
 func Test_lambda_error()
   " This was causing a crash
-  call assert_fails('ec{@{->{d->()()', 'E451:')
+  call assert_fails('ec{@{->{d->()()', 'E15:')
 endfunc
 
 func Test_closure_error()

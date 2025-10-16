@@ -1,5 +1,6 @@
 " Tests for ruby interface
 
+source check.vim
 CheckFeature ruby
 
 func Test_ruby_change_buffer()
@@ -289,7 +290,7 @@ func Test_ruby_Vim_buffer_get()
   call assert_match('Xfoo1$', rubyeval('Vim::Buffer[1].name'))
   call assert_match('Xfoo2$', rubyeval('Vim::Buffer[2].name'))
   call assert_fails('ruby print Vim::Buffer[3].name',
-        \           "NoMethodError")
+        \           "NoMethodError: undefined method `name' for nil")
   %bwipe
 endfunc
 
@@ -371,7 +372,7 @@ func Test_ruby_Vim_evaluate_dict()
   redir => l:out
   ruby d = Vim.evaluate("d"); print d
   redir END
-  call assert_equal(['{"a"=>"foo","b"=>123}'], split(substitute(l:out, '\s', '', 'g'), "\n"))
+  call assert_equal(['{"a"=>"foo", "b"=>123}'], split(l:out, "\n"))
 endfunc
 
 " Test Vim::message({msg}) (display message {msg})
@@ -390,7 +391,7 @@ func Test_ruby_print()
   call assert_equal('1.23', RubyPrint('1.23'))
   call assert_equal('Hello World!', RubyPrint('"Hello World!"'))
   call assert_equal('[1, 2]', RubyPrint('[1, 2]'))
-  call assert_equal('{"k1"=>"v1","k2"=>"v2"}', substitute(RubyPrint('({"k1" => "v1", "k2" => "v2"})'), '\s', '', 'g'))
+  call assert_equal('{"k1"=>"v1", "k2"=>"v2"}', RubyPrint('({"k1" => "v1", "k2" => "v2"})'))
   call assert_equal('true', RubyPrint('true'))
   call assert_equal('false', RubyPrint('false'))
   call assert_equal('', RubyPrint('nil'))
@@ -445,10 +446,7 @@ Vim.command('let s ..= "B"')
   ruby << trim eof
     Vim.command('let s ..= "E"')
   eof
-ruby << trimm
-Vim.command('let s ..= "F"')
-trimm
-  call assert_equal('ABCDEF', s)
+  call assert_equal('ABCDE', s)
 endfunc
 
 " vim: shiftwidth=2 sts=2 expandtab

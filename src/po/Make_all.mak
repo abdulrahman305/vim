@@ -4,6 +4,7 @@
 
 LANGUAGES = \
 		af \
+		am \
 		ca \
 		cs \
 		cs.cp1250 \
@@ -16,7 +17,6 @@ LANGUAGES = \
 		fr \
 		ga \
 		hu \
-		hy \
 		it \
 		ja \
 		ja.euc-jp \
@@ -50,6 +50,7 @@ LANGUAGES = \
 
 POFILES = \
 		af.po \
+		am.po \
 		ca.po \
 		cs.po \
 		cs.cp1250.po \
@@ -62,7 +63,6 @@ POFILES = \
 		fr.po \
 		ga.po \
 		hu.po \
-		hy.po \
 		it.po \
 		ja.po \
 		ja.euc-jp.po \
@@ -96,6 +96,7 @@ POFILES = \
 
 MOFILES = \
 		af.mo \
+		am.mo \
 		ca.mo \
 		cs.mo \
 		da.mo \
@@ -107,7 +108,6 @@ MOFILES = \
 		fr.mo \
 		ga.mo \
 		hu.mo \
-		hy.mo \
 		it.mo \
 		ja.mo \
 		ko.UTF-8.mo \
@@ -157,7 +157,6 @@ CHECKFILES = \
 		fr.ck \
 		ga.ck \
 		hu.ck \
-		hy.ck \
 		it.ck \
 		ja.ck \
 		ja.euc-jp.ck \

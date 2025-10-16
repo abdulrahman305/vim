@@ -14,7 +14,7 @@
 
 #include "vim.h"
 
-#if defined(FEAT_EVAL)
+#if defined(FEAT_EVAL) || defined(PROTO)
 
 #ifdef VMS
 # include <float.h>
@@ -41,7 +41,7 @@ string2float(
 	*value = INFINITY;
 	return 3;
     }
-    if (STRNICMP(text, "-inf", 4) == 0)
+    if (STRNICMP(text, "-inf", 3) == 0)
     {
 	*value = -INFINITY;
 	return 4;
@@ -338,7 +338,7 @@ f_fmod(typval_T *argvars, typval_T *rettv)
 	rettv->vval.v_float = 0.0;
 }
 
-# if defined(HAVE_MATH_H)
+# if defined(HAVE_MATH_H) || defined(PROTO)
 /*
  * "isinf()" function
  */

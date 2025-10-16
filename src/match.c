@@ -13,7 +13,7 @@
 
 #include "vim.h"
 
-#if defined(FEAT_SEARCH_EXTRA)
+#if defined(FEAT_SEARCH_EXTRA) || defined(PROTO)
 
 # define SEARCH_HL_PRIORITY 0
 
@@ -21,7 +21,7 @@
  * Add match to the match list of window "wp".
  * If "pat" is not NULL the pattern will be highlighted with the group "grp"
  * with priority "prio".
- * If "pos_list" is not NULL the list of positions defines the highlights.
+ * If "pos_list" is not NULL the list of posisions defines the highlights.
  * Optionally, a desired ID "id" can be specified (greater than or equal to 1).
  * If no particular ID is desired, -1 must be specified for "id".
  * Return ID of added match, -1 on failure.
@@ -38,7 +38,7 @@ match_add(
 {
     matchitem_T	*cur;
     matchitem_T	*prev;
-    matchitem_T	*m = NULL;
+    matchitem_T	*m;
     int		hlg_id;
     regprog_T	*regprog = NULL;
     int		rtype = UPD_SOME_VALID;
@@ -86,12 +86,15 @@ match_add(
     // Build new match.
     m = ALLOC_CLEAR_ONE(matchitem_T);
     if (m == NULL)
-	goto fail;
+	return -1;
     if (pos_list != NULL && pos_list->lv_len > 0)
     {
 	m->mit_pos_array = ALLOC_CLEAR_MULT(llpos_T, pos_list->lv_len);
 	if (m->mit_pos_array == NULL)
-	    goto fail;
+	{
+	    vim_free(m);
+	    return -1;
+	}
 	m->mit_pos_count = pos_list->lv_len;
     }
     m->mit_id = id;
@@ -184,7 +187,20 @@ match_add(
 	// Calculate top and bottom lines for redrawing area
 	if (toplnum != 0)
 	{
-	    redraw_win_range_later(wp, toplnum, botlnum);
+	    if (wp->w_buffer->b_mod_set)
+	    {
+		if (wp->w_buffer->b_mod_top > toplnum)
+		    wp->w_buffer->b_mod_top = toplnum;
+		if (wp->w_buffer->b_mod_bot < botlnum)
+		    wp->w_buffer->b_mod_bot = botlnum;
+	    }
+	    else
+	    {
+		wp->w_buffer->b_mod_set = TRUE;
+		wp->w_buffer->b_mod_top = toplnum;
+		wp->w_buffer->b_mod_bot = botlnum;
+		wp->w_buffer->b_mod_xlines = 0;
+	    }
 	    m->mit_toplnum = toplnum;
 	    m->mit_botlnum = botlnum;
 	    rtype = UPD_VALID;
@@ -210,13 +226,9 @@ match_add(
     return id;
 
 fail:
-    vim_regfree(regprog);
-    if (m != NULL)
-    {
-	vim_free(m->mit_pattern);
-	vim_free(m->mit_pos_array);
-	vim_free(m);
-    }
+    vim_free(m->mit_pattern);
+    vim_free(m->mit_pos_array);
+    vim_free(m);
     return -1;
 }
 
@@ -257,7 +269,20 @@ match_delete(win_T *wp, int id, int perr)
     vim_free(cur->mit_pattern);
     if (cur->mit_toplnum != 0)
     {
-	redraw_win_range_later(wp, cur->mit_toplnum, cur->mit_botlnum);
+	if (wp->w_buffer->b_mod_set)
+	{
+	    if (wp->w_buffer->b_mod_top > cur->mit_toplnum)
+		wp->w_buffer->b_mod_top = cur->mit_toplnum;
+	    if (wp->w_buffer->b_mod_bot < cur->mit_botlnum)
+		wp->w_buffer->b_mod_bot = cur->mit_botlnum;
+	}
+	else
+	{
+	    wp->w_buffer->b_mod_set = TRUE;
+	    wp->w_buffer->b_mod_top = cur->mit_toplnum;
+	    wp->w_buffer->b_mod_bot = cur->mit_botlnum;
+	    wp->w_buffer->b_mod_xlines = 0;
+	}
 	rtype = UPD_VALID;
     }
     vim_free(cur->mit_pos_array);
@@ -937,7 +962,7 @@ get_search_match_hl(win_T *wp, match_T *search_hl, long col, int *char_attr)
 
 #endif // FEAT_SEARCH_EXTRA
 
-#if defined(FEAT_EVAL)
+#if defined(FEAT_EVAL) || defined(PROTO)
 # ifdef FEAT_SEARCH_EXTRA
     static int
 matchadd_dict_arg(typval_T *tv, char_u **conceal_char, win_T **win)
@@ -1357,7 +1382,7 @@ f_matchdelete(typval_T *argvars UNUSED, typval_T *rettv UNUSED)
 }
 #endif
 
-#if defined(FEAT_SEARCH_EXTRA)
+#if defined(FEAT_SEARCH_EXTRA) || defined(PROTO)
 /*
  * ":[N]match {group} {pattern}"
  * Sets nextcmd to the start of the next command, if any.  Also called when

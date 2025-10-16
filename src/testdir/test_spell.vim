@@ -1,9 +1,11 @@
 " Test spell checking
 " Note: this file uses latin1 encoding, but is used with utf-8 encoding.
 
+source check.vim
 CheckFeature spell
 
-source util/screendump.vim
+source screendump.vim
+source view_util.vim
 
 func TearDown()
   set nospell

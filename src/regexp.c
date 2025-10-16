@@ -50,7 +50,7 @@ toggle_Magic(int x)
     return Magic(x);
 }
 
-#if defined(FEAT_RELTIME)
+#ifdef FEAT_RELTIME
 static int timeout_nesting = 0;
 
 /*
@@ -80,7 +80,7 @@ disable_regexp_timeout(void)
 }
 #endif
 
-#if defined(FEAT_EVAL)
+#if defined(FEAT_EVAL) || defined(PROTO)
 # ifdef FEAT_RELTIME
 static sig_atomic_t *saved_timeout_flag;
 # endif
@@ -265,8 +265,8 @@ get_char_class(char_u **pp)
 	static keyvalue_T *last_entry = NULL;
 
 	target.key = 0;
-	target.value.string = *pp + 2;
-	target.value.length = 0;	// not used, see cmp_keyvalue_value_n()
+	target.value = (char *)*pp + 2;
+	target.length = 0;		    // not used, see cmp_keyvalue_value_n()
 
 	if (last_entry != NULL && cmp_keyvalue_value_n(&target, last_entry) == 0)
 	    entry = last_entry;
@@ -277,7 +277,7 @@ get_char_class(char_u **pp)
 	if (entry != NULL)
 	{
 	    last_entry = entry;
-	    *pp += entry->value.length + 2;
+	    *pp += entry->length + 2;
 	    return entry->key;
 	}
     }
@@ -362,7 +362,7 @@ static int	regnzpar;	// \z() count.
 static int	re_has_z;	// \z item detected
 #endif
 static unsigned	regflags;	// RF_ flags for prog
-#if defined(FEAT_SYN_HL)
+#if defined(FEAT_SYN_HL) || defined(PROTO)
 static int	had_eol;	// TRUE when EOL found by vim_regcomp()
 #endif
 
@@ -410,15 +410,15 @@ static int	nextchr;	// used for ungetchr()
 
 typedef struct
 {
-    char_u	*regparse;
-    int		prevchr_len;
-    int		curchr;
-    int		prevchr;
-    int		prevprevchr;
-    int		nextchr;
-    int		at_start;
-    int		prev_at_start;
-    int		regnpar;
+     char_u	*regparse;
+     int	prevchr_len;
+     int	curchr;
+     int	prevchr;
+     int	prevprevchr;
+     int	nextchr;
+     int	at_start;
+     int	prev_at_start;
+     int	regnpar;
 } parse_state_T;
 
 static void	initchr(char_u *);
@@ -427,9 +427,9 @@ static void	skipchr_keepstart(void);
 static int	peekchr(void);
 static void	skipchr(void);
 static void	ungetchr(void);
-static vimlong_T	gethexchrs(int maxinputlen);
+static long	gethexchrs(int maxinputlen);
 static long	getoctchrs(void);
-static vimlong_T	getdecchrs(void);
+static long	getdecchrs(void);
 static int	coll_get_char(void);
 static int	prog_magic_wrong(void);
 static int	cstrncmp(char_u *s1, char_u *s2, int *n);
@@ -979,7 +979,7 @@ ungetchr(void)
  * The parameter controls the maximum number of input characters. This will be
  * 2 when reading a \%x20 sequence and 4 when reading a \%u20AC sequence.
  */
-    static vimlong_T
+    static long
 gethexchrs(int maxinputlen)
 {
     long_u	nr = 0;
@@ -998,14 +998,14 @@ gethexchrs(int maxinputlen)
 
     if (i == 0)
 	return -1;
-    return nr;
+    return (long)nr;
 }
 
 /*
  * Get and return the value of the decimal string immediately after the
  * current position. Return -1 for invalid.  Consumes all digits.
  */
-    static vimlong_T
+    static long
 getdecchrs(void)
 {
     long_u	nr = 0;
@@ -1025,7 +1025,7 @@ getdecchrs(void)
 
     if (i == 0)
 	return -1;
-    return nr;
+    return (long)nr;
 }
 
 /*
@@ -1253,11 +1253,7 @@ typedef enum
 // note:
 //     submatch is available only if FEAT_EVAL is defined.
     static void
-reg_getline_common(
-    linenr_T		lnum,
-    reg_getline_flags_T	flags,
-    char_u		**line,
-    colnr_T		*length)
+reg_getline_common(linenr_T lnum, reg_getline_flags_T flags, char_u **line, colnr_T *length)
 {
     int get_line = flags & RGLF_LINE;
     int get_length = flags & RGLF_LENGTH;
@@ -1569,7 +1565,6 @@ reg_nextline(void)
  * Returns RA_FAIL, RA_NOMATCH or RA_MATCH.
  * If "bytelen" is not NULL, it is set to the byte length of the match in the
  * last line.
- * Optional: ignore case if rex.reg_ic is set.
  */
     static int
 match_with_backref(
@@ -1614,9 +1609,7 @@ match_with_backref(
 	else
 	    len = (int)reg_getline_len(clnum) - ccol;
 
-	// Use case-insensitive compare if rex.reg_ic is set
-	if ((!rex.reg_ic && cstrncmp(p + ccol, rex.input, &len) != 0)
-	    || (rex.reg_ic && MB_STRNICMP(p + ccol, rex.input, len) != 0))
+	if (cstrncmp(p + ccol, rex.input, &len) != 0)
 	    return RA_NOMATCH;  // doesn't match
 	if (bytelen != NULL)
 	    *bytelen += len;
@@ -1648,9 +1641,9 @@ re_mult_next(char *what)
 {
     if (re_multi_type(peekchr()) == MULTI_MULT)
     {
-	semsg(_(e_nfa_regexp_cannot_repeat_str), what);
-	rc_did_emsg = TRUE;
-	return FAIL;
+       semsg(_(e_nfa_regexp_cannot_repeat_str), what);
+       rc_did_emsg = TRUE;
+       return FAIL;
     }
     return OK;
 }
@@ -1729,8 +1722,7 @@ mb_decompose(int c, int *c1, int *c2, int *c3)
     else
     {
 	*c1 = c;
-	*c2 = 0;
-	*c3 = 0;
+	*c2 = *c3 = 0;
     }
 }
 
@@ -2144,12 +2136,12 @@ vim_regsub_multi(
     return result;
 }
 
-#if defined(FEAT_EVAL)
+#if defined(FEAT_EVAL) || defined(PROTO)
 // When nesting more than a couple levels it's probably a mistake.
 # define MAX_REGSUB_NESTING 4
 static char_u   *eval_result[MAX_REGSUB_NESTING] = {NULL, NULL, NULL, NULL};
 
-# if defined(EXITFREE)
+# if defined(EXITFREE) || defined(PROTO)
     void
 free_resub_eval_result(void)
 {
@@ -3025,7 +3017,7 @@ vim_regfree(regprog_T *prog)
 	prog->engine->regfree(prog);
 }
 
-#if defined(EXITFREE)
+#if defined(EXITFREE) || defined(PROTO)
     void
 free_regexp_stuff(void)
 {
@@ -3050,7 +3042,7 @@ report_re_switch(char_u *pat)
 }
 #endif
 
-#if defined(FEAT_X11)
+#if defined(FEAT_X11) || defined(PROTO)
 /*
  * Return whether "prog" is currently being executed.
  */
@@ -3137,7 +3129,7 @@ vim_regexec_string(
     return result > 0;
 }
 
-#if defined(FEAT_SPELL) || defined(FEAT_EVAL) || defined(FEAT_X11)
+#if defined(FEAT_SPELL) || defined(FEAT_EVAL) || defined(FEAT_X11) || defined(PROTO)
 /*
  * Note: "*prog" may be freed and changed.
  * Return TRUE if there is a match, FALSE if not.

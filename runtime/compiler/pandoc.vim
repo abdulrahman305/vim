@@ -1,8 +1,7 @@
 " Vim compiler file
 " Compiler:     Pandoc
 " Maintainer:   Konfekt
-" Last Change:	2024 Nov 19
-" 2025 May 15 Update the title regex for CompilerSet #17321
+" Last Change:	2024 Sep 8
 "
 " Expects output file extension, say `:make html` or `:make pdf`.
 " Passes additional arguments to pandoc, say `:make html --self-contained`.
@@ -52,12 +51,12 @@ endfunction
 
 execute 'CompilerSet makeprg=pandoc'..escape(
     \ ' --standalone'..
-    \ (s:PandocFiletype(&filetype) ==# 'markdown' && (getline(1) =~# '^%\s\+\S\+' || (search('^title:\s\+\S\+', 'cnw') > 0)) ?
+    \ (s:PandocFiletype(&filetype) ==# 'markdown' && (getline(1) =~# '^%\s\+\S\+' || (search('^title:\s+\S+', 'cnw') > 0)) ?
     \ '' : ' --metadata title=%:t:r:S')..
     \ ' '..s:PandocLang()..
     \ ' --from='..s:PandocFiletype(&filetype)..
     \ ' '..get(b:, 'pandoc_compiler_args', get(g:, 'pandoc_compiler_args', ''))..
-    \ ' --output %:r:S.$* -- %:S', ' \|"')
+    \ ' --output %:r:S.$* -- %:S', ' ')
 CompilerSet errorformat=\"%f\",\ line\ %l:\ %m
 
 let &cpo = s:keepcpo

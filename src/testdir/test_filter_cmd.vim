@@ -1,5 +1,7 @@
 " Test the :filter command modifier
 
+source check.vim
+
 func Test_filter()
   edit Xdoesnotmatch
   edit Xwillmatch

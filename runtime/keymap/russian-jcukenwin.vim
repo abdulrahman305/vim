@@ -4,7 +4,6 @@
 
 " Maintainer:   Artem Chuprina <ran@ran.pp.ru>
 " Last Changed: 2001 Jun 23
-" 2025 Mar 17 by The Vim Project (added /, #16912)
 
 " All characters are given literally, conversion to another encoding (e.g.,
 " UTF-8) should work.
@@ -86,4 +85,3 @@ $	;
 &	?
 /	.
 ?	,
-\|	/

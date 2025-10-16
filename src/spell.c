@@ -45,8 +45,8 @@
  *
  * Thanks to Olaf Seibert for providing an example implementation of this tree
  * and the compression mechanism.
- * LZ trie ideas, original link (now dead)
- *	irb.hr/hr/home/ristov/papers/RistovLZtrieRevision1.pdf
+ * LZ trie ideas:
+ *	http://www.irb.hr/hr/home/ristov/papers/RistovLZtrieRevision1.pdf
  * More papers: http://www-igm.univ-mlv.fr/~laporte/publi_en.html
  *
  * Matching involves checking the caps type: Onecap ALLCAP KeepCap.
@@ -58,9 +58,11 @@
 #define IN_SPELL_C
 #include "vim.h"
 
-#if defined(FEAT_SPELL)
+#if defined(FEAT_SPELL) || defined(PROTO)
 
-#include <time.h>
+#ifndef UNIX		// it's in os_unix.h for Unix
+# include <time.h>	// for time_t
+#endif
 
 #define REGION_ALL 0xff		// word valid in all regions
 
@@ -3138,7 +3140,7 @@ make_case_word(char_u *fword, char_u *cword, int flags)
 	STRCPY(cword, fword);
 }
 
-#if defined(FEAT_EVAL)
+#if defined(FEAT_EVAL) || defined(PROTO)
 /*
  * Soundfold a string, for soundfold().
  * Result is in allocated memory, NULL for an error.
@@ -3827,7 +3829,7 @@ spell_soundfold_wsal(slang_T *slang, char_u *inword, char_u *res)
 			    c = *ws;
 			if (strstr((char *)s, "^^") != NULL)
 			{
-			    if (c != NUL && reslen < MAXWLEN)
+			    if (c != NUL)
 				wres[reslen++] = c;
 			    mch_memmove(word, word + i + 1,
 				       sizeof(int) * (wordlen - (i + 1) + 1));
@@ -4217,7 +4219,7 @@ dump_word(
 		    ? MB_STRNICMP(p, pat, STRLEN(pat)) == 0
 		    : STRNCMP(p, pat, STRLEN(pat)) == 0)
 		&& ins_compl_add_infercase(p, (int)STRLEN(p),
-					  p_ic, NULL, *dir, FALSE, 0) == OK)
+					  p_ic, NULL, *dir, FALSE) == OK)
 	// if dir was BACKWARD then honor it just once
 	*dir = FORWARD;
 }

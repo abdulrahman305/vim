@@ -279,8 +279,7 @@ tgetstr(char *id, char **buf)
     char	*hold;
     int		i;
 
-    do
-    {
+    do {
 	tmp = _find(tmp, ":");			// For each field
 	while (*tmp == ':')			// skip empty fields
 	    tmp++;

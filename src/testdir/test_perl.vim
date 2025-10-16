@@ -1,5 +1,7 @@
 " Tests for Perl interface
 
+source check.vim
+source shared.vim
 CheckFeature perl
 
 " FIXME: RunTest don't see any error when Perl abort...
@@ -357,10 +359,7 @@ VIM::DoCommand('let s ..= "B"')
   perl << trim eof
     VIM::DoCommand('let s ..= "E"')
   eof
-  perl << trimm
-VIM::DoCommand('let s ..= "F"')
-trimm
-  call assert_equal('ABCDEF', s)
+  call assert_equal('ABCDE', s)
 endfunc
 
 func Test_perl_in_sandbox()

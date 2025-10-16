@@ -1,10 +1,11 @@
 " Test for Select-mode
 
 " This only works for Unix in a terminal
+source check.vim
 CheckNotGui
 CheckUnix
 
-source util/mouse.vim
+source mouse.vim
 
 " Test for select mode
 func Test_selectmode_basic()

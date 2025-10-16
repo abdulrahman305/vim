@@ -17,7 +17,7 @@
  * Various routines dealing with allocation and deallocation of memory.
  */
 
-#if defined(MEM_PROFILE)
+#if defined(MEM_PROFILE) || defined(PROTO)
 
 # define MEM_SIZES  8200
 static long_u mem_allocs[MEM_SIZES];
@@ -151,7 +151,7 @@ alloc(size_t size)
     return lalloc(size, TRUE);
 }
 
-#if defined(FEAT_QUICKFIX)
+#if defined(FEAT_QUICKFIX) || defined(PROTO)
 /*
  * alloc() with an ID for alloc_fail().
  */
@@ -293,7 +293,7 @@ theend:
 /*
  * lalloc() with an ID for alloc_fail().
  */
-#if defined(FEAT_SIGNS)
+#if defined(FEAT_SIGNS) || defined(PROTO)
     void *
 lalloc_id(size_t size, int message, alloc_id_T id UNUSED)
 {
@@ -305,7 +305,7 @@ lalloc_id(size_t size, int message, alloc_id_T id UNUSED)
 }
 #endif
 
-#if defined(MEM_PROFILE)
+#if defined(MEM_PROFILE) || defined(PROTO)
 /*
  * realloc() with memory profiling.
  */
@@ -350,7 +350,7 @@ do_outofmem_msg(size_t size)
 	mch_exit(123);
 }
 
-#if defined(EXITFREE)
+#if defined(EXITFREE) || defined(PROTO)
 
 /*
  * Free everything that we allocated.
@@ -645,7 +645,7 @@ ga_clear_strings(garray_T *gap)
     ga_clear(gap);
 }
 
-#if defined(FEAT_EVAL)
+#if defined(FEAT_EVAL) || defined(PROTO)
 /*
  * Copy a growing array that contains a list of strings.
  */
@@ -770,10 +770,7 @@ ga_concat_strings(garray_T *gap, char *sep)
     char_u	*p;
 
     for (i = 0; i < gap->ga_len; ++i)
-	len += (int)STRLEN(((char_u **)(gap->ga_data))[i]);
-
-    if (gap->ga_len > 1)
-	len += (gap->ga_len - 1) * sep_len;
+	len += (int)STRLEN(((char_u **)(gap->ga_data))[i]) + sep_len;
 
     s = alloc(len + 1);
     if (s == NULL)
@@ -877,7 +874,8 @@ ga_append(garray_T *gap, int c)
     return OK;
 }
 
-#if (defined(UNIX) && !defined(USE_SYSTEM)) || defined(MSWIN)
+#if (defined(UNIX) && !defined(USE_SYSTEM)) || defined(MSWIN) \
+	|| defined(PROTO)
 /*
  * Append the text in "gap" below the cursor line and clear "gap".
  */

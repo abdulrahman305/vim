@@ -119,5 +119,4 @@ endif
 
 clean:
 	$(RM) *.mo
-#	$(RM) *.pot
-	$(RM) *.orig
+	$(RM) *.pot

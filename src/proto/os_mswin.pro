@@ -1,5 +1,4 @@
 /* os_mswin.c */
-void SaveInst(HINSTANCE hInst);
 void mch_exit_g(int r);
 void mch_early_init(void);
 int mch_input_isatty(void);
@@ -11,8 +10,8 @@ int mch_FullName(char_u *fname, char_u *buf, int len, int force);
 int mch_isFullName(char_u *fname);
 void slash_adjust(char_u *p);
 char_u *resolve_appexeclink(char_u *fname);
-int vim_lstat(const char *name, stat_T *stp);
 int vim_stat(const char *name, stat_T *stp);
+int vim_lstat(const char *name, stat_T *stp);
 void mch_settmode(tmode_T tmode);
 int mch_get_shellsize(void);
 void mch_set_shellsize(void);
@@ -22,11 +21,9 @@ void display_errors(void);
 int mch_has_exp_wildcard(char_u *p);
 int mch_has_wildcard(char_u *p);
 int mch_chdir(char *path);
-int mch_char_avail(void);
-int mch_check_messages(void);
 int mch_icon_load(HANDLE *iconp);
-int mch_get_random(char_u *buf, int len);
 int mch_libcall(char_u *libname, char_u *funcname, char_u *argstring, int argint, char_u **string_result, int *number_result);
+int mch_get_random(char_u *buf, int len);
 void DumpPutS(const char *psz);
 int mch_get_winpos(int *x, int *y);
 void mch_set_winpos(int x, int y);

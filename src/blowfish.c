@@ -7,8 +7,7 @@
  * See README.txt for an overview of the Vim source code.
  *
  * Blowfish encryption for Vim; in Blowfish cipher feedback mode.
- * Contributed by Mohsin Ahmed
- * Original link (www.cs.albany.edu/~mosh) is no longer available.
+ * Contributed by Mohsin Ahmed, http://www.cs.albany.edu/~mosh
  * Based on http://www.schneier.com/blowfish.html by Bruce Schneier.
  *
  * There are two variants:
@@ -22,7 +21,7 @@
 
 #include "vim.h"
 
-#if defined(FEAT_CRYPT)
+#if defined(FEAT_CRYPT) || defined(PROTO)
 
 #define BF_BLOCK    8
 #define BF_BLOCK_MASK 7

@@ -1,6 +1,8 @@
 " Tests for setbufline(), getbufline(), appendbufline(), deletebufline()
 
-source util/screendump.vim
+source shared.vim
+source screendump.vim
+source check.vim
 
 func Test_setbufline_getbufline()
   " similar to Test_set_get_bufline()

@@ -9,12 +9,10 @@
 #endif
 #endif
 
-#include <decc$types.h>             // Required early for large-file support
-
 #define CASE_INSENSITIVE_FILENAME   // Open VMS is case insensitive
-#define SPACE_IN_FILENAME           // There could be space between user and passwd
+#define SPACE_IN_FILENAME	    // There could be space between user and passwd
 #define FNAME_ILLEGAL "|*#?%"       // Illegal characters in a file name
-#define BINARY_FILE_IO              // Use binary fileio
+#define BINARY_FILE_IO		    // Use binary fileio
 #define USE_GETCWD
 #define USE_SYSTEM
 #define XPMATTRIBUTES_TYPE XpmAttributes
@@ -148,15 +146,6 @@
 #define FEAT_IPV6
 #define FEAT_XTERM_SAVE
 
-#define VIM_SIZEOF_INT  4
-#define VIM_SIZEOF_LONG 4
-
-#if __USE_OFF64_T
-# define SIZEOF_OFF_T 8
-#else
-# define SIZEOF_OFF_T 4
-#endif
-
 // Hardware specific
 #if defined(__VAX) || defined(VAX)
 #undef  HAVE_GETTIMEOFDAY
@@ -167,31 +156,36 @@
 #undef  HAVE_ISNAN
 #undef  HAVE_XOS_R_H
 #define HAVE_NO_LONG_LONG
+#define VIM_SIZEOF_INT  4
+#define VIM_SIZEOF_LONG 4
 #define LONG_LONG_MIN  (-2147483647-1)
 #define LONG_LONG_MAX  (2147483647)
 #define ULONG_LONG_MAX (4294967295U)
 
 #else // ALPHA, IA64, X86_64
-#define HAVE_FSEEKO             /* Use off_t. */
 #define HAVE_GETTIMEOFDAY
 #define HAVE_USLEEP
 #define HAVE_STRCASECMP
 #define HAVE_STRINGS_H
 #define HAVE_SIGSETJMP
+#define HAVE_ISNAN
 #undef  HAVE_XOS_R_H
 #undef  HAVE_NO_LONG_LONG
+#define VIM_SIZEOF_INT  4
+#define VIM_SIZEOF_LONG 8
 #define LONG_LONG_MIN  (-9223372036854775807-1)
 #define LONG_LONG_MAX  (9223372036854775807)
 #define ULONG_LONG_MAX (18446744073709551615U)
 
-#if defined(__DECC) && (__CRTL_VER >= 80500000) && (__STDC_VERSION__ >= 199901L) /* C99 */
-#define HAVE_ISINF
-#define HAVE_ISNAN
+#if defined(__x86_64) || defined(__x86_64__)
+#if !defined(X86_64)
+#define X86_64
 #endif
-
+#define HAVE_ISNAN
+#define HAVE_ISINF
 #define HAVE_XOS_R_H
-
-#endif /* VAX [else] */
+#endif
+#endif
 
 // Compiler specific
 #if defined(VAXC) || defined(__VAXC)
@@ -224,7 +218,7 @@
 
 // GUI support defines
 #if defined(FEAT_GUI_MOTIF) || defined(FEAT_GUI_GTK)
-#define X_INCLUDE_GRP_H  // To use getgrgid
+#define X_INCLUDE_GRP_H		// To use getgrgid
 #define XUSE_MTSAFE_API
 #define HAVE_X11
 #define WANT_X11

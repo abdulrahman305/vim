@@ -1,5 +1,7 @@
 " Tests for the getbufinfo(), getwininfo() and gettabinfo() functions
 
+source check.vim
+
 func Test_getbufwintabinfo()
   CheckFeature quickfix
 
@@ -111,18 +113,6 @@ func Test_getbufwintabinfo()
   call assert_true(winlist[2].quickfix)
   call assert_false(winlist[2].loclist)
   wincmd t | only
-endfunc
-
-function Test_get_wininfo_leftcol()
-  set nowrap
-  set winwidth=10
-  vsp
-  call setline(1, ['abcdefghijklmnopqrstuvwxyz'])
-  norm! 5zl
-  call assert_equal(5, getwininfo()[0].leftcol)
-  bwipe!
-  set wrap&
-  set winwidth&
 endfunc
 
 function Test_get_buf_options()

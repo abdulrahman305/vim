@@ -674,7 +674,7 @@ manage_centered(Widget dialog_child)
     XtVaSetValues(shell, XmNmappedWhenManaged, mappedWhenManaged, NULL);
 }
 
-#if defined(FEAT_MENU) || defined(FEAT_GUI_DIALOG)
+#if defined(FEAT_MENU) || defined(FEAT_GUI_DIALOG) || defined(PROTO)
 
 /*
  * Encapsulate the way an XmFontList is created.
@@ -699,7 +699,7 @@ gui_motif_create_fontlist(XFontStruct *font)
     return font_list;
 }
 
-# if ((XmVersion > 1001) && defined(FEAT_XFONTSET))
+# if ((XmVersion > 1001) && defined(FEAT_XFONTSET)) || defined(PROTO)
     XmFontList
 gui_motif_fontset2fontlist(XFontSet *fontset)
 {
@@ -719,7 +719,7 @@ gui_motif_fontset2fontlist(XFontSet *fontset)
 
 #endif
 
-#if defined(FEAT_MENU)
+#if defined(FEAT_MENU) || defined(PROTO)
 /*
  * Menu stuff.
  */
@@ -1363,7 +1363,7 @@ gui_mch_add_menu_item(vimmenu_T *menu, int idx)
     }
 }
 
-#if (XmVersion <= 1002)
+#if (XmVersion <= 1002) || defined(PROTO)
 /*
  * This function will destroy/create the popup menus dynamically,
  * according to the value of 'mousemodel'.
@@ -1377,7 +1377,7 @@ gui_motif_update_mousemodel(vimmenu_T *menu)
 
     // When GUI hasn't started the menus have not been created.
     if (!gui.in_use)
-	return;
+      return;
 
     while (menu)
     {
@@ -1450,7 +1450,7 @@ gui_mch_new_menu_font(void)
     ui_new_shellsize();
 }
 
-#if defined(FEAT_BEVAL_GUI)
+#if defined(FEAT_BEVAL_GUI) || defined(PROTO)
     void
 gui_mch_new_tooltip_font(void)
 {
@@ -2097,7 +2097,7 @@ set_fontlist(Widget id)
 }
 #endif
 
-#if defined(FEAT_BROWSE)
+#if defined(FEAT_BROWSE) || defined(PROTO)
 
 /*
  * file selector related stuff
@@ -2353,7 +2353,7 @@ DialogAcceptCB(
 
 #endif // FEAT_BROWSE
 
-#if defined(FEAT_GUI_DIALOG)
+#if defined(FEAT_GUI_DIALOG) || defined(PROTO)
 
 static int	dialogStatus;
 
@@ -2832,7 +2832,7 @@ gui_mch_dialog(
 }
 #endif // FEAT_GUI_DIALOG
 
-#if defined(FEAT_TOOLBAR)
+#if defined(FEAT_TOOLBAR) || defined(PROTO)
     void
 gui_mch_show_toolbar(int showit)
 {
@@ -3058,7 +3058,7 @@ motif_get_toolbar_colors(
 }
 #endif
 
-#if defined(FEAT_GUI_TABLINE)
+#if defined(FEAT_GUI_TABLINE) || defined(PROTO)
 /*
  * Show or hide the tabline.
  */

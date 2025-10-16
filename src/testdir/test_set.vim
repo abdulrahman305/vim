@@ -1,5 +1,7 @@
 " Tests for the :set command
 
+source check.vim
+
 function Test_set_backslash()
   let isk_save = &isk
 

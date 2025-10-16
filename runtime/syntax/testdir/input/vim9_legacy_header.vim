@@ -1,6 +1,3 @@
-" Vim9 legacy script header
-
-
 " comment
 
 if !has('vim9script')
@@ -17,4 +14,3 @@ vim9script noclear
 
  # string only recognised with leading char
  "useless string"
-

@@ -13,7 +13,7 @@
 
 #include "vim.h"
 
-#if defined(FEAT_PROP_POPUP)
+#if defined(FEAT_PROP_POPUP) || defined(PROTO)
 
 /*
  * In a hashtable item "hi_key" points to "pt_name" in a proptype_T.
@@ -1439,7 +1439,7 @@ get_prop_ids_from_list(list_T *l, int *num_ids)
 {
     int		*prop_ids;
     listitem_T	*li;
-    int		i = 0;
+    int		i;
     int		id;
     int		error;
 
@@ -1449,7 +1449,7 @@ get_prop_ids_from_list(list_T *l, int *num_ids)
     if (prop_ids == NULL)
 	return NULL;
 
-    CHECK_LIST_MATERIALIZE(l);
+    i = 0;
     FOR_ALL_LIST_ITEMS(l, li)
     {
 	error = FALSE;
@@ -2130,7 +2130,7 @@ clear_ht_prop_types(hashtab_T *ht)
     vim_free(ht);
 }
 
-#if defined(EXITFREE)
+#if defined(EXITFREE) || defined(PROTO)
 /*
  * Free all global property types.
  */

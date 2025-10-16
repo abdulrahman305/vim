@@ -1,6 +1,7 @@
 " Tests for tagjump (tags and special searches)
 
-source util/screendump.vim
+source check.vim
+source screendump.vim
 
 " SEGV occurs in older versions.  (At least 7.4.1748 or older)
 func Test_ptag_with_notagstack()
@@ -750,15 +751,15 @@ func Test_tag_guess()
   call writefile(code, 'Xfoo', 'D')
 
   let v:statusmsg = ''
-  silent ta func1
+  ta func1
   call assert_match('E435:', v:statusmsg)
   call assert_equal(2, line('.'))
   let v:statusmsg = ''
-  silent ta func2
+  ta func2
   call assert_match('E435:', v:statusmsg)
   call assert_equal(4, line('.'))
   let v:statusmsg = ''
-  silent ta func3
+  ta func3
   call assert_match('E435:', v:statusmsg)
   call assert_equal(5, line('.'))
   call assert_fails('ta func4', 'E434:')
@@ -1624,50 +1625,12 @@ func Test_tag_guess_short()
 
   let v:statusmsg = ''
   let @/ = ''
-  silent ta y
+  ta y
   call assert_match('E435:', v:statusmsg)
   call assert_equal(2, line('.'))
   call assert_match('<y', @/)
 
   set tags& cpoptions-=t
-endfunc
-
-func Test_tag_excmd_with_nostartofline()
-  call writefile(["!_TAG_FILE_ENCODING\tutf-8\t//",
-        \ "f\tXfile\tascii"],
-        \ 'Xtags', 'D')
-  call writefile(['f', 'foobar'], 'Xfile', 'D')
-
-  set nostartofline
-  new Xfile
-  setlocal tags=Xtags
-  normal! G$
-  " This used to cause heap-buffer-overflow
-  tag f
-
-  bwipe!
-  set startofline&
-endfunc
-
-func Test_tag_excmd_with_number_vim9script()
-  call writefile(["1#1\tXfile\t2;\"\ti"], 'Xtags', 'D')
-  call writefile(['f', 'foobar'], 'Xfile', 'D')
-  let list =<< trim END
-  vim9script
-  command! Tag call Tag()
-  def Tag(): void
-    exe "tag 1#1"
-  enddef
-  END
-  call writefile(list, 'Xtags.vim', 'D')
-
-  setlocal tags=Xtags
-  so Xtags.vim
-  :Tag
-  call assert_equal('Xfile', bufname('%'))
-  call assert_equal(2, line('.'))
-
-  bwipe!
 endfunc
 
 " vim: shiftwidth=2 sts=2 expandtab

@@ -1,13 +1,15 @@
 " vim compiler file
 " Compiler:	cppcheck (C++ static checker)
 " Maintainer:   Vincent B. (twinside@free.fr)
-" Last Change:  2024 Nov 19 by @Konfekt
+" Last Change:  2024 oct 17 by @Konfekt
 
-if exists("current_compiler") | finish | endif
+if exists("cppcheck")
+  finish
+endif
 let current_compiler = "cppcheck"
 
 let s:cpo_save = &cpo
-set cpo&vim
+set cpo-=C
 
 let s:slash = has('win32')? '\' : '/'
 
@@ -25,7 +27,7 @@ let &l:makeprg = 'cppcheck --quiet'
       \	          (filereadable('compile_commands.json') ? '--project=compile_commands.json' :
       \           (!empty(glob('*'..s:slash..'compile_commands.json', 1, 1)) ? '--project='..glob('*'..s:slash..'compile_commands.json', 1, 1)[0] :
       \	          (empty(&path) ? '' : '-I')..join(map(filter(split(&path, ','), 'isdirectory(v:val)'),'shellescape(v:val)'), ' -I')))))
-exe 'CompilerSet makeprg='..escape(&l:makeprg, ' \|"')
+silent CompilerSet makeprg
 
 CompilerSet errorformat=
   \%f:%l:%c:\ %tarning:\ %m,

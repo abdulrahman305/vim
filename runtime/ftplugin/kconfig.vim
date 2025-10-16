@@ -2,7 +2,7 @@
 " Vim syntax file
 " Maintainer:		Christian Brabandt <cb@256bit.org>
 " Previous Maintainer:	Nikolai Weibull <now@bitwi.se>
-" Latest Revision:	2025 Jan 20
+" Latest Revision:	2024-04-12
 " License:		Vim (see :h license)
 " Repository:		https://github.com/chrisbra/vim-kconfig
 
@@ -19,5 +19,4 @@ setlocal comments=:# commentstring=#\ %s formatoptions-=t formatoptions+=croql
 " For matchit.vim
 if exists("loaded_matchit")
   let b:match_words = '^\<menu\>:\<endmenu\>,^\<if\>:\<endif\>,^\<choice\>:\<endchoice\>'
-  let b:undo_ftplugin .= "| unlet! b:match_words"
 endif

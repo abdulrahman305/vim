@@ -239,9 +239,15 @@
 
 #include "vim.h"
 
-#if defined(FEAT_SPELL)
+#if defined(FEAT_SPELL) || defined(PROTO)
 
-#include <time.h>	// for time_t
+#ifndef UNIX		// it's in os_unix.h for Unix
+# include <time.h>	// for time_t
+#endif
+
+#ifndef UNIX		// it's in os_unix.h for Unix
+# include <time.h>	// for time_t
+#endif
 
 // Special byte values for <byte>.  Some are only used in the tree for
 // postponed prefixes, some only in the other trees.  This is a bit messy...

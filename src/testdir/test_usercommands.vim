@@ -1,8 +1,9 @@
 " Tests for user defined commands
 
-import './util/vim9.vim' as v9
+import './vim9.vim' as v9
 
-source util/screendump.vim
+source check.vim
+source screendump.vim
 
 " Test for <mods> in user defined commands
 function Test_cmdmods()
@@ -325,13 +326,13 @@ func Test_CmdErrors()
       vim9script
       com! -complete=file DoCmd :
   END
-  call v9.CheckScriptFailure(lines, 'E1208:', 2)
+  call v9.CheckScriptFailure(lines, 'E1208', 2)
 
   let lines =<< trim END
       vim9script
       com! -nargs=0 -complete=file DoCmd :
   END
-  call v9.CheckScriptFailure(lines, 'E1208:', 2)
+  call v9.CheckScriptFailure(lines, 'E1208', 2)
 
   com! -nargs=0 DoCmd :
   call assert_fails('DoCmd x', 'E488:')
@@ -424,10 +425,6 @@ func Test_CmdCompletion()
   com! -nargs=1 -complete=behave DoCmd :
   call feedkeys(":DoCmd \<C-A>\<C-B>\"\<CR>", 'tx')
   call assert_equal('"DoCmd mswin xterm', @:)
-
-  com! -nargs=1 -complete=retab DoCmd :
-  call feedkeys(":DoCmd \<C-A>\<C-B>\"\<CR>", 'tx')
-  call assert_equal('"DoCmd -indentonly', @:)
 
   " Test for file name completion
   com! -nargs=1 -complete=file DoCmd :
@@ -968,24 +965,5 @@ func Test_comclear_while_listing()
   call StopVimInTerminal(buf)
 endfunc
 
-" Test for listing user commands.
-func Test_command_list_0()
-  " Check space padding of attribute and name in command list
-  set vbs&
-  command! ShortCommand echo "ShortCommand"
-  command! VeryMuchLongerCommand echo "VeryMuchLongerCommand"
-
-  redi @"> | com | redi END
-  pu
-
-  let bl = matchbufline(bufnr('%'), "^    ShortCommand      0", 1, '$')
-  call assert_false(bl == [])
-  let bl = matchbufline(bufnr('%'), "^    VeryMuchLongerCommand 0", 1, '$')
-  call assert_false(bl == [])
-
-  bwipe!
-  delcommand ShortCommand
-  delcommand VeryMuchLongerCommand
-endfunc
 
 " vim: shiftwidth=2 sts=2 expandtab

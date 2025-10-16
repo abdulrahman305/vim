@@ -478,7 +478,7 @@ regcomp_start(
     regsize = 0L;
     reg_toolong = FALSE;
     regflags = 0;
-#if defined(FEAT_SYN_HL)
+#if defined(FEAT_SYN_HL) || defined(PROTO)
     had_eol = FALSE;
 #endif
 }
@@ -1261,7 +1261,7 @@ regatom(int *flagp)
 
       case Magic('$'):
 	ret = regnode(EOL);
-#if defined(FEAT_SYN_HL)
+#if defined(FEAT_SYN_HL) || defined(PROTO)
 	had_eol = TRUE;
 #endif
 	break;
@@ -1284,7 +1284,7 @@ regatom(int *flagp)
 	if (c == '$')		// "\_$" is end-of-line
 	{
 	    ret = regnode(EOL);
-#if defined(FEAT_SYN_HL)
+#if defined(FEAT_SYN_HL) || defined(PROTO)
 	    had_eol = TRUE;
 #endif
 	    break;
@@ -1589,7 +1589,7 @@ regatom(int *flagp)
 		case 'u':   // %uabcd hex 4
 		case 'U':   // %U1234abcd hex 8
 			  {
-			      vimlong_T i;
+			      long i;
 
 			      switch (c)
 			      {
@@ -1612,7 +1612,7 @@ regatom(int *flagp)
 			      if (i == 0)
 				  regc(0x0a);
 			      else
-				  regmbc((int)i);
+				  regmbc(i);
 			      regc(NUL);
 			      *flagp |= HASWIDTH;
 			      break;
@@ -1831,10 +1831,6 @@ collection:
 				|| *regparse == 'U')
 			{
 			    startc = coll_get_char();
-			    // max UTF-8 Codepoint is U+10FFFF,
-			    // but allow values until INT_MAX
-			    if (startc == INT_MAX)
-				EMSG_RET_NULL(_(e_unicode_val_too_large));
 			    if (startc == 0)
 				regc(0x0a);
 			    else
@@ -2135,7 +2131,7 @@ regpiece(int *flagp)
 		int	lop = END;
 		long	nr;
 
-		nr = (long)getdecchrs();
+		nr = getdecchrs();
 		switch (no_Magic(getchr()))
 		{
 		    case '=': lop = MATCH; break;		  // \@=
@@ -2595,7 +2591,7 @@ bt_regcomp(char_u *expr, int re_flags)
     return (regprog_T *)r;
 }
 
-#if defined(FEAT_SYN_HL)
+#if defined(FEAT_SYN_HL) || defined(PROTO)
 /*
  * Check if during the previous call to vim_regcomp the EOL item "$" has been
  * found.  This is messy, but it works fine.
@@ -2614,7 +2610,7 @@ vim_regcomp_had_eol(void)
     static int
 coll_get_char(void)
 {
-    vimlong_T	nr = -1;
+    long	nr = -1;
 
     switch (*regparse++)
     {
@@ -2624,15 +2620,13 @@ coll_get_char(void)
 	case 'u': nr = gethexchrs(4); break;
 	case 'U': nr = gethexchrs(8); break;
     }
-    if (nr < 0)
+    if (nr < 0 || nr > INT_MAX)
     {
 	// If getting the number fails be backwards compatible: the character
 	// is a backslash.
 	--regparse;
 	nr = '\\';
     }
-    if (nr > INT_MAX)
-	nr = INT_MAX;
     return nr;
 }
 

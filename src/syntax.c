@@ -13,7 +13,7 @@
 
 #include "vim.h"
 
-#if defined(FEAT_SYN_HL)
+#if defined(FEAT_SYN_HL) || defined(PROTO)
 
 // different types of offsets that are possible
 #define SPO_MS_OFF	0	// match  start offset
@@ -299,7 +299,7 @@ static void update_si_attr(int idx);
 static void check_keepend(void);
 static void update_si_end(stateitem_T *sip, int startcol, int force);
 static short *copy_id_list(short *list);
-static int in_id_list(stateitem_T *item, short *cont_list, struct sp_syn *ssp, int flags);
+static int in_id_list(stateitem_T *item, short *cont_list, struct sp_syn *ssp, int contained);
 static int push_current_state(int idx);
 static void pop_current_state(void);
 #ifdef FEAT_PROFILE
@@ -1943,7 +1943,7 @@ syn_current_attr(
 					? !(spp->sp_flags & HL_CONTAINED)
 					: in_id_list(cur_si,
 					    cur_si->si_cont_list, &spp->sp_syn,
-					    spp->sp_flags))))
+					    spp->sp_flags & HL_CONTAINED))))
 			{
 			    int r;
 
@@ -3269,7 +3269,7 @@ check_keyword_id(
 			: (cur_si == NULL
 			    ? !(kp->flags & HL_CONTAINED)
 			    : in_id_list(cur_si, cur_si->si_cont_list,
-				      &kp->k_syn, kp->flags)))
+				      &kp->k_syn, kp->flags & HL_CONTAINED)))
 		{
 		    *endcolp = startcol + kwlen;
 		    *flagsp = kp->flags;
@@ -4066,7 +4066,7 @@ syn_list_flags(keyvalue_T *nlist, int nr_entries, int flags, int attr)
     for (i = 0; i < nr_entries; ++i)
 	if (flags & nlist[i].key)
 	{
-	    msg_puts_attr((char *)nlist[i].value.string, attr);
+	    msg_puts_attr(nlist[i].value, attr);
 	    msg_putchar(' ');
 	}
 }
@@ -4681,7 +4681,7 @@ syn_incl_toplevel(int id, int *flagsp)
 {
     if ((*flagsp & HL_CONTAINED) || curwin->w_s->b_syn_topgrp == 0)
 	return;
-    *flagsp |= HL_CONTAINED | HL_INCLUDED_TOPLEVEL;
+    *flagsp |= HL_CONTAINED;
     if (curwin->w_s->b_syn_topgrp >= SYNID_CLUSTER)
     {
 	// We have to alloc this, because syn_combine_list() will free it.
@@ -5969,12 +5969,17 @@ get_id_list(
 		    break;
 		}
 		if (name[1] == 'A')
-		    id = SYNID_ALLBUT;
+		    id = SYNID_ALLBUT + current_syn_inc_tag;
 		else if (name[1] == 'T')
-		    id = SYNID_TOP;
+		{
+		    if (curwin->w_s->b_syn_topgrp >= SYNID_CLUSTER)
+			id = curwin->w_s->b_syn_topgrp;
+		    else
+			id = SYNID_TOP + current_syn_inc_tag;
+		}
 		else
-		    id = SYNID_CONTAINED;
-		id += current_syn_inc_tag;
+		    id = SYNID_CONTAINED + current_syn_inc_tag;
+
 	    }
 	    else if (name[1] == '@')
 	    {
@@ -6122,7 +6127,7 @@ in_id_list(
     stateitem_T	*cur_si,	// current item or NULL
     short	*list,		// id list
     struct sp_syn *ssp,		// group id and ":syn include" tag of group
-    int		flags)		// group flags
+    int		contained)	// group id is contained
 {
     int		retval;
     short	*scl_list;
@@ -6130,7 +6135,6 @@ in_id_list(
     short	id = ssp->id;
     static int	depth = 0;
     int		r;
-    int		toplevel;
 
     // If ssp has a "containedin" list and "cur_si" is in it, return TRUE.
     if (cur_si != NULL && ssp->cont_in_list != NULL
@@ -6144,7 +6148,7 @@ in_id_list(
 	// cur_si->si_idx is -1 for keywords, these never contain anything.
 	if (cur_si->si_idx >= 0 && in_id_list(NULL, ssp->cont_in_list,
 		&(SYN_ITEMS(syn_block)[cur_si->si_idx].sp_syn),
-		  SYN_ITEMS(syn_block)[cur_si->si_idx].sp_flags))
+		  SYN_ITEMS(syn_block)[cur_si->si_idx].sp_flags & HL_CONTAINED))
 	    return TRUE;
     }
 
@@ -6156,14 +6160,7 @@ in_id_list(
      * inside anything.  Only allow not-contained groups.
      */
     if (list == ID_LIST_ALL)
-	return !(flags & HL_CONTAINED);
-
-    /*
-     * Is this top-level (i.e. not 'contained') in the file it was declared in?
-     * For included files, this is different from HL_CONTAINED, which is set
-     * unconditionally.
-     */
-    toplevel = !(flags & HL_CONTAINED) || (flags & HL_INCLUDED_TOPLEVEL);
+	return !contained;
 
     /*
      * If the first item is "ALLBUT", return TRUE if "id" is NOT in the
@@ -6182,13 +6179,13 @@ in_id_list(
 	else if (item < SYNID_CONTAINED)
 	{
 	    // TOP: accept all not-contained groups in the same file
-	    if (item - SYNID_TOP != ssp->inc_tag || !toplevel)
+	    if (item - SYNID_TOP != ssp->inc_tag || contained)
 		return FALSE;
 	}
 	else
 	{
 	    // CONTAINED: accept all contained groups in the same file
-	    if (item - SYNID_CONTAINED != ssp->inc_tag || toplevel)
+	    if (item - SYNID_CONTAINED != ssp->inc_tag || !contained)
 		return FALSE;
 	}
 	item = *++list;
@@ -6212,7 +6209,7 @@ in_id_list(
 	    if (scl_list != NULL && depth < 30)
 	    {
 		++depth;
-		r = in_id_list(NULL, scl_list, ssp, flags);
+		r = in_id_list(NULL, scl_list, ssp, contained);
 		--depth;
 		if (r)
 		    return retval;
@@ -6372,7 +6369,7 @@ reset_expand_highlight(void)
 }
 
 /*
- * Handle command line completion for :match and :echohl command: Add "NONE"
+ * Handle command line completion for :match and :echohl command: Add "None"
  * as highlight group.
  */
     void
@@ -6511,7 +6508,7 @@ syn_get_id(
     return (trans ? current_trans_id : current_id);
 }
 
-#if defined(FEAT_CONCEAL)
+#if defined(FEAT_CONCEAL) || defined(PROTO)
 /*
  * Get extra information about the syntax item.  Must be called right after
  * get_syntax_attr().
@@ -6535,7 +6532,7 @@ syn_get_sub_char(void)
 }
 #endif
 
-#if defined(FEAT_EVAL)
+#if defined(FEAT_EVAL) || defined(PROTO)
 /*
  * Return the syntax ID at position "i" in the current stack.
  * The caller must have called syn_get_id() before to fill the stack.
@@ -6556,7 +6553,7 @@ syn_get_stack_item(int i)
 }
 #endif
 
-#if defined(FEAT_FOLDING)
+#if defined(FEAT_FOLDING) || defined(PROTO)
     static int
 syn_cur_foldlevel(void)
 {
@@ -6619,7 +6616,7 @@ syn_get_foldlevel(win_T *wp, long lnum)
 }
 #endif
 
-#if defined(FEAT_PROFILE)
+#if defined(FEAT_PROFILE) || defined(PROTO)
 /*
  * ":syntime".
  */

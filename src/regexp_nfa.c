@@ -1321,7 +1321,7 @@ nfa_regatom(void)
 
 	case Magic('$'):
 	    EMIT(NFA_EOL);
-#if defined(FEAT_SYN_HL)
+#if defined(FEAT_SYN_HL) || defined(PROTO)
 	    had_eol = TRUE;
 #endif
 	    break;
@@ -1347,7 +1347,7 @@ nfa_regatom(void)
 	    if (c == '$')	// "\_$" is end-of-line
 	    {
 		EMIT(NFA_EOL);
-#if defined(FEAT_SYN_HL)
+#if defined(FEAT_SYN_HL) || defined(PROTO)
 		had_eol = TRUE;
 #endif
 		break;
@@ -1560,7 +1560,7 @@ nfa_regatom(void)
 		case 'u':   // %uabcd hex 4
 		case 'U':   // %U1234abcd hex 8
 		    {
-			vimlong_T nr;
+			long nr;
 
 			switch (c)
 			{
@@ -1577,7 +1577,7 @@ nfa_regatom(void)
 						       reg_magic == MAGIC_ALL);
 			// A NUL is stored in the text as NL
 			// TODO: what if a composing character follows?
-			EMIT(nr == 0 ? 0x0a : (long)nr);
+			EMIT(nr == 0 ? 0x0a : nr);
 		    }
 		    break;
 
@@ -1953,10 +1953,6 @@ collection:
 			    {
 				// TODO(RE) This needs more testing
 				startc = coll_get_char();
-				// max UTF-8 Codepoint is U+10FFFF,
-				// but allow values until INT_MAX
-				if (startc == INT_MAX)
-				    EMSG_RET_FAIL(_(e_unicode_val_too_large));
 				got_coll_char = TRUE;
 				MB_PTR_BACK(old_regparse, regparse);
 			    }
@@ -2222,7 +2218,7 @@ nfa_regpiece(void)
 	    break;
 
 	case Magic('@'):
-	    c2 = (long)getdecchrs();
+	    c2 = getdecchrs();
 	    op = no_Magic(getchr());
 	    i = 0;
 	    switch(op)

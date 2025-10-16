@@ -1,4 +1,4 @@
-/* manually generated from if_ole.cpp */
+/* if_ole.cpp */
 void InitOLE(int* pbDoRestart);
 void UninitOLE(void);
 void RegisterMe(int silent);

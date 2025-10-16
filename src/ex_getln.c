@@ -13,6 +13,10 @@
 
 #include "vim.h"
 
+#ifndef MAX
+# define MAX(x,y) ((x) > (y) ? (x) : (y))
+#endif
+
 // Return value when handling keys in command-line mode.
 #define CMDLINE_NOT_CHANGED	1
 #define CMDLINE_CHANGED		2
@@ -103,7 +107,7 @@ empty_pattern_magic(char_u *p, size_t len, magic_T magic_val)
     // remove trailing \v and the like
     while (len >= 2 && p[len - 2] == '\\'
 			&& vim_strchr((char_u *)"mMvVcCZ", p[len - 1]) != NULL)
-	len -= 2;
+       len -= 2;
 
     // true, if the pattern is empty, or the pattern ends with \| and magic is
     // set (or it ends with '|' and very magic is set)
@@ -204,144 +208,6 @@ set_search_match(pos_T *t)
 }
 
 /*
- * Parses the :[range]s/foo like commands and returns details needed for
- * incsearch and wildmenu completion.
- * Returns TRUE if pattern is valid.
- * Sets skiplen, patlen, search_first_line, and search_last_line.
- */
-    int
-parse_pattern_and_range(
-	pos_T	*incsearch_start,
-	int	*search_delim,
-	int	*skiplen,
-	int	*patlen)
-{
-    char_u	*cmd, *p, *end;
-    cmdmod_T	dummy_cmdmod;
-    exarg_T	ea;
-    pos_T	save_cursor;
-    int		delim_optional = FALSE;
-    int		delim;
-    int		use_last_pat;
-    magic_T     magic = 0;
-    char	*dummy;
-
-    *skiplen = 0;
-    *patlen = ccline.cmdlen;
-
-    // Default range
-    search_first_line = 0;
-    search_last_line = MAXLNUM;
-
-    CLEAR_FIELD(ea);
-    ea.line1 = 1;
-    ea.line2 = 1;
-    ea.cmd = ccline.cmdbuff;
-    ea.addr_type = ADDR_LINES;
-
-    // Skip over command modifiers
-    parse_command_modifiers(&ea, &dummy, &dummy_cmdmod, TRUE);
-
-    // Skip over the range to find the command.
-    cmd = skip_range(ea.cmd, TRUE, NULL);
-
-    if (vim_strchr((char_u *)"sgvl", *cmd) == NULL)
-	return FALSE;
-
-    // Skip over command name to find pattern separator
-    for (p = cmd; ASCII_ISALPHA(*p); ++p)
-	;
-    if (*skipwhite(p) == NUL)
-	return FALSE;
-
-    if (STRNCMP(cmd, "substitute", p - cmd) == 0
-	    || STRNCMP(cmd, "smagic", p - cmd) == 0
-	    || STRNCMP(cmd, "snomagic", MAX(p - cmd, 3)) == 0
-	    || STRNCMP(cmd, "vglobal", p - cmd) == 0)
-    {
-	if (*cmd == 's' && cmd[1] == 'm')
-	    magic_overruled = OPTION_MAGIC_ON;
-	else if (*cmd == 's' && cmd[1] == 'n')
-	    magic_overruled = OPTION_MAGIC_OFF;
-    }
-    else if (STRNCMP(cmd, "sort", MAX(p - cmd, 3)) == 0
-	    || STRNCMP(cmd, "uniq", MAX(p - cmd, 3)) == 0)
-    {
-	// skip over ! and flags
-	if (*p == '!')
-	    p = skipwhite(p + 1);
-	while (ASCII_ISALPHA(*(p = skipwhite(p))))
-	    ++p;
-	if (*p == NUL)
-	    return FALSE;
-    }
-    else if (STRNCMP(cmd, "vimgrep", MAX(p - cmd, 3)) == 0
-	    || STRNCMP(cmd, "vimgrepadd", MAX(p - cmd, 8)) == 0
-	    || STRNCMP(cmd, "lvimgrep", MAX(p - cmd, 2)) == 0
-	    || STRNCMP(cmd, "lvimgrepadd", MAX(p - cmd, 9)) == 0
-	    || STRNCMP(cmd, "global", p - cmd) == 0)
-    {
-	// skip optional "!"
-	if (*p == '!')
-	{
-	    p++;
-	    if (*skipwhite(p) == NUL)
-		return FALSE;
-	}
-	if (*cmd != 'g')
-	    delim_optional = TRUE;
-    }
-    else
-	return FALSE;
-
-    p = skipwhite(p);
-    delim = (delim_optional && vim_isIDc(*p)) ? ' ' : *p++;
-    *search_delim = delim;
-
-    end = skip_regexp_ex(p, delim, magic_isset(), NULL, NULL, &magic);
-    use_last_pat = end == p && *end == delim;
-
-    if (end == p && !use_last_pat)
-	return FALSE;
-
-    // Skip if the pattern matches everything (e.g., for 'hlsearch')
-    if (!use_last_pat)
-    {
-	char c = *end;
-	int empty;
-
-	*end = NUL;
-	empty = empty_pattern_magic(p, (size_t)(end - p), magic);
-	*end = c;
-	if (empty)
-	    return FALSE;
-    }
-
-    // Found a non-empty pattern or //
-    *skiplen = (int)(p - ccline.cmdbuff);
-    *patlen = (int)(end - p);
-
-    // Parse the address range
-    save_cursor = curwin->w_cursor;
-    curwin->w_cursor = *incsearch_start;
-
-    parse_cmd_address(&ea, &dummy, TRUE);
-
-    if (ea.addr_count > 0)
-    {
-	int reverse_match = ea.line2 < ea.line1;
-	search_first_line = reverse_match ? ea.line2 : ea.line1;
-	search_last_line = reverse_match ? ea.line1 : ea.line2;
-    }
-    else if (cmd[0] == 's' && cmd[1] != 'o')
-	// :s defaults to the current line
-	search_first_line = search_last_line = curwin->w_cursor.lnum;
-
-    curwin->w_cursor = save_cursor;
-    return TRUE;
-}
-
-/*
  * Return TRUE when 'incsearch' highlighting is to be done.
  * Sets search_first_line and search_last_line to the address range.
  * May change the last search pattern.
@@ -354,7 +220,18 @@ do_incsearch_highlighting(
 	int		    *skiplen,
 	int		    *patlen)
 {
-    int retval = FALSE;
+    char_u	*cmd;
+    cmdmod_T	dummy_cmdmod;
+    char_u	*p;
+    int		delim_optional = FALSE;
+    int		delim;
+    char_u	*end;
+    char	*dummy;
+    exarg_T	ea;
+    pos_T	save_cursor;
+    int		use_last_pat;
+    int		retval = FALSE;
+    magic_T     magic = 0;
 
     *skiplen = 0;
     *patlen = ccline.cmdlen;
@@ -362,7 +239,7 @@ do_incsearch_highlighting(
     if (!p_is || cmd_silent)
 	return FALSE;
 
-    // By default search all lines
+    // by default search all lines
     search_first_line = 0;
     search_last_line = MAXLNUM;
 
@@ -371,15 +248,123 @@ do_incsearch_highlighting(
 	*search_delim = firstc;
 	return TRUE;
     }
-
     if (firstc != ':')
 	return FALSE;
 
     ++emsg_off;
-    retval = parse_pattern_and_range(&is_state->search_start, search_delim,
-	    skiplen, patlen);
-    --emsg_off;
+    CLEAR_FIELD(ea);
+    ea.line1 = 1;
+    ea.line2 = 1;
+    ea.cmd = ccline.cmdbuff;
+    ea.addr_type = ADDR_LINES;
 
+    parse_command_modifiers(&ea, &dummy, &dummy_cmdmod, TRUE);
+
+    cmd = skip_range(ea.cmd, TRUE, NULL);
+    if (vim_strchr((char_u *)"sgvl", *cmd) == NULL)
+	goto theend;
+
+    // Skip over "substitute" to find the pattern separator.
+    for (p = cmd; ASCII_ISALPHA(*p); ++p)
+	;
+    if (*skipwhite(p) == NUL)
+	goto theend;
+
+    if (STRNCMP(cmd, "substitute", p - cmd) == 0
+	    || STRNCMP(cmd, "smagic", p - cmd) == 0
+	    || STRNCMP(cmd, "snomagic", MAX(p - cmd, 3)) == 0
+	    || STRNCMP(cmd, "vglobal", p - cmd) == 0)
+    {
+	if (*cmd == 's' && cmd[1] == 'm')
+	    magic_overruled = OPTION_MAGIC_ON;
+	else if (*cmd == 's' && cmd[1] == 'n')
+	    magic_overruled = OPTION_MAGIC_OFF;
+    }
+    else if (STRNCMP(cmd, "sort", MAX(p - cmd, 3)) == 0)
+    {
+	// skip over ! and flags
+	if (*p == '!')
+	    p = skipwhite(p + 1);
+	while (ASCII_ISALPHA(*(p = skipwhite(p))))
+	    ++p;
+	if (*p == NUL)
+	    goto theend;
+    }
+    else if (STRNCMP(cmd, "vimgrep", MAX(p - cmd, 3)) == 0
+	|| STRNCMP(cmd, "vimgrepadd", MAX(p - cmd, 8)) == 0
+	|| STRNCMP(cmd, "lvimgrep", MAX(p - cmd, 2)) == 0
+	|| STRNCMP(cmd, "lvimgrepadd", MAX(p - cmd, 9)) == 0
+	|| STRNCMP(cmd, "global", p - cmd) == 0)
+    {
+	// skip over "!"
+	if (*p == '!')
+	{
+	    p++;
+	    if (*skipwhite(p) == NUL)
+		goto theend;
+	}
+	if (*cmd != 'g')
+	    delim_optional = TRUE;
+    }
+    else
+	goto theend;
+
+    p = skipwhite(p);
+    delim = (delim_optional && vim_isIDc(*p)) ? ' ' : *p++;
+    *search_delim = delim;
+    end = skip_regexp_ex(p, delim, magic_isset(), NULL, NULL, &magic);
+
+    use_last_pat = end == p && *end == delim;
+
+    if (end == p && !use_last_pat)
+	goto theend;
+
+    // Don't do 'hlsearch' highlighting if the pattern matches everything.
+    if (!use_last_pat)
+    {
+	char c = *end;
+	int  empty;
+
+	*end = NUL;
+	empty = empty_pattern_magic(p, (size_t)(end - p), magic);
+	*end = c;
+	if (empty)
+	    goto theend;
+    }
+
+    // found a non-empty pattern or //
+    *skiplen = (int)(p - ccline.cmdbuff);
+    *patlen = (int)(end - p);
+
+    // parse the address range
+    save_cursor = curwin->w_cursor;
+    curwin->w_cursor = is_state->search_start;
+    parse_cmd_address(&ea, &dummy, TRUE);
+    if (ea.addr_count > 0)
+    {
+	// Allow for reverse match.
+	if (ea.line2 < ea.line1)
+	{
+	    search_first_line = ea.line2;
+	    search_last_line = ea.line1;
+	}
+	else
+	{
+	    search_first_line = ea.line1;
+	    search_last_line = ea.line2;
+	}
+    }
+    else if (cmd[0] == 's' && cmd[1] != 'o')
+    {
+	// :s defaults to the current line
+	search_first_line = curwin->w_cursor.lnum;
+	search_last_line = curwin->w_cursor.lnum;
+    }
+
+    curwin->w_cursor = save_cursor;
+    retval = TRUE;
+theend:
+    --emsg_off;
     return retval;
 }
 
@@ -620,7 +605,6 @@ may_adjust_incsearch_highlighting(
     int	    search_flags = SEARCH_NOOF;
     int	    i;
     int	    save;
-    int	    bslsh = FALSE;
     int	    search_delim;
 
     // Parsing range may already set the last search pattern.
@@ -648,22 +632,10 @@ may_adjust_incsearch_highlighting(
 	    return FAIL;
 	}
 	skiplen = 0;
-	patlen = (int)last_search_pattern_len();
+	patlen = last_search_pattern_len();
     }
     else
 	pat = ccline.cmdbuff + skiplen;
-
-    // do not search for the search end delimiter,
-    // unless it is part of the pattern
-    if (patlen > 2 && firstc == pat[patlen - 1])
-    {
-	patlen--;
-	if (pat[patlen - 1] == '\\')
-	{
-	    pat[patlen - 1] = firstc;
-	    bslsh = TRUE;
-	}
-    }
 
     cursor_off();
     out_flush();
@@ -688,8 +660,6 @@ may_adjust_incsearch_highlighting(
 		 pat, patlen, count, search_flags, RE_SEARCH, NULL);
     --emsg_off;
     pat[patlen] = save;
-    if (bslsh)
-	pat[patlen - 1] = '\\';
     if (i)
     {
 	is_state->search_start = is_state->match_start;
@@ -938,26 +908,25 @@ cmdline_wildchar_complete(
 	int		*did_wild_list,
 	int		*wim_index_p,
 	expand_T	*xp,
-	int		*gotesc,
-	int		redraw_if_menu_empty,
-	pos_T		*pre_incsearch_pos)
+	int		*gotesc)
 {
     int		wim_index = *wim_index_p;
     int		res;
-    int		cmdpos_before;
+    int		j;
     int		options = WILD_NO_BEEP;
-    int		wim_noselect = p_wmnu && (wim_flags[0] & WIM_NOSELECT);
 
     if (wim_flags[wim_index] & WIM_BUFLASTUSED)
 	options |= WILD_BUFLASTUSED;
     if (xp->xp_numfiles > 0)   // typed p_wc at least twice
     {
-	// If "list" is present, list matches unless already listed
+	// if 'wildmode' contains "list" may still need to list
 	if (xp->xp_numfiles > 1
 		&& !*did_wild_list
-		&& (wim_flags[wim_index] & WIM_LIST))
+		&& ((wim_flags[wim_index] & WIM_LIST)
+		    || (p_wmnu && (wim_flags[wim_index] & WIM_FULL) != 0)))
 	{
-	    (void)showmatches(xp, FALSE, TRUE, wim_noselect);
+	    (void)showmatches(xp,
+		    p_wmnu && ((wim_flags[wim_index] & WIM_LIST) == 0));
 	    redrawcmd();
 	    *did_wild_list = TRUE;
 	}
@@ -970,40 +939,14 @@ cmdline_wildchar_complete(
     }
     else		    // typed p_wc first time
     {
-	int wim_longest = (wim_flags[0] & WIM_LONGEST);
-	int wim_list = (wim_flags[0] & WIM_LIST);
-	int wim_full = (wim_flags[0] & WIM_FULL);
-
 	wim_index = 0;
-	if (c == p_wc || c == p_wcm || c == K_WILD)
-	{
-	    options |= WILD_MAY_EXPAND_PATTERN;
-	    if (c == K_WILD)
-		options |= WILD_FUNC_TRIGGER;
-	    if (pre_incsearch_pos)
-		xp->xp_pre_incsearch_pos = *pre_incsearch_pos;
-	    else
-		xp->xp_pre_incsearch_pos = curwin->w_cursor;
-	}
-	cmdpos_before = ccline.cmdpos;
-
+	j = ccline.cmdpos;
 	// if 'wildmode' first contains "longest", get longest
 	// common part
-	if (wim_longest)
+	if (wim_flags[0] & WIM_LONGEST)
 	    res = nextwild(xp, WILD_LONGEST, options, escape);
 	else
-	{
-	    if (wim_noselect || wim_list)
-		options |= WILD_NOSELECT;
 	    res = nextwild(xp, WILD_EXPAND_KEEP, options, escape);
-	}
-
-	// Remove popup window if no completion items are available
-	if (redraw_if_menu_empty && xp->xp_numfiles <= 0)
-	{
-	    update_screen(0);
-	    redrawcmd();  // Ensure initial pasted text appears on cmdline
-	}
 
 	// if interrupted while completing, behave like it failed
 	if (got_int)
@@ -1016,43 +959,39 @@ cmdline_wildchar_complete(
 	    return CMDLINE_CHANGED;
 	}
 
-	// Display matches
-	if (res == OK && xp->xp_numfiles > (wim_noselect ? 0 : 1))
+	// when more than one match, and 'wildmode' first contains
+	// "list", or no change and 'wildmode' contains "longest,list",
+	// list all matches
+	if (res == OK && xp->xp_numfiles > 1)
 	{
-	    if (wim_longest)
+	    // a "longest" that didn't do anything is skipped (but not
+	    // "list:longest")
+	    if (wim_flags[0] == WIM_LONGEST && ccline.cmdpos == j)
+		wim_index = 1;
+	    if ((wim_flags[wim_index] & WIM_LIST)
+		    || (p_wmnu && (wim_flags[wim_index] & WIM_FULL) != 0))
 	    {
-		int found_longest_prefix = (ccline.cmdpos != cmdpos_before);
-		if (wim_list || (p_wmnu && wim_full))
-		    (void)showmatches(xp, p_wmnu, wim_list, TRUE);
-		else if (!found_longest_prefix)
+		if (!(wim_flags[0] & WIM_LONGEST))
 		{
-		    int wim_list_next = (wim_flags[1] & WIM_LIST);
-		    int wim_full_next = (wim_flags[1] & WIM_FULL);
-		    int wim_noselect_next = (wim_flags[1] & WIM_NOSELECT);
-		    if (wim_list_next || (p_wmnu && (wim_full_next
-				    || wim_noselect_next)))
-		    {
-			if (wim_full_next && !wim_noselect_next)
-			    nextwild(xp, WILD_NEXT, options, escape);
-			else
-			    (void)showmatches(xp, p_wmnu, wim_list_next,
-				    wim_noselect_next);
-			if (wim_list_next)
-			    *did_wild_list = TRUE;
-		    }
+		    int p_wmnu_save = p_wmnu;
+
+		    p_wmnu = 0;
+
+		    // remove match
+		    nextwild(xp, WILD_PREV, 0, escape);
+		    p_wmnu = p_wmnu_save;
 		}
+		(void)showmatches(xp, p_wmnu
+			&& ((wim_flags[wim_index] & WIM_LIST) == 0));
+		redrawcmd();
+		*did_wild_list = TRUE;
+		if (wim_flags[wim_index] & WIM_LONGEST)
+		    nextwild(xp, WILD_LONGEST, options, escape);
+		else if (wim_flags[wim_index] & WIM_FULL)
+		    nextwild(xp, WILD_NEXT, options, escape);
 	    }
 	    else
-	    {
-		if (wim_list || (p_wmnu && (wim_full || wim_noselect)))
-		    (void)showmatches(xp, p_wmnu, wim_list, wim_noselect);
-		else
-		    vim_beep(BO_WILD);
-	    }
-
-	    redrawcmd();
-	    if (wim_list)
-		*did_wild_list = TRUE;
+		vim_beep(BO_WILD);
 	}
 	else if (xp->xp_numfiles == -1)
 	    xp->xp_context = EXPAND_NOTHING;
@@ -1428,7 +1367,7 @@ cmdline_browse_history(
     for (;;)
     {
 	// one step backwards
-	if (c == K_UP || c == K_S_UP || c == Ctrl_P
+	if (c == K_UP|| c == K_S_UP || c == Ctrl_P
 		|| c == K_PAGEUP || c == K_KPAGEUP)
 	{
 	    if (hiscnt == get_hislen())	// first time
@@ -1537,7 +1476,7 @@ cmdline_browse_history(
 		}
 		if (i == 0)
 		{
-		    alloc_cmdbuff((int)len);
+		    alloc_cmdbuff(len);
 		    if (ccline.cmdbuff == NULL)
 		    {
 			res = GOTO_NORMAL_MODE;
@@ -1546,18 +1485,18 @@ cmdline_browse_history(
 		}
 	    }
 	    ccline.cmdbuff[len] = NUL;
-	    ccline.cmdpos = ccline.cmdlen = (int)len;
+	    ccline.cmdpos = ccline.cmdlen = len;
 	}
 	else
 	{
-	    alloc_cmdbuff((int)plen);
+	    alloc_cmdbuff(plen);
 	    if (ccline.cmdbuff == NULL)
 	    {
 		res = GOTO_NORMAL_MODE;
 		goto done;
 	    }
 	    STRCPY(ccline.cmdbuff, p);
-	    ccline.cmdpos = ccline.cmdlen = (int)plen;
+	    ccline.cmdpos = ccline.cmdlen = plen;
 	}
 
 	redrawcmd();
@@ -1649,7 +1588,7 @@ getcmdline_int(
     int		clear_ccline)	// clear ccline first
 {
     static int	depth = 0;	    // call depth
-    int		c = 0;
+    int		c;
     int		i;
     int		j;
     int		gotesc = FALSE;		// TRUE when <ESC> just typed
@@ -1666,6 +1605,7 @@ getcmdline_int(
     int		res;
     int		save_msg_scroll = msg_scroll;
     int		save_State = State;	// remember State when called
+    int		prev_cmdpos = -1;
     int		some_key_typed = FALSE;	// one of the keys was typed
     // mouse drag and release events are ignored, unless they are
     // preceded with a mouse down event
@@ -1680,9 +1620,6 @@ getcmdline_int(
     int		did_save_ccline = FALSE;
     int		cmdline_type;
     int		wild_type = 0;
-    int		event_cmdlineleavepre_triggered = FALSE;
-    char_u	*prev_cmdbuff = NULL;
-    int		did_hist_navigate = FALSE;
 
     // one recursion level deeper
     ++depth;
@@ -1726,7 +1663,6 @@ getcmdline_int(
 
     ExpandInit(&xpc);
     ccline.xpc = &xpc;
-    clear_cmdline_orig();
 
 #ifdef FEAT_RIGHTLEFT
     if (curwin->w_p_rl && *curwin->w_p_rlc == 's'
@@ -1852,12 +1788,8 @@ getcmdline_int(
      */
     for (;;)
     {
-	int	trigger_cmdlinechanged = TRUE;
-	int	end_wildmenu;
-	int	prev_cmdpos = ccline.cmdpos;
-	int	skip_pum_redraw = FALSE;
-
-	VIM_CLEAR(prev_cmdbuff);
+	int trigger_cmdlinechanged = TRUE;
+	int end_wildmenu;
 
 	redir_off = TRUE;	// Don't redirect the typed command.
 				// Repeated, because a ":redir" inside
@@ -1874,17 +1806,6 @@ getcmdline_int(
 	// Trigger SafeState if nothing is pending.
 	may_trigger_safestate(xpc.xp_numfiles <= 0);
 
-	if (ccline.cmdbuff != NULL)
-	{
-	    prev_cmdbuff = vim_strsave(ccline.cmdbuff);
-	    if (prev_cmdbuff == NULL)
-		goto returncmd;
-	}
-
-	// Defer screen update to avoid pum flicker during wildtrigger()
-	if (c == K_WILD && firstc != '@')
-	    skip_pum_redraw = TRUE;
-
 	// Get a character.  Ignore K_IGNORE and K_NOP, they should not do
 	// anything, such as stop completion.
 	do
@@ -1892,13 +1813,6 @@ getcmdline_int(
 	    cursorcmd();		// set the cursor on the right spot
 	    c = safe_vgetc();
 	} while (c == K_IGNORE || c == K_NOP);
-
-	// Skip wildmenu during history navigation via Up/Down keys
-	if (c == K_WILD && did_hist_navigate)
-	{
-	    did_hist_navigate = FALSE;
-	    continue;
-	}
 
 	if (c == K_COMMAND || c == K_SCRIPT_COMMAND)
 	{
@@ -1987,8 +1901,7 @@ getcmdline_int(
 	    c = wildmenu_translate_key(&ccline, c, &xpc, did_wild_list);
 
 	int key_is_wc = (c == p_wc && KeyTyped) || c == p_wcm;
-	if ((cmdline_pum_active() || wild_menu_showing || did_wild_list)
-		&& !key_is_wc)
+	if ((cmdline_pum_active() || did_wild_list) && !key_is_wc)
 	{
 	    // Ctrl-Y: Accept the current selection and close the popup menu.
 	    // Ctrl-E: cancel the cmdline popup menu and return the original
@@ -2000,24 +1913,6 @@ getcmdline_int(
 							firstc != '@') == FAIL)
 		    break;
 	    }
-	}
-
-	// Trigger CmdlineLeavePre autocommand
-	if (KeyTyped && (c == '\n' || c == '\r' || c == K_KENTER || c == ESC
-#ifdef UNIX
-		    || c == intr_char
-#endif
-		    || c == Ctrl_C))
-	{
-#ifdef FEAT_EVAL
-	    set_vim_var_char(c);  // Set v:char
-#endif
-	    trigger_cmd_autocmd(cmdline_type, EVENT_CMDLINELEAVEPRE);
-	    event_cmdlineleavepre_triggered = TRUE;
-#if defined(FEAT_SEARCH_EXTRA)
-	    if ((c == ESC || c == Ctrl_C) && (wim_flags[0] & WIM_LIST))
-		set_no_hlsearch(TRUE);
-#endif
 	}
 
 	// The wildmenu is cleared if the pressed key is not used for
@@ -2035,14 +1930,7 @@ getcmdline_int(
 	if (end_wildmenu)
 	{
 	    if (cmdline_pum_active())
-	    {
-		skip_pum_redraw = skip_pum_redraw && !key_is_wc
-		    && !VIM_ISWHITE(c)
-		    && (vim_isprintc(c)
-			|| c == K_BS || c == Ctrl_H || c == K_DEL
-			|| c == K_KDEL || c == Ctrl_W || c == Ctrl_U);
-		cmdline_pum_remove(&ccline, skip_pum_redraw);
-	    }
+		cmdline_pum_remove();
 	    if (xpc.xp_numfiles != -1)
 		(void)ExpandOne(&xpc, NULL, NULL, 0, WILD_FREE);
 	    did_wild_list = FALSE;
@@ -2115,25 +2003,13 @@ getcmdline_int(
 	    }
 	}
 
-	// Completion for 'wildchar', 'wildcharm', and wildtrigger()
-	if ((c == p_wc && !gotesc && KeyTyped) || c == p_wcm || c == K_WILD)
+	// Completion for 'wildchar' or 'wildcharm' key.
+	if ((c == p_wc && !gotesc && KeyTyped) || c == p_wcm)
 	{
-	    if (c == K_WILD)
-		++emsg_silent;  // Silence the bell
 	    res = cmdline_wildchar_complete(c, firstc != '@', &did_wild_list,
-		    &wim_index, &xpc, &gotesc, c == K_WILD,
-#ifdef FEAT_SEARCH_EXTRA
-		    &is_state.search_start
-#else
-		    NULL
-#endif
-		    );
-	    if (c == K_WILD)
-		--emsg_silent;
+		    &wim_index, &xpc, &gotesc);
 	    if (res == CMDLINE_CHANGED)
 		goto cmdline_changed;
-	    if (c == K_WILD)
-		goto cmdline_not_changed;
 	}
 
 	gotesc = FALSE;
@@ -2148,8 +2024,8 @@ getcmdline_int(
 			    || p_wmnu))
 		{
 		    // Trigger the popup menu when wildoptions=pum
-		    showmatches(&xpc, p_wmnu, wim_flags[wim_index] & WIM_LIST,
-			    wim_flags[0] & WIM_NOSELECT);
+		    showmatches(&xpc, p_wmnu
+			    && ((wim_flags[wim_index] & WIM_LIST) == 0));
 		}
 		if (nextwild(&xpc, WILD_PREV, 0, firstc != '@') == OK
 			&& nextwild(&xpc, WILD_PREV, 0, firstc != '@') == OK)
@@ -2166,13 +2042,6 @@ getcmdline_int(
 	// further.
 	if (wild_type == WILD_CANCEL || wild_type == WILD_APPLY)
 	{
-#ifdef FEAT_SEARCH_EXTRA
-	    // Apply search highlighting
-	    if (is_state.winid != curwin->w_id)
-		init_incsearch_state(&is_state);
-	    if (KeyTyped || vpeekc() == NUL)
-		may_do_incsearch_highlighting(firstc, count, &is_state);
-#endif
 	    wild_type = 0;
 	    goto cmdline_not_changed;
 	}
@@ -2264,8 +2133,7 @@ getcmdline_int(
 		goto cmdline_not_changed;
 
 	case Ctrl_D:
-		if (showmatches(&xpc, FALSE, TRUE, wim_flags[0] & WIM_NOSELECT)
-			== EXPAND_NOTHING)
+		if (showmatches(&xpc, FALSE) == EXPAND_NOTHING)
 		    break;	// Use ^D as normal char instead
 
 		redrawcmd();
@@ -2499,10 +2367,7 @@ getcmdline_int(
 		    res = cmdline_browse_history(c, firstc, &lookfor, &lookforlen, histype,
 			    &hiscnt, &xpc);
 		    if (res == CMDLINE_CHANGED)
-		    {
-			did_hist_navigate = TRUE;
 			goto cmdline_changed;
-		    }
 		    else if (res == GOTO_NORMAL_MODE)
 			goto returncmd;
 		}
@@ -2648,19 +2513,22 @@ cmdline_changed:
 	// If the window changed incremental search state is not valid.
 	if (is_state.winid != curwin->w_id)
 	    init_incsearch_state(&is_state);
-	if (xpc.xp_context == EXPAND_NOTHING && (KeyTyped || vpeekc() == NUL))
-	    may_do_incsearch_highlighting(firstc, count, &is_state);
 #endif
 	// Trigger CmdlineChanged autocommands.
-	if (trigger_cmdlinechanged
-		&& (ccline.cmdpos != prev_cmdpos
-		    || (prev_cmdbuff != NULL &&
-			STRCMP(prev_cmdbuff, ccline.cmdbuff) != 0)))
+	if (trigger_cmdlinechanged)
 	    trigger_cmd_autocmd(cmdline_type, EVENT_CMDLINECHANGED);
 
 	// Trigger CursorMovedC autocommands.
 	if (ccline.cmdpos != prev_cmdpos)
+	{
 	    trigger_cmd_autocmd(cmdline_type, EVENT_CURSORMOVEDC);
+	    prev_cmdpos = ccline.cmdpos;
+	}
+
+#ifdef FEAT_SEARCH_EXTRA
+	if (xpc.xp_context == EXPAND_NOTHING && (KeyTyped || vpeekc() == NUL))
+	    may_do_incsearch_highlighting(firstc, count, &is_state);
+#endif
 
 #ifdef FEAT_RIGHTLEFT
 	if (cmdmsg_rl
@@ -2679,14 +2547,6 @@ cmdline_changed:
     }
 
 returncmd:
-    // Trigger CmdlineLeavePre autocommands if not already triggered.
-    if (!event_cmdlineleavepre_triggered)
-    {
-#ifdef FEAT_EVAL
-	set_vim_var_char(c);  // Set v:char
-#endif
-	trigger_cmd_autocmd(cmdline_type, EVENT_CMDLINELEAVEPRE);
-    }
 
 #ifdef FEAT_RIGHTLEFT
     cmdmsg_rl = FALSE;
@@ -2696,14 +2556,13 @@ returncmd:
     // if certain special keys like <Esc> or <C-\> were used as wildchar. Make
     // sure to still clean up to avoid memory corruption.
     if (cmdline_pum_active())
-	cmdline_pum_remove(&ccline, FALSE);
+	cmdline_pum_remove();
     wildmenu_cleanup(&ccline);
     did_wild_list = FALSE;
     wim_index = 0;
 
     ExpandCleanup(&xpc);
     ccline.xpc = NULL;
-    clear_cmdline_orig();
 
 #ifdef FEAT_SEARCH_EXTRA
     finish_incsearch_highlighting(gotesc, &is_state, FALSE);
@@ -2744,9 +2603,6 @@ returncmd:
 	need_wait_return = FALSE;
 
     // Trigger CmdlineLeave autocommands.
-#ifdef FEAT_EVAL
-    set_vim_var_char(c);  // Set v:char
-#endif
     trigger_cmd_autocmd(cmdline_type, EVENT_CMDLINELEAVE);
 
     State = save_State;
@@ -2777,13 +2633,11 @@ theend:
 	    restore_cmdline(&save_ccline);
 	else
 	    ccline.cmdbuff = NULL;
-
-	vim_free(prev_cmdbuff);
 	return p;
     }
 }
 
-#if defined(FEAT_CRYPT) || defined(FEAT_EVAL)
+#if (defined(FEAT_CRYPT) || defined(FEAT_EVAL)) || defined(PROTO)
 /*
  * Get a command line with a prompt.
  * This is prepared to be called recursively from getcmdline() (e.g. by
@@ -2866,8 +2720,6 @@ check_opt_wim(void)
 	    new_wim_flags[idx] |= WIM_LIST;
 	else if (i == 8 && STRNCMP(p, "lastused", 8) == 0)
 	    new_wim_flags[idx] |= WIM_BUFLASTUSED;
-	else if (i == 8 && STRNCMP(p, "noselect", 8) == 0)
-	    new_wim_flags[idx] |= WIM_NOSELECT;
 	else
 	    return FAIL;
 	p += i;
@@ -3350,7 +3202,8 @@ cmdline_overstrike(void)
     return ccline.overstrike;
 }
 
-# if defined(MCH_CURSOR_SHAPE) || defined(FEAT_GUI) || defined(FEAT_MOUSESHAPE)
+# if defined(MCH_CURSOR_SHAPE) || defined(FEAT_GUI) \
+	 || defined(FEAT_MOUSESHAPE) || defined(PROTO)
 /*
  * Return TRUE if the cursor is at the end of the cmdline.
  */
@@ -3361,7 +3214,7 @@ cmdline_at_end(void)
 }
 #endif
 
-#if defined(FEAT_XIM) && (defined(FEAT_GUI_GTK))
+#if (defined(FEAT_XIM) && (defined(FEAT_GUI_GTK))) || defined(PROTO)
 /*
  * Return the virtual column number at the current cursor position.
  * This is used by the IM code to obtain the start of the preedit string.
@@ -3532,10 +3385,10 @@ realloc_cmdbuff(int len)
     return OK;
 }
 
-#if defined(FEAT_ARABIC)
+#if defined(FEAT_ARABIC) || defined(PROTO)
 static char_u	*arshape_buf = NULL;
 
-# if defined(EXITFREE)
+# if defined(EXITFREE) || defined(PROTO)
     void
 free_arshape_buf(void)
 {
@@ -4332,7 +4185,7 @@ get_cmdline_type(void)
     return p->cmdfirstc;
 }
 
-#if defined(FEAT_EVAL)
+#if defined(FEAT_EVAL) || defined(PROTO)
 /*
  * Get the current command line in allocated memory.
  * Only works when the command line is being edited.
@@ -4386,13 +4239,14 @@ get_cmdline_completion_pattern(void)
 }
 
 /*
- * Get the command-line completion type.
+ * Get the current command-line completion type.
  */
     static char_u *
 get_cmdline_completion(void)
 {
-    cmdline_info_T	*p;
-    int			xp_context;
+    cmdline_info_T *p;
+    char_u	*buffer;
+    int		xp_context;
 
     if (cmdline_star > 0)
 	return NULL;
@@ -4411,7 +4265,20 @@ get_cmdline_completion(void)
     if (xp_context == EXPAND_UNSUCCESSFUL)
 	return NULL;
 
-    return cmdcomplete_type_to_str(xp_context, p->xpc->xp_arg);
+    char_u *cmd_compl = cmdcomplete_type_to_str(xp_context);
+    if (cmd_compl == NULL)
+	return NULL;
+
+    if (xp_context == EXPAND_USER_LIST || xp_context == EXPAND_USER_DEFINED)
+    {
+	buffer = alloc(STRLEN(cmd_compl) + STRLEN(p->xpc->xp_arg) + 2);
+	if (buffer == NULL)
+	    return NULL;
+	sprintf((char *)buffer, "%s,%s", cmd_compl, p->xpc->xp_arg);
+	return buffer;
+    }
+
+    return vim_strsave(cmd_compl);
 }
 
 /*
@@ -4847,7 +4714,7 @@ open_cmdwin(void)
     State = MODE_NORMAL;
     setmouse();
 
-    // Reset here so it can be set by a CmdwinEnter autocommand.
+    // Reset here so it can be set by a CmdWinEnter autocommand.
     cmdwin_result = 0;
 
     // Trigger CmdwinEnter autocommands.
@@ -4915,8 +4782,8 @@ open_cmdwin(void)
 	    {
 		// Execute the command directly.
 		ccline.cmdbuff = vim_strnsave(p, plen);
-		ccline.cmdlen = (int)plen;
-		ccline.cmdbufflen = (int)(plen + 1);
+		ccline.cmdlen = plen;
+		ccline.cmdbufflen = plen + 1;
 		cmdwin_result = CAR;
 	    }
 	    else
@@ -5056,7 +4923,7 @@ script_get(exarg_T *eap UNUSED, char_u *cmd UNUSED)
 #endif
 }
 
-#if defined(FEAT_EVAL)
+#if defined(FEAT_EVAL) || defined(PROTO)
 /*
  * This function is used by f_input() and f_inputdialog() functions. The third
  * argument to f_input() specifies the type of completion to use at the
@@ -5180,30 +5047,3 @@ get_user_input(
     cmd_silent = cmd_silent_save;
 }
 #endif
-
-/*
- * "wildtrigger()" function
- */
-    void
-f_wildtrigger(typval_T *argvars UNUSED, typval_T *rettv UNUSED)
-{
-    if (!(State & MODE_CMDLINE) || char_avail() || wild_menu_showing
-	    || cmdline_pum_active())
-	return;
-
-    int cmd_type = get_cmdline_type();
-
-    if (cmd_type == ':' || cmd_type == '/' || cmd_type == '?')
-    {
-	// Add K_WILD as a single special key
-	char_u	key_string[4];
-
-	key_string[0] = K_SPECIAL;
-	key_string[1] = KS_EXTRA;
-	key_string[2] = KE_WILD;
-	key_string[3] = NUL;
-
-	// Insert it into the typeahead buffer
-	ins_typebuf(key_string, REMAP_NONE, 0, TRUE, FALSE);
-    }
-}

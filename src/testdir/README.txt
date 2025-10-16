@@ -1,8 +1,5 @@
-This directory contains test cases for various Vim features.
-The auxiliary functions to perform the tests are in the util/ folder.
-
+This directory contains tests for various Vim features.
 For testing an indent script see runtime/indent/testdir/README.txt.
-For testing a syntax script see runtime/syntax/testdir/README.txt.
 
 If it makes sense, add a new test method to an already existing file.  You may
 want to separate it from other tests with comment lines.
@@ -164,8 +161,6 @@ You can now examine the extracted screendumps:
 
 
 VIEWING GENERATED SCREENDUMPS (submitted for a pull request):
-
-Note: There is also a "git difftool" extension described in ./commondumps.vim.
 
 First, you need to check out the topic branch with the proposed changes and
 write down a difference list between the HEAD commit (index) and its parent

@@ -1,6 +1,8 @@
 " Test for delete().
 
-source util/screendump.vim
+source check.vim
+source term_util.vim
+source screendump.vim
 
 func Test_file_delete()
   split Xfdelfile
@@ -109,7 +111,6 @@ endfunc
 
 " This should no longer trigger ml_get errors
 func Test_delete_ml_get_errors()
-  CheckScreendump
   CheckRunVimInTerminal
   let lines =<< trim END
     set noshowcmd noruler scrolloff=0

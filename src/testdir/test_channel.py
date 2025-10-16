@@ -285,4 +285,4 @@ def main(host, port, server_class=ThreadedTCPServer):
         server.shutdown()
 
 if __name__ == "__main__":
-    main("127.0.0.1", 0)
+    main("localhost", 0)

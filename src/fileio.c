@@ -55,23 +55,17 @@ filemess(
 {
     int		msg_scroll_save;
     int		prev_msg_col = msg_col;
-    size_t	len;
 
     if (msg_silent != 0)
 	return;
     msg_add_fname(buf, name);	    // put file name in IObuff with quotes
 
     // If it's extremely long, truncate it.
-    len = STRLEN(IObuff);
-    if (len > IOSIZE - 100)
-    {
-	len = IOSIZE - 100;
-	IObuff[len] = NUL;
-    }
+    if (STRLEN(IObuff) > IOSIZE - 100)
+	IObuff[IOSIZE - 100] = NUL;
 
     // Avoid an over-long translation to cause trouble.
-    if (*s != NUL)
-	STRNCPY(IObuff + len, s, 99);
+    STRNCAT(IObuff, s, 99);
 
     /*
      * For the first message may have to start a new line.
@@ -230,7 +224,6 @@ readfile(
 #ifdef FEAT_SODIUM
     int		may_need_lseek = FALSE;
 #endif
-    size_t	fnamelen = 0;
 
     curbuf->b_au_did_filetype = FALSE; // reset before triggering any autocommands
 
@@ -343,10 +336,10 @@ readfile(
 
     if (fname != NULL && *fname != NUL)
     {
-	fnamelen = STRLEN(fname);
+	size_t namelen = STRLEN(fname);
 
 	// If the name is too long we might crash further on, quit here.
-	if (fnamelen >= MAXPATHL)
+	if (namelen >= MAXPATHL)
 	{
 	    filemess(curbuf, fname, (char_u *)_("Illegal file name"), 0);
 	    msg_end();
@@ -357,7 +350,7 @@ readfile(
 	// If the name ends in a path separator, we can't open it.  Check here,
 	// because reading the file may actually work, but then creating the
 	// swap file may destroy it!  Reported on MS-DOS and Win 95.
-	if (after_pathsep(fname, fname + fnamelen))
+	if (after_pathsep(fname, fname + namelen))
 	{
 	    filemess(curbuf, fname, (char_u *)_(msg_is_a_directory), 0);
 	    msg_end();
@@ -366,14 +359,15 @@ readfile(
 	    goto theend;
 	}
     }
-#if defined(UNIX) || defined(VMS)
-    if (!read_stdin && fname != NULL)
-	perm = mch_getperm(fname);
-#endif
 
     if (!read_stdin && !read_buffer && !read_fifo)
     {
 #if defined(UNIX) || defined(VMS)
+	/*
+	 * On Unix it is possible to read a directory, so we have to
+	 * check for it before the mch_open().
+	 */
+	perm = mch_getperm(fname);
 	if (perm >= 0 && !S_ISREG(perm)		    // not a regular file ...
 		      && !S_ISFIFO(perm)	    // ... or fifo
 		      && !S_ISSOCK(perm)	    // ... or socket
@@ -383,10 +377,6 @@ readfile(
 # endif
 						)
 	{
-	    /*
-	     * On Unix it is possible to read a directory, so we have to
-	     * check for it before the mch_open().
-	     */
 	    if (S_ISDIR(perm))
 	    {
 		filemess(curbuf, fname, (char_u *)_(msg_is_a_directory), 0);
@@ -786,13 +776,11 @@ readfile(
 		// Also write a message in the GUI window, if there is one.
 		if (gui.in_use && !gui.dying && !gui.starting)
 		{
-		    size_t  plen = STRLEN(_("Reading from stdin..."));
-
 		    // make a copy, gui_write() may try to change it
-		    p = vim_strnsave((char_u *)_("Reading from stdin..."), plen);
+		    p = vim_strsave((char_u *)_("Reading from stdin..."));
 		    if (p != NULL)
 		    {
-			gui_write(p, (int)plen);
+			gui_write(p, (int)STRLEN(p));
 			vim_free(p);
 		    }
 		}
@@ -850,7 +838,7 @@ readfile(
 	c = enc_utf8;
 	if (!c && !read_stdin)
 	{
-	    fc = fname[fnamelen - 1];
+	    fc = fname[STRLEN(fname) - 1];
 	    if (TOLOWER_ASC(fc) == 'x')
 	    {
 		// Read the first line (and a bit more).  Immediately rewind to
@@ -1013,6 +1001,7 @@ retry:
     converted = need_conversion(fenc);
     if (converted)
     {
+
 	// "ucs-bom" means we need to check the first bytes of the file
 	// for a BOM.
 	if (STRCMP(fenc, ENC_UCSBOM) == 0)
@@ -2492,38 +2481,31 @@ failed:
 
 	if (!filtering && !(flags & READ_DUMMY))
 	{
-	    int	buflen;
-
 	    msg_add_fname(curbuf, sfname);   // fname in IObuff with quotes
 	    c = FALSE;
 
-	    buflen = (int)STRLEN(IObuff);
 #ifdef UNIX
 	    if (S_ISFIFO(perm))			    // fifo
 	    {
-		buflen += vim_snprintf((char *)IObuff + buflen, IOSIZE - buflen,
-			_("[fifo]"));
+		STRCAT(IObuff, _("[fifo]"));
 		c = TRUE;
 	    }
 	    if (S_ISSOCK(perm))			    // or socket
 	    {
-		buflen += vim_snprintf((char *)IObuff + buflen, IOSIZE - buflen,
-			_("[socket]"));
+		STRCAT(IObuff, _("[socket]"));
 		c = TRUE;
 	    }
 # ifdef OPEN_CHR_FILES
 	    if (S_ISCHR(perm))			    // or character special
 	    {
-		buflen += vim_snprintf((char *)IObuff + buflen, IOSIZE - buflen,
-			_("[character special]"));
+		STRCAT(IObuff, _("[character special]"));
 		c = TRUE;
 	    }
 # endif
 #endif
 	    if (curbuf->b_p_ro)
 	    {
-		buflen += vim_snprintf((char *)IObuff + buflen, IOSIZE - buflen,
-			"%s", shortmess(SHM_RO) ? _("[RO]") : _("[readonly]"));
+		STRCAT(IObuff, shortmess(SHM_RO) ? _("[RO]") : _("[readonly]"));
 		c = TRUE;
 	    }
 	    if (read_no_eol_lnum)
@@ -2533,26 +2515,22 @@ failed:
 	    }
 	    if (ff_error == EOL_DOS)
 	    {
-		buflen += vim_snprintf((char *)IObuff + buflen, IOSIZE - buflen,
-			_("[CR missing]"));
+		STRCAT(IObuff, _("[CR missing]"));
 		c = TRUE;
 	    }
 	    if (split)
 	    {
-		buflen += vim_snprintf((char *)IObuff + buflen, IOSIZE - buflen,
-			_("[long lines split]"));
+		STRCAT(IObuff, _("[long lines split]"));
 		c = TRUE;
 	    }
 	    if (notconverted)
 	    {
-		buflen += vim_snprintf((char *)IObuff + buflen, IOSIZE - buflen,
-			_("[NOT converted]"));
+		STRCAT(IObuff, _("[NOT converted]"));
 		c = TRUE;
 	    }
 	    else if (converted)
 	    {
-		buflen += vim_snprintf((char *)IObuff + buflen, IOSIZE - buflen,
-			_("[converted]"));
+		STRCAT(IObuff, _("[converted]"));
 		c = TRUE;
 	    }
 #ifdef FEAT_CRYPT
@@ -2564,20 +2542,19 @@ failed:
 #endif
 	    if (conv_error != 0)
 	    {
-		vim_snprintf((char *)IObuff + buflen, IOSIZE - buflen,
-			_("[CONVERSION ERROR in line %ld]"), (long)conv_error);
+		sprintf((char *)IObuff + STRLEN(IObuff),
+		       _("[CONVERSION ERROR in line %ld]"), (long)conv_error);
 		c = TRUE;
 	    }
 	    else if (illegal_byte > 0)
 	    {
-		vim_snprintf((char *)IObuff + buflen, IOSIZE - buflen,
-			_("[ILLEGAL BYTE in line %ld]"), (long)illegal_byte);
+		sprintf((char *)IObuff + STRLEN(IObuff),
+			 _("[ILLEGAL BYTE in line %ld]"), (long)illegal_byte);
 		c = TRUE;
 	    }
 	    else if (error)
 	    {
-		vim_snprintf((char *)IObuff + buflen, IOSIZE - buflen,
-			_("[READ ERRORS]"));
+		STRCAT(IObuff, _("[READ ERRORS]"));
 		c = TRUE;
 	    }
 	    if (msg_add_fileformat(fileformat))
@@ -2750,7 +2727,7 @@ theend:
     return retval;
 }
 
-#if defined(OPEN_CHR_FILES)
+#if defined(OPEN_CHR_FILES) || defined(PROTO)
 /*
  * Returns TRUE if the file name argument is of the form "/dev/fd/\d\+",
  * which is the name of files used for process substitution output by
@@ -2955,7 +2932,7 @@ readfile_charconvert(
 }
 #endif
 
-#if defined(FEAT_CRYPT)
+#if defined(FEAT_CRYPT) || defined(PROTO)
 /*
  * Check for magic number used for encryption.  Applies to the current buffer.
  * If found, the magic number is removed from ptr[*sizep] and *sizep and
@@ -3068,7 +3045,7 @@ check_file_readonly(
 	);
 }
 
-#if defined(HAVE_FSYNC)
+#if defined(HAVE_FSYNC) || defined(PROTO)
 /*
  * Call fsync() with Mac-specific exception.
  * Return fsync() result: zero for success.
@@ -3185,18 +3162,22 @@ msg_add_lines(
     long    lnum,
     off_T   nchars)
 {
-    int  len = (int)STRLEN(IObuff);
+    char_u  *p;
 
+    p = IObuff + STRLEN(IObuff);
+
+    if (insert_space)
+	*p++ = ' ';
     if (shortmess(SHM_LINES))
-	vim_snprintf((char *)IObuff + len, IOSIZE - (size_t)len,
-		// l10n: L as in line, B as in byte
-		_("%s%ldL, %lldB"), insert_space ? " " : "", lnum, (varnumber_T)nchars);
+	vim_snprintf((char *)p, IOSIZE - (p - IObuff),
+		"%ldL, %lldB", lnum, (varnumber_T)nchars);
     else
     {
-	len += vim_snprintf((char *)IObuff + len, IOSIZE - (size_t)len,
-		NGETTEXT("%s%ld line, ", "%s%ld lines, ", lnum), insert_space ? " " : "", lnum);
-	vim_snprintf((char *)IObuff + len, IOSIZE - (size_t)len,
-		NGETTEXT("%lld byte", "%lld bytes", nchars), (varnumber_T)nchars);
+	sprintf((char *)p, NGETTEXT("%ld line, ", "%ld lines, ", lnum), lnum);
+	p += STRLEN(p);
+	vim_snprintf((char *)p, IOSIZE - (p - IObuff),
+		NGETTEXT("%lld byte", "%lld bytes", nchars),
+		(varnumber_T)nchars);
     }
 }
 
@@ -3305,7 +3286,7 @@ get_fio_flags(char_u *ptr)
     return 0;
 }
 
-#if defined(MSWIN)
+#if defined(MSWIN) || defined(PROTO)
 /*
  * Check "ptr" for a MS-Windows codepage name and return the FIO_ flags needed
  * for the conversion MS-Windows can do for us.  Also accept "utf-8".
@@ -3334,7 +3315,7 @@ get_win_fio_flags(char_u *ptr)
 }
 #endif
 
-#if defined(MACOS_CONVERT)
+#if defined(MACOS_CONVERT) || defined(PROTO)
 /*
  * Check "ptr" for a Carbon supported encoding and return the FIO_ flags
  * needed for the internal conversion to/from utf-8 or latin1.
@@ -3535,9 +3516,6 @@ shorten_fnames(int force)
     }
     status_redraw_all();
     redraw_tabline = TRUE;
-#if defined(FEAT_TABPANEL)
-    redraw_tabpanel = TRUE;
-#endif
 #if defined(FEAT_PROP_POPUP) && defined(FEAT_QUICKFIX)
     popup_update_preview_title();
 #endif
@@ -3545,7 +3523,8 @@ shorten_fnames(int force)
 
 #if (defined(FEAT_DND) && defined(FEAT_GUI_GTK)) \
 	|| defined(FEAT_GUI_MSWIN) \
-	|| defined(FEAT_GUI_HAIKU)
+	|| defined(FEAT_GUI_HAIKU) \
+	|| defined(PROTO)
 /*
  * Shorten all filenames in "fnames[count]" by current directory.
  */
@@ -3606,7 +3585,6 @@ buf_modname(
     char_u	*s;
     char_u	*e;
     char_u	*ptr;
-    size_t	ptrlen;
     int		fnamelen, extlen;
 
     extlen = (int)STRLEN(ext);
@@ -3664,14 +3642,10 @@ buf_modname(
     }
 
     // the file name has at most BASENAMELEN characters.
-    ptrlen = (size_t)(fnamelen - (ptr - retval));
-    if (ptrlen > (unsigned)BASENAMELEN)
-    {
-	ptrlen = BASENAMELEN;
-	ptr[ptrlen] = NUL;
-    }
+    if (STRLEN(ptr) > (unsigned)BASENAMELEN)
+	ptr[BASENAMELEN] = '\0';
 
-    s = ptr + ptrlen;
+    s = ptr + STRLEN(ptr);
 
     /*
      * For 8.3 file names we may have to reduce the length.
@@ -3711,7 +3685,7 @@ buf_modname(
 	 * If the extension doesn't start with '.', and there already is an
 	 * extension, it may need to be truncated
 	 */
-	else if ((int)(ptrlen - (e - retval)) + extlen > 4)
+	else if ((int)STRLEN(e) + extlen > 4)
 	    s = e + 4 - extlen;
     }
 #ifdef MSWIN
@@ -3729,12 +3703,13 @@ buf_modname(
      * ext can start with '.' and cannot exceed 3 more characters.
      */
     STRCPY(s, ext);
+
     /*
      * Prepend the dot.
      */
     if (prepend_dot && !shortname && *(e = gettail(retval)) != '.')
     {
-	mch_memmove(e + 1, e, (size_t)(((fnamelen + extlen) - (e - retval)) + 1));	// +1 for NUL
+	STRMOVE(e + 1, e);
 	*e = '.';
     }
 
@@ -4136,7 +4111,7 @@ move_lines(buf_T *frombuf, buf_T *tobuf)
     curbuf = tobuf;
     for (lnum = 1; lnum <= frombuf->b_ml.ml_line_count; ++lnum)
     {
-	p = vim_strnsave(ml_get_buf(frombuf, lnum, FALSE), ml_get_buf_len(frombuf, lnum));
+	p = vim_strsave(ml_get_buf(frombuf, lnum, FALSE));
 	if (p == NULL || ml_append(lnum - 1, p, 0, FALSE) == FAIL)
 	{
 	    vim_free(p);
@@ -4179,6 +4154,8 @@ buf_check_timestamp(
     stat_T	st;
     int		stat_res;
     int		retval = 0;
+    char_u	*path;
+    char	*tbuf;
     char	*mesg = NULL;
     char	*mesg2 = "";
     int		helpmesg = FALSE;
@@ -4187,6 +4164,7 @@ buf_check_timestamp(
 	RELOAD_NORMAL,
 	RELOAD_DETECT
     }		reload = RELOAD_NONE;
+    char	*reason;
 #if defined(FEAT_CON_DIALOG) || defined(FEAT_GUI_DIALOG)
     int		can_reload = FALSE;
 #endif
@@ -4197,6 +4175,9 @@ buf_check_timestamp(
 #endif
     static int	busy = FALSE;
     int		n;
+#ifdef FEAT_EVAL
+    char_u	*s;
+#endif
     bufref_T	bufref;
 
     set_bufref(&bufref, buf);
@@ -4261,51 +4242,21 @@ buf_check_timestamp(
 	    reload = RELOAD_NORMAL;
 	else
 	{
-	    char    *reason;
-#ifdef FEAT_EVAL
-	    size_t  reasonlen;
-#endif
-
 	    if (stat_res < 0)
-	    {
 		reason = "deleted";
-#ifdef FEAT_EVAL
-		reasonlen = STRLEN_LITERAL("deleted");
-#endif
-	    }
 	    else if (bufIsChanged(buf))
-	    {
 		reason = "conflict";
-#ifdef FEAT_EVAL
-		reasonlen = STRLEN_LITERAL("conflict");
-#endif
-	    }
 	    /*
 	     * Check if the file contents really changed to avoid giving a
 	     * warning when only the timestamp was set (e.g., checked out of
 	     * CVS).  Always warn when the buffer was changed.
 	     */
 	    else if (orig_size != buf->b_orig_size || buf_contents_changed(buf))
-	    {
 		reason = "changed";
-#ifdef FEAT_EVAL
-		reasonlen = STRLEN_LITERAL("changed");
-#endif
-	    }
 	    else if (orig_mode != buf->b_orig_mode)
-	    {
 		reason = "mode";
-#ifdef FEAT_EVAL
-		reasonlen = STRLEN_LITERAL("mode");
-#endif
-	    }
 	    else
-	    {
 		reason = "time";
-#ifdef FEAT_EVAL
-		reasonlen = STRLEN_LITERAL("time");
-#endif
-	    }
 
 	    /*
 	     * Only give the warning if there are no FileChangedShell
@@ -4314,8 +4265,8 @@ buf_check_timestamp(
 	     */
 	    busy = TRUE;
 #ifdef FEAT_EVAL
-	    set_vim_var_string(VV_FCS_REASON, (char_u *)reason, (int)reasonlen);
-	    set_vim_var_string(VV_FCS_CHOICE, (char_u *)"", 0);
+	    set_vim_var_string(VV_FCS_REASON, (char_u *)reason, -1);
+	    set_vim_var_string(VV_FCS_CHOICE, (char_u *)"", -1);
 #endif
 	    ++allbuf_lock;
 	    n = apply_autocmds(EVENT_FILECHANGEDSHELL,
@@ -4327,7 +4278,7 @@ buf_check_timestamp(
 		if (!bufref_valid(&bufref))
 		    emsg(_(e_filechangedshell_autocommand_deleted_buffer));
 #ifdef FEAT_EVAL
-		char_u	*s = get_vim_var_str(VV_FCS_CHOICE);
+		s = get_vim_var_str(VV_FCS_CHOICE);
 		if (STRCMP(s, "reload") == 0 && *reason != 'd')
 		    reload = RELOAD_NORMAL;
 		else if (STRCMP(s, "edit") == 0)
@@ -4392,86 +4343,80 @@ buf_check_timestamp(
 
     if (mesg != NULL)
     {
-	char_u *path;
-
 	path = home_replace_save(buf, buf->b_fname);
 	if (path != NULL)
 	{
-	    size_t  tbufsize;
-	    char    *tbuf;
-
 	    if (!helpmesg)
 		mesg2 = "";
-	    tbufsize = STRLEN(mesg) + STRLEN(path) + 2 + STRLEN(mesg2) + 1; // +2 for either '\n' or "; "
-									    // and +1 for NUL
-	    tbuf = alloc(tbufsize);
-	    if (tbuf != NULL)
-	    {
-		int tbuflen;
-
-		tbuflen = vim_snprintf(tbuf, tbufsize, mesg, path);
+	    tbuf = alloc(STRLEN(path) + STRLEN(mesg) + STRLEN(mesg2) + 2);
+	    sprintf(tbuf, mesg, path);
 #ifdef FEAT_EVAL
-		// Set warningmsg here, before the unimportant and output-specific
-		// mesg2 has been appended.
-		set_vim_var_string(VV_WARNINGMSG, (char_u *)tbuf, tbuflen);
+	    // Set warningmsg here, before the unimportant and output-specific
+	    // mesg2 has been appended.
+	    set_vim_var_string(VV_WARNINGMSG, (char_u *)tbuf, -1);
 #endif
 #if defined(FEAT_CON_DIALOG) || defined(FEAT_GUI_DIALOG)
-		if (can_reload)
+	    if (can_reload)
+	    {
+		if (*mesg2 != NUL)
 		{
-		    if (*mesg2 != NUL)
-			vim_snprintf(tbuf + tbuflen, tbufsize - tbuflen, "\n%s", mesg2);
-		    switch (do_dialog(VIM_WARNING, (char_u *)_("Warning"),
-			    (char_u *)tbuf,
-			    (char_u *)_("&OK\n&Load File\nLoad File &and Options"),
-			    1, NULL, TRUE))
-		    {
-			case 2:
-			    reload = RELOAD_NORMAL;
-			    break;
-			case 3:
-			    reload = RELOAD_DETECT;
-			    break;
-		    }
+		    STRCAT(tbuf, "\n");
+		    STRCAT(tbuf, mesg2);
 		}
-		else
-#endif
-		if (State > MODE_NORMAL_BUSY || (State & MODE_CMDLINE)
-								 || already_warned)
+		switch (do_dialog(VIM_WARNING, (char_u *)_("Warning"),
+			(char_u *)tbuf,
+			(char_u *)_("&OK\n&Load File\nLoad File &and Options"),
+			1, NULL, TRUE))
 		{
-		    if (*mesg2 != NUL)
-			vim_snprintf(tbuf + tbuflen, tbufsize - tbuflen, "; %s", mesg2);
-		    emsg(tbuf);
-		    retval = 2;
-		}
-		else
-		{
-		    if (!autocmd_busy)
-		    {
-			msg_start();
-			msg_puts_attr(tbuf, HL_ATTR(HLF_E) + MSG_HIST);
-			if (*mesg2 != NUL)
-			    msg_puts_attr(mesg2, HL_ATTR(HLF_W) + MSG_HIST);
-			msg_clr_eos();
-			(void)msg_end();
-			if (emsg_silent == 0 && !in_assert_fails)
-			{
-			    out_flush();
-    #ifdef FEAT_GUI
-			    if (!focus)
-    #endif
-				// give the user some time to think about it
-				ui_delay(1004L, TRUE);
-
-			    // don't redraw and erase the message
-			    redraw_cmdline = FALSE;
-			}
-		    }
-		    already_warned = TRUE;
+		    case 2:
+			reload = RELOAD_NORMAL;
+			break;
+		    case 3:
+			reload = RELOAD_DETECT;
+			break;
 		}
 	    }
+	    else
+#endif
+	    if (State > MODE_NORMAL_BUSY || (State & MODE_CMDLINE)
+							     || already_warned)
+	    {
+		if (*mesg2 != NUL)
+		{
+		    STRCAT(tbuf, "; ");
+		    STRCAT(tbuf, mesg2);
+		}
+		emsg(tbuf);
+		retval = 2;
+	    }
+	    else
+	    {
+		if (!autocmd_busy)
+		{
+		    msg_start();
+		    msg_puts_attr(tbuf, HL_ATTR(HLF_E) + MSG_HIST);
+		    if (*mesg2 != NUL)
+			msg_puts_attr(mesg2, HL_ATTR(HLF_W) + MSG_HIST);
+		    msg_clr_eos();
+		    (void)msg_end();
+		    if (emsg_silent == 0 && !in_assert_fails)
+		    {
+			out_flush();
+#ifdef FEAT_GUI
+			if (!focus)
+#endif
+			    // give the user some time to think about it
+			    ui_delay(1004L, TRUE);
 
-	    vim_free(tbuf);
+			// don't redraw and erase the message
+			redraw_cmdline = FALSE;
+		    }
+		}
+		already_warned = TRUE;
+	    }
+
 	    vim_free(path);
+	    vim_free(tbuf);
 	}
     }
 
@@ -4751,19 +4696,19 @@ getftypewfd(WIN32_FIND_DATAW *wfd)
     {
 	if (tag == IO_REPARSE_TAG_MOUNT_POINT)
 	    return (char_u*)"junction";
-	if (tag == IO_REPARSE_TAG_SYMLINK)
+	else if (tag == IO_REPARSE_TAG_SYMLINK)
 	{
 	    if (flag & FILE_ATTRIBUTE_DIRECTORY)
 		return (char_u*)"linkd";
-
-	    return (char_u*)"link";
+	    else
+		return (char_u*)"link";
 	}
 	return (char_u*)"reparse";	// unknown reparse point type
     }
     if (flag & FILE_ATTRIBUTE_DIRECTORY)
 	return (char_u*)"dir";
-
-    return (char_u*)"file";
+    else
+	return (char_u*)"file";
 }
 
     static dict_T *
@@ -4848,6 +4793,7 @@ create_readdirex_item(char_u *path, char_u *name)
 	ret = mch_stat(p, &st);
 	if (ret < 0)
 	    q = (char_u*)"link";
+
     }
     vim_free(p);
 
@@ -4882,1005 +4828,4 @@ create_readdirex_item(char_u *path, char_u *name)
 	    goto theend;
 
 	pw = getpwuid(st.st_uid);
-	if (pw == NULL)
-	    q = (char_u*)"";
-	else
-	    q = (char_u*)pw->pw_name;
-	if (dict_add_string(item, "user", q) == FAIL)
-	    goto theend;
-#  if !defined(VMS) || (defined(VMS) && defined(HAVE_XOS_R_H))
-	gr = getgrgid(st.st_gid);
-	if (gr == NULL)
-	    q = (char_u*)"";
-	else
-	    q = (char_u*)gr->gr_name;
-#  endif
-	if (dict_add_string(item, "group", q) == FAIL)
-	    goto theend;
-    }
-    else
-    {
-	if (dict_add_number(item, "size", -1) == FAIL)
-	    goto theend;
-	if (dict_add_number(item, "time", -1) == FAIL)
-	    goto theend;
-	if (dict_add_string(item, "type", q == NULL ? (char_u*)"" : q) == FAIL)
-	    goto theend;
-	if (dict_add_string(item, "perm", (char_u*)"") == FAIL)
-	    goto theend;
-	if (dict_add_string(item, "user", (char_u*)"") == FAIL)
-	    goto theend;
-	if (dict_add_string(item, "group", (char_u*)"") == FAIL)
-	    goto theend;
-    }
-    return item;
-
-theend:
-    dict_unref(item);
-    return NULL;
-}
-# endif
-
-    static int
-compare_readdirex_item(const void *p1, const void *p2)
-{
-    char_u  *name1, *name2;
-
-    name1 = dict_get_string(*(dict_T**)p1, "name", FALSE);
-    name2 = dict_get_string(*(dict_T**)p2, "name", FALSE);
-    if (readdirex_sort == READDIR_SORT_BYTE)
-	return STRCMP(name1, name2);
-    if (readdirex_sort == READDIR_SORT_IC)
-	return STRICMP(name1, name2);
-
-    return STRCOLL(name1, name2);
-}
-
-    static int
-compare_readdir_item(const void *s1, const void *s2)
-{
-    if (readdirex_sort == READDIR_SORT_BYTE)
-	return STRCMP(*(char **)s1, *(char **)s2);
-    if (readdirex_sort == READDIR_SORT_IC)
-	return STRICMP(*(char **)s1, *(char **)s2);
-
-    return STRCOLL(*(char **)s1, *(char **)s2);
-}
-#endif
-
-#if defined(TEMPDIRNAMES) || defined(FEAT_EVAL)
-/*
- * Core part of "readdir()" and "readdirex()" function.
- * Retrieve the list of files/directories of "path" into "gap".
- * If "withattr" is TRUE, retrieve the names and their attributes.
- * If "withattr" is FALSE, retrieve the names only.
- * Return OK for success, FAIL for failure.
- */
-    int
-readdir_core(
-    garray_T	*gap,
-    char_u	*path,
-    int		withattr UNUSED,
-    void	*context,
-    int		(*checkitem)(void *context, void *item),
-    int		sort)
-{
-    int			failed = FALSE;
-    char_u		*p;
-# ifdef MSWIN
-    char_u		*buf;
-    int			ok;
-    HANDLE		hFind = INVALID_HANDLE_VALUE;
-    WIN32_FIND_DATAW    wfd;
-    WCHAR		*wn = NULL;	// UTF-16 name, NULL when not used.
-    char_u		*p_end;
-# else
-    DIR			*dirp;
-    struct dirent	*dp;
-# endif
-
-    ga_init2(gap, sizeof(void *), 20);
-
-# ifdef FEAT_EVAL
-#  define FREE_ITEM(item)   do { \
-	if (withattr) \
-	    dict_unref((dict_T*)(item)); \
-	else \
-	    vim_free(item); \
-    } while (0)
-
-    readdirex_sort = READDIR_SORT_BYTE;
-# else
-#  define FREE_ITEM(item)   vim_free(item)
-# endif
-
-# ifdef MSWIN
-    buf = alloc(MAXPATHL);
-    if (buf == NULL)
-	return FAIL;
-    STRNCPY(buf, path, MAXPATHL-5);
-    p = p_end = buf + STRLEN(buf);
-    MB_PTR_BACK(buf, p);
-    if (*p == '\\' || *p == '/')
-	p_end = p;
-    STRCPY(p_end, "\\*");
-
-    wn = enc_to_utf16(buf, NULL);
-    if (wn != NULL)
-	hFind = FindFirstFileW(wn, &wfd);
-    ok = (hFind != INVALID_HANDLE_VALUE);
-    if (!ok)
-    {
-	failed = TRUE;
-	semsg(_(e_cant_open_file_str), path);
-    }
-    else
-    {
-	while (ok)
-	{
-	    int	    ignore;
-	    void    *item;
-	    WCHAR   *wp;
-
-	    wp = wfd.cFileName;
-	    ignore = wp[0] == L'.' &&
-		    (wp[1] == NUL ||
-		     (wp[1] == L'.' && wp[2] == NUL));
-	    if (ignore)
-	    {
-		ok = FindNextFileW(hFind, &wfd);
-		continue;
-	    }
-#  ifdef FEAT_EVAL
-	    if (withattr)
-		item = (void*)create_readdirex_item(&wfd);
-	    else
-#  endif
-		item = (void*)utf16_to_enc(wfd.cFileName, NULL);
-	    if (item == NULL)
-	    {
-		failed = TRUE;
-		break;
-	    }
-
-	    if (!ignore && checkitem != NULL)
-	    {
-		int r = checkitem(context, item);
-
-		if (r < 0)
-		{
-		    FREE_ITEM(item);
-		    break;
-		}
-		if (r == 0)
-		    ignore = TRUE;
-	    }
-
-	    if (!ignore)
-	    {
-		if (ga_grow(gap, 1) == OK)
-		    ((void**)gap->ga_data)[gap->ga_len++] = item;
-		else
-		{
-		    failed = TRUE;
-		    FREE_ITEM(item);
-		    break;
-		}
-	    }
-	    else
-		FREE_ITEM(item);
-
-	    ok = FindNextFileW(hFind, &wfd);
-	}
-	FindClose(hFind);
-    }
-
-    vim_free(buf);
-    vim_free(wn);
-# else	// MSWIN
-    dirp = opendir((char *)path);
-    if (dirp == NULL)
-    {
-	failed = TRUE;
-	semsg(_(e_cant_open_file_str), path);
-    }
-    else
-    {
-	for (;;)
-	{
-	    int	    ignore;
-	    void    *item;
-
-	    dp = readdir(dirp);
-	    if (dp == NULL)
-		break;
-	    p = (char_u *)dp->d_name;
-
-	    ignore = p[0] == '.' &&
-		    (p[1] == NUL ||
-		     (p[1] == '.' && p[2] == NUL));
-	    if (ignore)
-		continue;
-#  ifdef FEAT_EVAL
-	    if (withattr)
-		item = (void*)create_readdirex_item(path, p);
-	    else
-#  endif
-		item = (void*)vim_strsave(p);
-	    if (item == NULL)
-	    {
-		failed = TRUE;
-		break;
-	    }
-
-	    if (checkitem != NULL)
-	    {
-		int r = checkitem(context, item);
-
-		if (r < 0)
-		{
-		    FREE_ITEM(item);
-		    break;
-		}
-		if (r == 0)
-		    ignore = TRUE;
-	    }
-
-	    if (!ignore)
-	    {
-		if (ga_grow(gap, 1) == OK)
-		    ((void**)gap->ga_data)[gap->ga_len++] = item;
-		else
-		{
-		    failed = TRUE;
-		    FREE_ITEM(item);
-		    break;
-		}
-	    }
-	    else
-		FREE_ITEM(item);
-	}
-
-	closedir(dirp);
-    }
-# endif	// MSWIN
-
-# undef FREE_ITEM
-
-    if (!failed && gap->ga_len > 0 && sort > READDIR_SORT_NONE)
-    {
-# ifdef FEAT_EVAL
-	readdirex_sort = sort;
-	if (withattr)
-	    qsort((void*)gap->ga_data, (size_t)gap->ga_len, sizeof(dict_T*),
-		    compare_readdirex_item);
-	else
-	    qsort((void*)gap->ga_data, (size_t)gap->ga_len, sizeof(char_u *),
-		    compare_readdir_item);
-# else
-	    sort_strings((char_u **)gap->ga_data, gap->ga_len);
-# endif
-    }
-
-    return failed ? FAIL : OK;
-}
-
-/*
- * Delete "name" and everything in it, recursively.
- * return 0 for success, -1 if some file was not deleted.
- */
-    int
-delete_recursive(char_u *name)
-{
-    int result = 0;
-
-    // A symbolic link to a directory itself is deleted, not the directory it
-    // points to.
-    if (
-# if defined(UNIX) || defined(MSWIN)
-	 mch_isrealdir(name)
-# else
-	 mch_isdir(name)
-# endif
-	    )
-    {
-	char_u	    *exp = vim_strsave(name);
-	garray_T    ga;
-
-	if (exp == NULL)
-	    return -1;
-	if (readdir_core(&ga, exp, FALSE, NULL, NULL, READDIR_SORT_NONE) == OK)
-	{
-	    int	len = vim_snprintf((char *)NameBuff, MAXPATHL, "%s/", exp);
-	    int	i;
-
-	    for (i = 0; i < ga.ga_len; ++i)
-	    {
-		vim_snprintf((char *)NameBuff + len, MAXPATHL - len, "%s", ((char_u **)ga.ga_data)[i]);
-		if (delete_recursive(NameBuff) != 0)
-		    // Remember the failure but continue deleting any further
-		    // entries.
-		    result = -1;
-	    }
-	    ga_clear_strings(&ga);
-	    if (mch_rmdir(exp) != 0)
-		result = -1;
-	}
-	else
-	    result = -1;
-	vim_free(exp);
-    }
-    else
-	result = mch_remove(name) == 0 ? 0 : -1;
-
-    return result;
-}
-#endif
-
-#if defined(TEMPDIRNAMES)
-static long	temp_count = 0;		// Temp filename counter.
-
-# if defined(UNIX) && defined(HAVE_FLOCK) && defined(HAVE_DIRFD)
-/*
- * Open temporary directory and take file lock to prevent
- * to be auto-cleaned.
- */
-   static void
-vim_opentempdir(void)
-{
-    DIR *dp = NULL;
-
-    if (vim_tempdir_dp != NULL)
-	return;
-
-    dp = opendir((const char*)vim_tempdir);
-    if (dp == NULL)
-	return;
-
-    vim_tempdir_dp = dp;
-    flock(dirfd(vim_tempdir_dp), LOCK_SH);
-}
-
-/*
- * Close temporary directory - it automatically release file lock.
- */
-   static void
-vim_closetempdir(void)
-{
-    if (vim_tempdir_dp == NULL)
-	return;
-
-    closedir(vim_tempdir_dp);
-    vim_tempdir_dp = NULL;
-}
-# endif
-
-/*
- * Delete the temp directory and all files it contains.
- */
-    void
-vim_deltempdir(void)
-{
-    if (vim_tempdir == NULL)
-	return;
-
-# if defined(UNIX) && defined(HAVE_FLOCK) && defined(HAVE_DIRFD)
-    vim_closetempdir();
-# endif
-    // remove the trailing path separator
-    gettail(vim_tempdir)[-1] = NUL;
-    delete_recursive(vim_tempdir);
-    VIM_CLEAR(vim_tempdir);
-}
-
-/*
- * Directory "tempdir" was created.  Expand this name to a full path and put
- * it in "vim_tempdir".  This avoids that using ":cd" would confuse us.
- * "tempdir" must be no longer than MAXPATHL.
- */
-    static void
-vim_settempdir(char_u *tempdir)
-{
-    char_u	*buf;
-    size_t	buflen;
-
-    buf = alloc(MAXPATHL + 2);
-    if (buf == NULL)
-	return;
-
-    if (vim_FullName(tempdir, buf, MAXPATHL, FALSE) == FAIL)
-	STRCPY(buf, tempdir);
-    buflen = STRLEN(buf);
-    if (!after_pathsep(buf, buf + buflen))
-    {
-	STRCPY(buf + buflen, PATHSEPSTR);
-	buflen += STRLEN_LITERAL(PATHSEPSTR);
-    }
-    vim_tempdir = vim_strnsave(buf, buflen);
-# if defined(UNIX) && defined(HAVE_FLOCK) && defined(HAVE_DIRFD)
-    vim_opentempdir();
-# endif
-    vim_free(buf);
-}
-#endif
-
-/*
- * vim_tempname(): Return a unique name that can be used for a temp file.
- *
- * The temp file is NOT guaranteed to be created.  If "keep" is FALSE it is
- * guaranteed to NOT be created.
- *
- * The returned pointer is to allocated memory.
- * The returned pointer is NULL if no valid name was found.
- */
-    char_u  *
-vim_tempname(
-    int	    extra_char UNUSED,  // char to use in the name instead of '?'
-    int	    keep UNUSED)
-{
-#ifdef USE_TMPNAM
-    char_u	itmp[L_tmpnam];	// use tmpnam()
-#elif defined(MSWIN)
-    WCHAR	itmp[TEMPNAMELEN];
-#else
-    char_u	itmp[TEMPNAMELEN];
-#endif
-
-#ifdef TEMPDIRNAMES
-    static char	*(tempdirs[]) = {TEMPDIRNAMES};
-    int		i;
-# ifndef EEXIST
-    stat_T	st;
-# endif
-
-    /*
-     * This will create a directory for private use by this instance of Vim.
-     * This is done once, and the same directory is used for all temp files.
-     * This method avoids security problems because of symlink attacks et al.
-     * It's also a bit faster, because we only need to check for an existing
-     * file when creating the directory and not for each temp file.
-     */
-    if (vim_tempdir == NULL)
-    {
-	/*
-	 * Try the entries in TEMPDIRNAMES to create the temp directory.
-	 */
-	for (i = 0; i < (int)ARRAY_LENGTH(tempdirs); ++i)
-	{
-# ifndef HAVE_MKDTEMP
-	    long	nr;
-	    long	off;
-# endif
-	    size_t	itmplen;
-
-	    // Expand $TMP, leave room for "/v1100000/999999999".
-	    // Skip the directory check if the expansion fails.
-	    itmplen = expand_env((char_u *)tempdirs[i], itmp, TEMPNAMELEN - 20);
-	    if (itmp[0] != '$' && mch_isdir(itmp))
-	    {
-		// directory exists
-		if (!after_pathsep(itmp, itmp + itmplen))
-		{
-		    STRCPY(itmp + itmplen, PATHSEPSTR);
-		    itmplen += STRLEN_LITERAL(PATHSEPSTR);
-		}
-
-# ifdef HAVE_MKDTEMP
-		{
-#  if defined(UNIX) || defined(VMS)
-		    // Make sure the umask doesn't remove the executable bit.
-		    // "repl" has been reported to use "177".
-		    mode_t	umask_save = umask(077);
-#  endif
-		    // Leave room for filename
-		    STRCPY(itmp + itmplen, "vXXXXXX");
-		    itmplen += STRLEN_LITERAL("vXXXXXX");
-		    if (mkdtemp((char *)itmp) != NULL)
-			vim_settempdir(itmp);
-#  if defined(UNIX) || defined(VMS)
-		    (void)umask(umask_save);
-#  endif
-		}
-# else
-		// Get an arbitrary number of up to 6 digits.  When it's
-		// unlikely that it already exists it will be faster,
-		// otherwise it doesn't matter.  The use of mkdir() avoids any
-		// security problems because of the predictable number.
-		nr = (mch_get_pid() + (long)time(NULL)) % 1000000L;
-
-		// Try up to 10000 different values until we find a name that
-		// doesn't exist.
-		for (off = 0; off < 10000L; ++off)
-		{
-		    int		r;
-#  if defined(UNIX) || defined(VMS)
-		    mode_t	umask_save;
-#  endif
-
-		    vim_snprintf((char *)itmp + itmplen, sizeof(itmp) - itmplen, "v%ld", nr + off);
-#  ifndef EEXIST
-		    // If mkdir() does not set errno to EEXIST, check for
-		    // existing file here.  There is a race condition then,
-		    // although it's fail-safe.
-		    if (mch_stat((char *)itmp, &st) >= 0)
-			continue;
-#  endif
-#  if defined(UNIX) || defined(VMS)
-		    // Make sure the umask doesn't remove the executable bit.
-		    // "repl" has been reported to use "177".
-		    umask_save = umask(077);
-#  endif
-		    r = vim_mkdir(itmp, 0700);
-#  if defined(UNIX) || defined(VMS)
-		    (void)umask(umask_save);
-#  endif
-		    if (r == 0)
-		    {
-			vim_settempdir(itmp);
-			break;
-		    }
-#  ifdef EEXIST
-		    // If the mkdir() didn't fail because the file/dir exists,
-		    // we probably can't create any dir here, try another
-		    // place.
-		    if (errno != EEXIST)
-#  endif
-			break;
-		}
-# endif // HAVE_MKDTEMP
-		if (vim_tempdir != NULL)
-		    break;
-	    }
-	}
-    }
-
-    if (vim_tempdir != NULL)
-    {
-	// There is no need to check if the file exists, because we own the
-	// directory and nobody else creates a file in it.
-	int itmplen = vim_snprintf((char *)itmp, sizeof(itmp), "%s%ld", vim_tempdir, temp_count++);
-	return vim_strnsave(itmp, (size_t)itmplen);
-    }
-
-    return NULL;
-
-#else // TEMPDIRNAMES
-    char_u	*p;
-
-# ifdef MSWIN
-    WCHAR	wszTempFile[_MAX_PATH + 1];
-    WCHAR	buf4[4];
-    WCHAR	*chartab = L"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    char_u	*retval;
-    char_u	*shname;
-    long	i;
-
-    wcscpy(itmp, L"");
-    if (GetTempPathW(_MAX_PATH, wszTempFile) == 0)
-    {
-	wszTempFile[0] = L'.';	// GetTempPathW() failed, use current dir
-	wszTempFile[1] = L'\\';
-	wszTempFile[2] = NUL;
-    }
-    wcscpy(buf4, L"VIM");
-
-    // randomize the name to avoid collisions
-    i = mch_get_pid() + extra_char;
-    buf4[1] = chartab[i % 36];
-    buf4[2] = chartab[101 * i % 36];
-    if (GetTempFileNameW(wszTempFile, buf4, 0, itmp) == 0)
-	return NULL;
-    if (!keep)
-	// GetTempFileNameW() will create the file, we don't want that
-	(void)DeleteFileW(itmp);
-
-    // Backslashes in a temp file name cause problems when filtering with
-    // "sh".  NOTE: This also checks 'shellcmdflag' to help those people who
-    // didn't set 'shellslash' but only if not using PowerShell.
-    retval = utf16_to_enc(itmp, NULL);
-    if (retval == NULL)
-	return NULL;
-    shname = gettail(p_sh);
-    if ((*p_shcf == '-' && !(strstr((char *)shname, "powershell") != NULL
-			     || strstr((char *)shname, "pwsh") != NULL ))
-								    || p_ssl)
-	for (p = retval; *p; ++p)
-	    if (*p == '\\')
-		*p = '/';
-    return retval;
-
-# else // MSWIN
-    int		itmplen;
-
-#  ifdef USE_TMPNAM
-    // tmpnam() will make its own name
-    p = tmpnam((char *)itmp);
-    if (p == NULL || *p == NUL)
-	return NULL;
-#  else
-
-#   ifdef VMS_TEMPNAM
-    // mktemp() is not working on VMS.  It seems to be
-    // a do-nothing function. Therefore we use tempnam().
-    vim_snprintf((char *)itmp, sizeof(itmp), "VIM%c", extra_char);
-    p = (char_u *)tempnam("tmp:", (char *)itmp);
-    if (p != NULL)
-    {
-	// VMS will use '.LIS' if we don't explicitly specify an extension,
-	// and VIM will then be unable to find the file later
-	itmplen = vim_snprintf((char *)itmp, sizeof(itmp), "%s.txt", p);
-	free(p);
-    }
-    else
-	return NULL;
-#   else
-    STRCPY(itmp, TEMPNAME);
-    itmplen = STRLEN_LITERAL(TEMPNAME);
-    if ((p = vim_strchr(itmp, '?')) != NULL)
-	*p = extra_char;
-    if (mktemp((char *)itmp) == NULL)
-	return NULL;
-#   endif
-#  endif
-
-    return vim_strnsave(itmp, (size_t)itmplen);
-# endif // MSWIN
-#endif // TEMPDIRNAMES
-}
-
-#if defined(BACKSLASH_IN_FILENAME)
-/*
- * Convert all backslashes in fname to forward slashes in-place, unless when
- * it looks like a URL.
- */
-    void
-forward_slash(char_u *fname)
-{
-    char_u	*p;
-
-    if (path_with_url(fname))
-	return;
-    for (p = fname; *p != NUL; ++p)
-	// The Big5 encoding can have '\' in the trail byte.
-	if (enc_dbcs != 0 && (*mb_ptr2len)(p) > 1)
-	    ++p;
-	else if (*p == '\\')
-	    *p = '/';
-}
-#endif
-
-/*
- * Try matching a filename with a "pattern" ("prog" is NULL), or use the
- * precompiled regprog "prog" ("pattern" is NULL).  That avoids calling
- * vim_regcomp() often.
- * Used for autocommands and 'wildignore'.
- * Returns TRUE if there is a match, FALSE otherwise.
- */
-    int
-match_file_pat(
-    char_u	*pattern,		// pattern to match with
-    regprog_T	**prog,			// pre-compiled regprog or NULL
-    char_u	*fname,			// full path of file name
-    char_u	*sfname,		// short file name or NULL
-    char_u	*tail,			// tail of path
-    int		allow_dirs)		// allow matching with dir
-{
-    regmatch_T	regmatch;
-    int		result = FALSE;
-
-    regmatch.rm_ic = p_fic; // ignore case if 'fileignorecase' is set
-    if (prog != NULL)
-	regmatch.regprog = *prog;
-    else
-	regmatch.regprog = vim_regcomp(pattern, RE_MAGIC);
-
-    /*
-     * Try for a match with the pattern with:
-     * 1. the full file name, when the pattern has a '/'.
-     * 2. the short file name, when the pattern has a '/'.
-     * 3. the tail of the file name, when the pattern has no '/'.
-     */
-    if (regmatch.regprog != NULL
-	     && ((allow_dirs
-		     && (vim_regexec(&regmatch, fname, (colnr_T)0)
-			 || (sfname != NULL
-			     && vim_regexec(&regmatch, sfname, (colnr_T)0))))
-		 || (!allow_dirs && vim_regexec(&regmatch, tail, (colnr_T)0))))
-	result = TRUE;
-
-    if (prog != NULL)
-	*prog = regmatch.regprog;
-    else
-	vim_regfree(regmatch.regprog);
-    return result;
-}
-
-/*
- * Return TRUE if a file matches with a pattern in "list".
- * "list" is a comma-separated list of patterns, like 'wildignore'.
- * "sfname" is the short file name or NULL, "ffname" the long file name.
- */
-    int
-match_file_list(char_u *list, char_u *sfname, char_u *ffname)
-{
-    char_u	buf[MAXPATHL];
-    char_u	*tail;
-    char_u	*regpat;
-    char	allow_dirs;
-    int		match;
-    char_u	*p;
-
-    tail = gettail(sfname);
-
-    // try all patterns in 'wildignore'
-    p = list;
-    while (*p)
-    {
-	copy_option_part(&p, buf, MAXPATHL, ",");
-	regpat = file_pat_to_reg_pat(buf, NULL, &allow_dirs, FALSE);
-	if (regpat == NULL)
-	    break;
-	match = match_file_pat(regpat, NULL, ffname, sfname,
-						       tail, (int)allow_dirs);
-	vim_free(regpat);
-	if (match)
-	    return TRUE;
-    }
-    return FALSE;
-}
-
-/*
- * Convert the given pattern "pat" which has shell style wildcards in it, into
- * a regular expression, and return the result in allocated memory.  If there
- * is a directory path separator to be matched, then TRUE is put in
- * allow_dirs, otherwise FALSE is put there -- webb.
- * Handle backslashes before special characters, like "\*" and "\ ".
- *
- * no_bslash only makes a difference, when BACKSLASH_IN_FILENAME is defined
- *
- * Returns NULL when out of memory.
- */
-    char_u *
-file_pat_to_reg_pat(
-    char_u	*pat,
-    char_u	*pat_end,	// first char after pattern or NULL
-    char	*allow_dirs,	// Result passed back out in here
-    int		no_bslash UNUSED) // Don't use a backward slash as pathsep
-{
-    int		size = 2; // '^' at start, '$' at end
-    char_u	*endp;
-    char_u	*reg_pat;
-    char_u	*p;
-    int		i;
-    int		nested = 0;
-    int		add_dollar = TRUE;
-
-    if (allow_dirs != NULL)
-	*allow_dirs = FALSE;
-    if (pat_end == NULL)
-	pat_end = pat + STRLEN(pat);
-
-    for (p = pat; p < pat_end; p++)
-    {
-	switch (*p)
-	{
-	    case '*':
-	    case '.':
-	    case ',':
-	    case '{':
-	    case '}':
-	    case '~':
-		size += 2;	// extra backslash
-		break;
-#ifdef BACKSLASH_IN_FILENAME
-	    case '\\':
-	    case '/':
-		size += 4;	// could become "[\/]"
-		break;
-#endif
-	    default:
-		size++;
-		if (enc_dbcs != 0 && (*mb_ptr2len)(p) > 1)
-		{
-		    ++p;
-		    ++size;
-		}
-		break;
-	}
-    }
-    reg_pat = alloc(size + 1);
-    if (reg_pat == NULL)
-	return NULL;
-
-    i = 0;
-
-    if (pat[0] == '*')
-	while (pat[0] == '*' && pat < pat_end - 1)
-	    pat++;
-    else
-	reg_pat[i++] = '^';
-    endp = pat_end - 1;
-    if (endp >= pat && *endp == '*')
-    {
-	while (endp - pat > 0 && *endp == '*')
-	    endp--;
-	add_dollar = FALSE;
-    }
-    for (p = pat; *p && nested >= 0 && p <= endp; p++)
-    {
-	switch (*p)
-	{
-	    case '*':
-		reg_pat[i++] = '.';
-		reg_pat[i++] = '*';
-		while (p[1] == '*')	// "**" matches like "*"
-		    ++p;
-		break;
-	    case '.':
-	    case '~':
-		reg_pat[i++] = '\\';
-		reg_pat[i++] = *p;
-		break;
-	    case '?':
-		reg_pat[i++] = '.';
-		break;
-	    case '\\':
-		if (p[1] == NUL)
-		    break;
-#ifdef BACKSLASH_IN_FILENAME
-		if (!no_bslash)
-		{
-		    // translate:
-		    // "\x" to "\\x"  e.g., "dir\file"
-		    // "\*" to "\\.*" e.g., "dir\*.c"
-		    // "\?" to "\\."  e.g., "dir\??.c"
-		    // "\+" to "\+"   e.g., "fileX\+.c"
-		    if ((vim_isfilec(p[1]) || p[1] == '*' || p[1] == '?')
-			    && p[1] != '+')
-		    {
-			reg_pat[i++] = '[';
-			reg_pat[i++] = '\\';
-			reg_pat[i++] = '/';
-			reg_pat[i++] = ']';
-			if (allow_dirs != NULL)
-			    *allow_dirs = TRUE;
-			break;
-		    }
-		}
-#endif
-		// Undo escaping from ExpandEscape():
-		// foo\?bar -> foo?bar
-		// foo\%bar -> foo%bar
-		// foo\,bar -> foo,bar
-		// foo\ bar -> foo bar
-		// Don't unescape \, * and others that are also special in a
-		// regexp.
-		// An escaped { must be unescaped since we use magic not
-		// verymagic.  Use "\\\{n,m\}"" to get "\{n,m}".
-		if (*++p == '?'
-#ifdef BACKSLASH_IN_FILENAME
-			&& no_bslash
-#endif
-			)
-		    reg_pat[i++] = '?';
-		else
-		    if (*p == ',' || *p == '%' || *p == '#'
-			       || vim_isspace(*p) || *p == '{' || *p == '}')
-			reg_pat[i++] = *p;
-		    else if (*p == '\\' && p[1] == '\\' && p[2] == '{')
-		    {
-			reg_pat[i++] = '\\';
-			reg_pat[i++] = '{';
-			p += 2;
-		    }
-		    else
-		    {
-			if (allow_dirs != NULL && vim_ispathsep(*p)
-#ifdef BACKSLASH_IN_FILENAME
-				&& (!no_bslash || *p != '\\')
-#endif
-				)
-			    *allow_dirs = TRUE;
-			reg_pat[i++] = '\\';
-			if (enc_dbcs != 0 && (*mb_ptr2len)(p) > 1)
-			    reg_pat[i++] = *p++;
-			reg_pat[i++] = *p;
-		    }
-		break;
-#ifdef BACKSLASH_IN_FILENAME
-	    case '/':
-		reg_pat[i++] = '[';
-		reg_pat[i++] = '\\';
-		reg_pat[i++] = '/';
-		reg_pat[i++] = ']';
-		if (allow_dirs != NULL)
-		    *allow_dirs = TRUE;
-		break;
-#endif
-	    case '{':
-		reg_pat[i++] = '\\';
-		reg_pat[i++] = '(';
-		nested++;
-		break;
-	    case '}':
-		reg_pat[i++] = '\\';
-		reg_pat[i++] = ')';
-		--nested;
-		break;
-	    case ',':
-		if (nested)
-		{
-		    reg_pat[i++] = '\\';
-		    reg_pat[i++] = '|';
-		}
-		else
-		    reg_pat[i++] = ',';
-		break;
-	    default:
-		if (enc_dbcs != 0 && (*mb_ptr2len)(p) > 1)
-		    reg_pat[i++] = *p++;
-		else if (allow_dirs != NULL && vim_ispathsep(*p))
-		    *allow_dirs = TRUE;
-		reg_pat[i++] = *p;
-		break;
-	}
-    }
-    if (add_dollar)
-	reg_pat[i++] = '$';
-    reg_pat[i] = NUL;
-    if (nested != 0)
-    {
-	if (nested < 0)
-	    emsg(_(e_missing_open_curly));
-	else
-	    emsg(_(e_missing_close_curly));
-	VIM_CLEAR(reg_pat);
-    }
-    return reg_pat;
-}
-
-#if defined(EINTR)
-/*
- * Version of read() that retries when interrupted by EINTR (possibly
- * by a SIGWINCH).
- */
-    long
-read_eintr(int fd, void *buf, size_t bufsize)
-{
-    long ret;
-
-    for (;;)
-    {
-	ret = vim_read(fd, buf, bufsize);
-	if (ret >= 0 || errno != EINTR)
-	    break;
-    }
-    return ret;
-}
-
-/*
- * Version of write() that retries when interrupted by EINTR (possibly
- * by a SIGWINCH).
- */
-    long
-write_eintr(int fd, void *buf, size_t bufsize)
-{
-    long    ret = 0;
-    long    wlen;
-
-    // Repeat the write() so long it didn't fail, other than being interrupted
-    // by a signal.
-    while (ret < (long)bufsize)
-    {
-	wlen = vim_write(fd, (char *)buf + ret, bufsize - ret);
-	if (wlen < 0)
-	{
-	    if (errno != EINTR)
-		break;
-	}
-	else
-	    ret += wlen;
-    }
-    return ret;
-}
-#endif
+	if (pw =

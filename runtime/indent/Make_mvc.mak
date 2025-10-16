@@ -1,17 +1,10 @@
-#
 # Makefile for running indent tests on OS Windows.
 # Made on the base of a indent/Makefile.
-# 2024-03-13, Restorer
-#
-
-# included common tools
-!INCLUDE ..\..\src\auto\nmake\tools.mak
-
-LSFLAGS = /A:-D /B /O:N /L /S
+# Restorer, 13.03.2024
 
 .SUFFIXES:
 
-VIMPROG = ..\..\src\vim.exe
+VIMPROG = vim.exe
 VIMRUNTIME = ..
 
 # Run the tests that didn't run yet or failed previously.
@@ -19,22 +12,10 @@ VIMRUNTIME = ..
 # If a test fails a testdir\*.fail file will be written.
 test :
 	@ set "VIMRUNTIME=$(VIMRUNTIME)"
-	@ $(VIMPROG) --clean --not-a-term -u testdir\runtest.vim && \
-		(echo:&echo:    INDENT TESTS: DONE &echo:) || \
-		<<echofail.bat
-set "retval=%ERRORLEVEL%"
-@echo off
-echo:&echo:    INDENT TESTS: FAILED
-for /F %%G in ('2^> nul $(LS) $(LSFLAGS) testdir\*.fail') do (
-call set "fail=%%fail%% %%G")
-if defined fail (
-for %%G in (%fail%) do @(echo:&echo:    %%~nxG:&echo: && type %%G)
-)
-exit /B %retval%
-<<
+	$(VIMPROG) --clean --not-a-term -u testdir\runtest.vim
+
 
 clean testclean :
-	@ if exist testdir\*.fail $(RM) testdir\*.fail
-	@ if exist testdir\*.out $(RM) testdir\*.out
+	@ if exist testdir\*.fail del /q testdir\*.fail
+	@ if exist testdir\*.out del /q testdir\*.out
 
-# vim: set noet sw=8 ts=8 sts=0 wm=0 tw=79 ft=make:

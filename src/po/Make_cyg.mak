@@ -96,5 +96,4 @@ install-all: install
 
 clean:
 	$(RM) *.mo
-#	$(RM) *.pot
-	$(RM) *.orig
+	$(RM) *.pot

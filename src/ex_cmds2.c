@@ -126,9 +126,9 @@ check_changed(buf_T *buf, int flags)
     return FALSE;
 }
 
-#if defined(FEAT_GUI_DIALOG) || defined(FEAT_CON_DIALOG)
+#if defined(FEAT_GUI_DIALOG) || defined(FEAT_CON_DIALOG) || defined(PROTO)
 
-#if defined(FEAT_BROWSE)
+#if defined(FEAT_BROWSE) || defined(PROTO)
 /*
  * When wanting to write a file without a file name, ask the user for a name.
  */
@@ -789,7 +789,7 @@ ex_compiler(exarg_T *eap)
     {
 	// ":compiler! {name}" sets global options
 	do_cmdline_cmd((char_u *)
-		"command -nargs=* -keepscript CompilerSet set <args>");
+		"command -nargs=* CompilerSet set <args>");
     }
     else
     {
@@ -835,9 +835,9 @@ ex_compiler(exarg_T *eap)
 }
 #endif
 
-#if defined(FEAT_PYTHON3) || defined(FEAT_PYTHON)
+#if defined(FEAT_PYTHON3) || defined(FEAT_PYTHON) || defined(PROTO)
 
-# if defined(FEAT_PYTHON) && defined(FEAT_PYTHON3)
+# if (defined(FEAT_PYTHON) && defined(FEAT_PYTHON3)) || defined(PROTO)
 /*
  * Detect Python 3 or 2, and initialize 'pyxversion'.
  */

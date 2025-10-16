@@ -1,6 +1,3 @@
-" Vim :substitute command
-
-
 substitute/foo/bar/&
 substitute/foo/bar/cegiInp#lr
 
@@ -39,7 +36,6 @@ def Foo()
   substitute/foo/bar/
   let bar = str->substitute(str, pat, sub, flags)
 enddef
-
 
 " various delimiters
 
@@ -115,67 +111,6 @@ s//{string}/
 s //{string}/
 
 
-" Repeat commands
-
-s
-:s
-s 42
-:s 42
-s42
-:s42
-
-s cegiInp#lr
-:s cegiInp#lr
-s cegiInp#lr42
-:s cegiInp#lr42
-s cegiInp#lr 42
-:s cegiInp#lr 42
-
-sg
-:sg
-sgi
-:sgi
-sg 42
-:sg 42
-sgi 42
-:sgi 42
-sg42
-:sg42
-sgi42
-:sgi42
-
-" FIXME
-&
-&&
-~
-~&
-
-" FIXME
-&cegiInp#lr
-&&cegiInp#lr
-~cegiInp#lr
-~&cegiInp#lr
-
-" 2 and 3 letter repeat-previous variants
-
-:sc  | :sce | :scg | :sci | :scI | :scn | :scp | :scl |
-:sgc | :sge | :sg  | :sgi | :sgI | :sgn | :sgp | :sgl | :sgr
-:sic | :sie |      | :si  | :siI | :sin | :sip |      | :sir
-:sIc | :sIe | :sIg | :sIi | :sI  | :sIn | :sIp | :sIl | :sIr
-:src |      | :srg | :sri | :srI | :srn | :srp | :srl | :sr
-
-
-" exceptions
-:scr  " is  `:scriptnames`
-:se   " is  `:set`
-:sig  " is  `:sign`
-:sil  " is  `:silent`
-:sn   " is  `:snext`
-:sp   " is  `:split`
-:sl   " is  `:sleep`
-:sre  " is  `:srewind`
-
-
 " Vi compatibility
 
 s\/{string}/
@@ -189,6 +124,7 @@ s \&{string}&
 
 " Trailing comment and bar
 
+" FIXME: trailing comment, no whitespace
 s" comment
 s| echo "Foo"
 

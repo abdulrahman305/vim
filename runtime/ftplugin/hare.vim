@@ -1,52 +1,61 @@
-vim9script
-
-# Vim filetype plugin.
-# Language:     Hare
-# Maintainer:   Amelia Clarke <selene@perilune.dev>
-# Last Updated: 2025 Sep 06
-# Upstream:     https://git.sr.ht/~sircmpwn/hare.vim
+" Vim filetype plugin.
+" Language:     Hare
+" Maintainer:   Amelia Clarke <selene@perilune.dev>
+" Last Updated: 2024 Oct 04
+" Upstream:     https://git.sr.ht/~sircmpwn/hare.vim
 
 if exists('b:did_ftplugin')
   finish
 endif
-b:did_ftplugin = 1
+let b:did_ftplugin = 1
 
-# Use the Hare compiler.
-compiler hare
-b:undo_ftplugin = 'compiler make'
+let s:cpo_save = &cpo
+set cpo&vim
 
-# Formatting settings.
+" Formatting settings.
 setlocal comments=://
 setlocal commentstring=//\ %s
-setlocal formatlistpat=^\\s*-\ 
+setlocal formatlistpat=^\ \\?-\ 
 setlocal formatoptions+=croqnlj/ formatoptions-=t
-b:undo_ftplugin ..= ' | setl cms< com< flp< fo<'
 
-# Locate Hare modules.
-&l:include = '\v^\s*use\s+%(\h\w*\s*\=)?'
-setlocal includeexpr=hare#IncludeExpr()
+" Search for Hare modules.
+setlocal include=^\\s*use\\>
+setlocal includeexpr=hare#FindModule(v:fname)
 setlocal isfname+=:
-&l:path = ',,' .. hare#GetPath()
 setlocal suffixesadd=.ha
-b:undo_ftplugin ..= ' | setl inc< inex< isf< pa< sua<'
 
-# Follow the official style guide by default.
+" Add HAREPATH to the default search paths.
+setlocal path-=/usr/include,,
+let &l:path .= ',' .. hare#GetPath() .. ',,'
+
+let b:undo_ftplugin = 'setl cms< com< flp< fo< inc< inex< isf< pa< sua< mp<'
+
+" Follow the Hare style guide by default.
 if get(g:, 'hare_recommended_style', 1)
   setlocal noexpandtab
   setlocal shiftwidth=0
   setlocal softtabstop=0
   setlocal tabstop=8
   setlocal textwidth=80
-  b:undo_ftplugin ..= ' | setl et< sts< sw< ts< tw<'
+  let b:undo_ftplugin .= ' et< sts< sw< ts< tw<'
 endif
 
-# Highlight incorrect whitespace outside of insert mode.
-if get(g:, 'hare_space_error', 1)
-  augroup HareSpaceError
-    autocmd!
+augroup hare.vim
+  autocmd!
+
+  " Highlight whitespace errors by default.
+  if get(g:, 'hare_space_error', 1)
     autocmd InsertEnter * hi link hareSpaceError NONE
     autocmd InsertLeave * hi link hareSpaceError Error
-  augroup END
+  endif
+augroup END
+
+if !exists('current_compiler')
+  let b:undo_ftplugin .= "| compiler make"
+  compiler hare
 endif
 
-# vim: et sts=2 sw=2 ts=8 tw=80
+let &cpo = s:cpo_save
+unlet s:cpo_save
+
+" vim: et sts=2 sw=2 ts=8

@@ -1,6 +1,6 @@
 " Test glob2regpat()
 
-import './util/vim9.vim' as v9
+import './vim9.vim' as v9
 
 func Test_glob2regpat_invalid()
   call assert_equal('^1\.33$', glob2regpat(1.33))

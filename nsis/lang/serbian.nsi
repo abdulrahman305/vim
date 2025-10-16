@@ -21,15 +21,15 @@ LangString ^UninstallCaption ${LANG_SERBIAN} \
 # Translated license file for the license page                            {{{1
 ##############################################################################
 
-LicenseLangString page_lic_file 0 "..\lang\LICENSE.nsis.txt"
-#LicenseLangString page_lic_file ${LANG_SERBIAN} "..\lang\LICENSE.sr.nsis.txt"
+LicenseLangString page_lic_file 0 "${VIMRT}\doc\uganda.nsis.txt"
+#LicenseLangString page_lic_file ${LANG_SERBIAN} "${VIMRT}\doc\uganda.nsis.srx"
 
 ##############################################################################
 # Translated README.txt file, which is opened after installation          {{{1
 ##############################################################################
 
 LangString vim_readme_file 0 "README.txt"
-#LangString vim_readme_file ${LANG_SERBIAN} "README.sr.txt"
+#LangString vim_readme_file ${LANG_SERBIAN} "README.srx.txt"
 
 ##############################################################################
 # MUI Configuration Strings                                               {{{1

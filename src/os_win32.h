@@ -11,7 +11,10 @@
  */
 
 #include "os_dos.h"		// common MS-DOS and Win32 stuff
-#include <direct.h>		// for _mkdir()
+// cproto fails on missing include files
+#ifndef PROTO
+# include <direct.h>		// for _mkdir()
+#endif
 
 #define BINARY_FILE_IO
 #define USE_EXE_NAME		// use argv[0] for $VIM
@@ -81,18 +84,19 @@
 #ifndef COBJMACROS
 # define COBJMACROS	// For OLE: Enable "friendlier" access to objects
 #endif
-
+#ifndef PROTO
 // Must include winsock2.h before windows.h since it conflicts with winsock.h
 // (included in windows.h).
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#include <windows.h>
+# include <winsock2.h>
+# include <ws2tcpip.h>
+# include <windows.h>
 
 // Weird: rpcndr.h defines "small" to "char", which causes trouble
 #undef small
 
-#ifndef SM_CXPADDEDBORDER
-# define SM_CXPADDEDBORDER     92
+# ifndef SM_CXPADDEDBORDER
+#  define SM_CXPADDEDBORDER     92
+# endif
 #endif
 
 typedef void (*sighandler_T)(int, int);

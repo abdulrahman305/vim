@@ -16,10 +16,9 @@ function SetupRemoteReplies()
   let max = argc()
 
   let id = expand("<client>")
-  if (type(id) == v:t_number && id == 0) || (type(id) == v:t_string && id == '')
+  if id == 0
     return
   endif
-
   while cnt < max
     " Handle same file from more clients and file being more than once
     " on the command line by encoding this stuff in the group name

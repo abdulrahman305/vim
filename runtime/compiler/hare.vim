@@ -1,35 +1,29 @@
-vim9script
+" Vim compiler file.
+" Compiler:    Hare
+" Maintainer:  Amelia Clarke <selene@perilune.dev>
+" Last Change: 2024-05-23
+" Upstream:    https://git.sr.ht/~sircmpwn/hare.vim
 
-# Vim compiler file.
-# Compiler:    Hare
-# Maintainer:  Amelia Clarke <selene@perilune.dev>
-# Last Change: 2025 Sep 06
-# Upstream:    https://git.sr.ht/~sircmpwn/hare.vim
-
-if exists('g:current_compiler')
+if exists('current_compiler')
   finish
 endif
+let current_compiler = 'hare'
+
+let s:cpo_save = &cpo
+set cpo&vim
 
 if filereadable('Makefile') || filereadable('makefile')
   CompilerSet makeprg=make
 else
-  const makeprg = 'hare build '
-    .. get(b:, 'hare_makeprg_params', get(g:, 'hare_makeprg_params', '-q'))
-  execute 'CompilerSet makeprg=' .. escape(makeprg, ' "\|')
+  CompilerSet makeprg=hare\ build
 endif
 
 CompilerSet errorformat=
-  \%o:%l:%v:\ syntax\ error:\ %m,
-  \%o:%l:%v:\ error:\ %m,
-  \Error:\ %m,
+  \%f:%l:%c:\ syntax\ error:\ %m,
+  \%f:%l:%c:\ error:\ %m,
   \%-G%.%#
 
-augroup HareQuickFix
-  autocmd!
-  autocmd QuickFixCmdPost make hare#QuickFixPaths()
-  autocmd QuickFixCmdPost lmake hare#QuickFixPaths()
-augroup END
+let &cpo = s:cpo_save
+unlet s:cpo_save
 
-g:current_compiler = 'hare'
-
-# vim: et sts=2 sw=2 ts=8 tw=80
+" vim: et sts=2 sw=2 ts=8

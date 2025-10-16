@@ -1,6 +1,5 @@
 " Vim :menutranslate command
 
-
 menutranslate clear
 menutranslate clear | echo "Foo"
 menutranslate clear " comment

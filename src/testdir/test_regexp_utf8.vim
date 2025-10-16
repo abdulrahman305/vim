@@ -1,5 +1,7 @@
 " Tests for regexp in utf8 encoding
 
+source shared.vim
+
 func s:equivalence_test()
   let str = "AÀÁÂÃÄÅĀĂĄǍǞǠǺȂȦȺḀẠẢẤẦẨẪẬẮẰẲẴẶ BƁɃḂḄḆ CÇĆĈĊČƇȻḈꞒ DĎĐƊḊḌḎḐḒ EÈÉÊËĒĔĖĘĚȄȆȨɆḔḖḘḚḜẸẺẼẾỀỂỄỆ FƑḞꞘ GĜĞĠĢƓǤǦǴḠꞠ HĤĦȞḢḤḦḨḪⱧ IÌÍÎÏĨĪĬĮİƗǏȈȊḬḮỈỊ JĴɈ KĶƘǨḰḲḴⱩꝀ LĹĻĽĿŁȽḶḸḺḼⱠ MḾṀṂ NÑŃŅŇǸṄṆṈṊꞤ OÒÓÔÕÖØŌŎŐƟƠǑǪǬǾȌȎȪȬȮȰṌṎṐṒỌỎỐỒỔỖỘỚỜỞỠỢ PƤṔṖⱣ QɊ RŔŖŘȐȒɌṘṚṜṞⱤꞦ SŚŜŞŠȘṠṢṤṦṨⱾꞨ TŢŤŦƬƮȚȾṪṬṮṰ UÙÚÛÜŨŪŬŮŰƯǕǙǛǓǗȔȖɄṲṴṶṸṺỤỦỨỪỬỮỰ  VƲṼṾ WŴẀẂẄẆẈ XẊẌ YÝŶŸƳȲɎẎỲỴỶỸ ZŹŻŽƵẐẒẔⱫ aàáâãäåāăąǎǟǡǻȃȧᶏḁẚạảấầẩẫậắằẳẵặⱥ bƀɓᵬᶀḃḅḇ cçćĉċčƈȼḉꞓꞔ dďđɗᵭᶁᶑḋḍḏḑḓ eèéêëēĕėęěȅȇȩɇᶒḕḗḙḛḝẹẻẽếềểễệ fƒᵮᶂḟꞙ gĝğġģǥǧǵɠᶃḡꞡ hĥħȟḣḥḧḩḫẖⱨꞕ iìíîïĩīĭįǐȉȋɨᶖḭḯỉị jĵǰɉ kķƙǩᶄḱḳḵⱪꝁ lĺļľŀłƚḷḹḻḽⱡ mᵯḿṁṃ nñńņňŉǹᵰᶇṅṇṉṋꞥ oòóôõöøōŏőơǒǫǭǿȍȏȫȭȯȱɵṍṏṑṓọỏốồổỗộớờởỡợ pƥᵱᵽᶈṕṗ qɋʠ rŕŗřȑȓɍɽᵲᵳᶉṛṝṟꞧ sśŝşšșȿᵴᶊṡṣṥṧṩꞩ tţťŧƫƭțʈᵵṫṭṯṱẗⱦ uùúûüũūŭůűųǚǖưǔǘǜȕȗʉᵾᶙṳṵṷṹṻụủứừửữự vʋᶌṽṿ wŵẁẃẅẇẉẘ xẋẍ yýÿŷƴȳɏẏẙỳỵỷỹ zźżžƶᵶᶎẑẓẕⱬ"
   let groups = split(str)
@@ -453,7 +455,7 @@ func Run_regexp_multibyte_magic()
   @w
   call assert_equal('k œ̄ṣ́m̥̄ᾱ̆́', getline(18))
 
-  bw!
+  close!
 endfunc
 
 func Test_regexp_multibyte_magic()
@@ -471,7 +473,7 @@ func Test_split_multibyte_to_bytes()
   call setline(1, 'l äö üᾱ̆́')
   s/ \?/ /g
   call assert_equal(' l ä ö ü ᾱ̆́', getline(1))
-  bw!
+  close!
 endfunc
 
 " Test for matchstr() with multibyte characters
@@ -481,7 +483,7 @@ func Test_matchstr_multibyte()
   call assert_equal('בג', matchstr("אבגד", "..", 0, 2))
   call assert_equal('א', matchstr("אבגד", ".", 0, 0))
   call assert_equal('ג', matchstr("אבגד", ".", 4, -1))
-  bw!
+  close!
 endfunc
 
 " Test for 7.4.636
@@ -492,7 +494,7 @@ func Test_search_with_end_offset()
   exe "normal /(/e+\<CR>"
   normal n"ayn
   call assert_equal("a\ncat(", @a)
-  bw!
+  close!
 endfunc
 
 " Check that "^" matches even when the line starts with a combining char
@@ -614,23 +616,7 @@ func Test_search_multibyte_match_ascii()
     call assert_equal(['s', 'ss', 'ſſ', 'ſ'], ic_match3, "Ignorecase Collection Regex-engine: " .. &re)
     call assert_equal(['ſſ','ſ'], noic_match3, "No-Ignorecase Collection Regex-engine: " .. &re)
   endfor
-  set re&vim
   bw!
 endfunc
-
-func Test_replace_multibyte_match_in_multi_lines()
-  new
-  let text = ['ab 1c', 'ab 1c', 'def', '是否 a', '是否 a', 'ghi', '是否a', '是否a', '是否 1', '是否 1']
-  let expected = ['', 'def', '', 'ghi', '', '']
-  for i in range(0, 2)
-    exe "set ignorecase re="..i
-    :%d _
-    call setline(1, text)
-    :%s/\(.\+\)\n\1//g
-    call assert_equal(expected, getline(1, '$'))
-  endfor
-  bw!
-  set ignorecase&vim re&vim
-endfun
 
 " vim: shiftwidth=2 sts=2 expandtab

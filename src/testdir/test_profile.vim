@@ -1,8 +1,10 @@
 " Test Vim profiler
 
+source check.vim
 CheckFeature profile
 
-source util/screendump.vim
+source shared.vim
+source screendump.vim
 
 if has('prof_nsec')
   let s:header = 'count     total (s)      self (s)'

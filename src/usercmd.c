@@ -71,7 +71,6 @@ static keyvalue_T command_complete_tab[] =
     KEYVALUE_ENTRY(EXPAND_FILES, "file"),
     KEYVALUE_ENTRY(EXPAND_FILES_IN_PATH, "file_in_path"),
     KEYVALUE_ENTRY(EXPAND_FILETYPE, "filetype"),
-    KEYVALUE_ENTRY(EXPAND_FILETYPECMD, "filetypecmd"),
     KEYVALUE_ENTRY(EXPAND_FUNCTIONS, "function"),
     KEYVALUE_ENTRY(EXPAND_HELP, "help"),
     KEYVALUE_ENTRY(EXPAND_HIGHLIGHT, "highlight"),
@@ -88,7 +87,6 @@ static keyvalue_T command_complete_tab[] =
     KEYVALUE_ENTRY(EXPAND_MESSAGES, "messages"),
     KEYVALUE_ENTRY(EXPAND_SETTINGS, "option"),
     KEYVALUE_ENTRY(EXPAND_PACKADD, "packadd"),
-    KEYVALUE_ENTRY(EXPAND_RETAB, "retab"),
     KEYVALUE_ENTRY(EXPAND_RUNTIME, "runtime"),
 #if defined(FEAT_EVAL)
     KEYVALUE_ENTRY(EXPAND_SCRIPTNAMES, "scriptnames"),
@@ -467,7 +465,7 @@ get_user_cmd_complete(expand_T *xp UNUSED, int idx)
 {
     if (idx < 0 || idx >= (int)ARRAY_LENGTH(command_complete_tab))
 	return NULL;
-    return command_complete_tab[idx].value.string;
+    return (char_u *)command_complete_tab[idx].value;
 }
 
 /*
@@ -487,33 +485,16 @@ get_commandtype(int expand)
 
 #ifdef FEAT_EVAL
 /*
- * Get the name of completion type "expand" as an allocated string.
- * "compl_arg" is the function name for "custom" and "customlist" types.
- * Returns NULL if no completion is available or on allocation failure.
+ * Get the name of completion type "expand" as a string.
  */
     char_u *
-cmdcomplete_type_to_str(int expand, char_u *compl_arg)
+cmdcomplete_type_to_str(int expand)
 {
     keyvalue_T *kv;
-    char_u     *cmd_compl;
 
     kv = get_commandtype(expand);
-    if (kv == NULL || kv->value.string == NULL)
-	return NULL;
 
-    cmd_compl = kv->value.string;
-    if (expand == EXPAND_USER_LIST || expand == EXPAND_USER_DEFINED)
-    {
-	char_u	*buffer;
-
-	buffer = alloc(STRLEN(cmd_compl) + STRLEN(compl_arg) + 2);
-	if (buffer == NULL)
-	    return NULL;
-	sprintf((char *)buffer, "%s,%s", cmd_compl, compl_arg);
-	return buffer;
-    }
-
-    return vim_strsave(cmd_compl);
+    return (kv == NULL) ? NULL : (char_u *)kv->value;
 }
 
 /*
@@ -533,8 +514,8 @@ cmdcomplete_str_to_type(char_u *complete_str)
 	return EXPAND_USER_LIST;
 
     target.key = 0;
-    target.value.string = complete_str;
-    target.value.length = 0;			// not used, see cmp_keyvalue_value()
+    target.value = (char *)complete_str;
+    target.length = 0;				// not used, see cmp_keyvalue_value()
 
     if (last_entry != NULL && cmp_keyvalue_value(&target, last_entry) == 0)
 	entry = last_entry;
@@ -618,21 +599,16 @@ uc_list(char_u *name, size_t name_len)
 		msg_putchar('|');
 		--len;
 	    }
-	    if (len != 0)
-		msg_puts(&"    "[4 - len]);
+	    while (len-- > 0)
+		msg_putchar(' ');
 
 	    msg_outtrans_attr(cmd->uc_name, HL_ATTR(HLF_D));
 	    len = (int)cmd->uc_namelen + 4;
 
-	    if (len < 21)
-	    {
-		// Field padding spaces   12345678901234567
-		static char spaces[18] = "                 ";
-		msg_puts(&spaces[len - 4]);
-		len = 21;
-	    }
-	    msg_putchar(' ');
-	    ++len;
+	    do {
+		msg_putchar(' ');
+		++len;
+	    } while (len < 22);
 
 	    // "over" is how much longer the name is than the column width for
 	    // the name, we'll try to align what comes after.
@@ -649,8 +625,7 @@ uc_list(char_u *name, size_t name_len)
 		case (EX_EXTRA|EX_NOSPC|EX_NEEDARG): IObuff[len++] = '1'; break;
 	    }
 
-	    do
-	    {
+	    do {
 		IObuff[len++] = ' ';
 	    } while (len < 5 - over);
 
@@ -673,8 +648,7 @@ uc_list(char_u *name, size_t name_len)
 		    IObuff[len++] = '.';
 	    }
 
-	    do
-	    {
+	    do {
 		IObuff[len++] = ' ';
 	    } while (len < 8 - over);
 
@@ -688,8 +662,7 @@ uc_list(char_u *name, size_t name_len)
 		    break;
 		}
 
-	    do
-	    {
+	    do {
 		IObuff[len++] = ' ';
 	    } while (len < 13 - over);
 
@@ -697,8 +670,8 @@ uc_list(char_u *name, size_t name_len)
 	    entry = get_commandtype(cmd->uc_compl);
 	    if (entry != NULL)
 	    {
-		STRCPY(IObuff + len, entry->value.string);
-		len += (int)entry->value.length;
+		STRCPY(IObuff + len, entry->value);
+		len += entry->length;
 #ifdef FEAT_EVAL
 		if (p_verbose > 0 && cmd->uc_compl_arg != NULL)
 		{
@@ -708,14 +681,13 @@ uc_list(char_u *name, size_t name_len)
 		    {
 			IObuff[len++] = ',';
 			STRCPY(IObuff + len, cmd->uc_compl_arg);
-			len += (int)uc_compl_arglen;
+			len += uc_compl_arglen;
 		    }
 		}
 #endif
 	    }
 
-	    do
-	    {
+	    do {
 		IObuff[len++] = ' ';
 	    } while (len < 25 - over);
 
@@ -854,8 +826,8 @@ parse_compl_arg(
     }
 
     target.key = 0;
-    target.value.string = value;
-    target.value.length = valend;
+    target.value = (char *)value;
+    target.length = valend;
 
     if (last_entry != NULL && cmp_keyvalue_value_n(&target, last_entry) == 0)
 	entry = last_entry;
@@ -1543,12 +1515,7 @@ uc_split_args(char_u *arg, size_t *lenp)
 }
 
     static size_t
-add_cmd_modifier(
-    char_u	*buf,
-    size_t	buflen,
-    char	*mod_str,
-    size_t	mod_strlen,
-    int		*multi_mods)
+add_cmd_modifier(char_u *buf, size_t buflen, char *mod_str, size_t mod_strlen, int *multi_mods)
 {
     if (buf != NULL)
     {
@@ -1670,19 +1637,15 @@ produce_cmdmods(char_u *buf, cmdmod_T *cmod, int quote)
     // the modifiers that are simple flags
     for (i = 0; i < (int)ARRAY_LENGTH(mod_entry_tab); ++i)
 	if (cmod->cmod_flags & mod_entry_tab[i].key)
-	    buflen += add_cmd_modifier(buf, buflen,
-		    (char *)mod_entry_tab[i].value.string,
-		    mod_entry_tab[i].value.length, &multi_mods);
+	    buflen += add_cmd_modifier(buf, buflen, mod_entry_tab[i].value, mod_entry_tab[i].length, &multi_mods);
 
     // :silent
     if (cmod->cmod_flags & CMOD_SILENT)
     {
 	if (cmod->cmod_flags & CMOD_ERRSILENT)
-	    buflen += add_cmd_modifier(buf, buflen, "silent!",
-		    STRLEN_LITERAL("silent!"), &multi_mods);
+	    buflen += add_cmd_modifier(buf, buflen, "silent!", STRLEN_LITERAL("silent!"), &multi_mods);
 	else
-	    buflen += add_cmd_modifier(buf, buflen, "silent",
-		    STRLEN_LITERAL("silent"), &multi_mods);
+	    buflen += add_cmd_modifier(buf, buflen, "silent", STRLEN_LITERAL("silent"), &multi_mods);
     }
 
     // :verbose

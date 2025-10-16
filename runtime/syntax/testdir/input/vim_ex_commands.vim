@@ -1,6 +1,5 @@
 " Ex commands
 
-
 " START NOT MATCHED
 :@
 :@@
@@ -12,8 +11,10 @@
 :help
  :help
 : help
- : help # FIXME
+ : help
 
+:2match
+:3match
 :append
     text
 .
@@ -197,7 +198,7 @@
 :folddoopen
 :folddoclosed
 :foldopen
-:for foo in bar | endfor
+:for
 :function
 :global/.../
 :goto
@@ -539,7 +540,6 @@
 :unabbreviate
 :unabbreviate
 :unhide
-:uniq
 :unlet
 :unlockvar
 :unmap
@@ -597,6 +597,8 @@ call Foo() | help
 call Foo() |help
 call Foo()| help
 
+call Foo() | 2match
+call Foo() | 3match
 " FIXME
 call Foo() | append
     text
@@ -781,7 +783,7 @@ call Foo() | foldclose
 call Foo() | folddoopen
 call Foo() | folddoclosed
 call Foo() | foldopen
-call Foo() | for foo in bar | endfor
+call Foo() | for
 call Foo() | function
 call Foo() | global/.../
 call Foo() | goto
@@ -1124,7 +1126,6 @@ call Foo() | undolist
 call Foo() | unabbreviate
 call Foo() | unabbreviate
 call Foo() | unhide
-call Foo() | uniq
 call Foo() | unlet
 call Foo() | unlockvar
 call Foo() | unmap

@@ -1,5 +1,7 @@
 " Test for textobjects
 
+source check.vim
+
 func CpoM(line, useM, expected)
   new
 

@@ -148,7 +148,7 @@ static struct ref refsdeleted;	// dummy object for deleted ref list
 // TCL interface manager
 ////////////////////////////////////////////////////////////////////////////
 
-#if defined(DYNAMIC_TCL)
+#if defined(DYNAMIC_TCL) || defined(PROTO)
 # ifndef DYNAMIC_TCL_DLL
 #  define DYNAMIC_TCL_DLL "tcl83.dll"
 # endif
@@ -233,7 +233,7 @@ tcl_runtime_link_init(char *libname, int verbose)
     }
     return OK;
 }
-#endif // defined(DYNAMIC_TCL)
+#endif // defined(DYNAMIC_TCL) || defined(PROTO)
 
 #ifdef DYNAMIC_TCL
 static char *find_executable_arg = NULL;
@@ -249,7 +249,7 @@ vim_tcl_init(char *arg)
 #endif
 }
 
-#if defined(DYNAMIC_TCL)
+#if defined(DYNAMIC_TCL) || defined(PROTO)
 
 static int stubs_initialized = FALSE;
 
@@ -282,7 +282,7 @@ tcl_enabled(int verbose)
 }
 #endif
 
-#if defined(EXITFREE)
+#if defined(EXITFREE) || defined(PROTO)
 /*
  * Called once when exiting.
  */

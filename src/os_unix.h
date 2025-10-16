@@ -159,6 +159,8 @@ typedef void (*sighandler_T) SIGPROTOARG;
 #endif
 
 
+#ifndef PROTO
+
 #ifdef VMS
 # include <unixio.h>
 # include <unixlib.h>
@@ -195,6 +197,8 @@ typedef void (*sighandler_T) SIGPROTOARG;
 #ifdef HAVE_FLOCK
 # include <sys/file.h>
 #endif
+
+#endif // PROTO
 
 #ifdef VMS
 typedef struct dsc$descriptor   DESC;
@@ -246,7 +250,7 @@ typedef struct dsc$descriptor   DESC;
 #endif
 
 #ifndef XDG_VIMRC_FILE
-# define XDG_VIMRC_FILE (mch_getenv((char_u *)"XDG_CONFIG_HOME") \
+# define XDG_VIMRC_FILE (mch_getenv("XDG_CONFIG_HOME") \
 	? "$XDG_CONFIG_HOME/vim/vimrc" \
 	: "~/.config/vim/vimrc")
 #endif
@@ -484,4 +488,3 @@ int mch_rename(const char *src, const char *dest);
 
 // We have three kinds of ACL support.
 #define HAVE_ACL (HAVE_POSIX_ACL || HAVE_SOLARIS_ACL || HAVE_AIX_ACL)
-

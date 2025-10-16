@@ -45,7 +45,9 @@ if_perl:
     - changed-files:
       - any-glob-to-any-file:
         - 'src/if_perl.xs'
+        - 'src/if_perlsfio.c'
         - 'src/proto/if_perl.pro'
+        - 'src/proto/if_perlsfio.pro'
         - 'runtime/doc/if_perl.txt'
 
 if_python:
@@ -144,7 +146,7 @@ plugin-netrw:
     - changed-files:
       - any-glob-to-any-file:
         - 'runtime/plugin/netrwPlugin.vim'
-        - 'runtime/pack/dist/opt/netrw/**'
+        - 'runtime/autoload/netrw*'
 
 xxd:
   - all:

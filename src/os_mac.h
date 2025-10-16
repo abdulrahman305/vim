@@ -47,11 +47,6 @@
 #include <dirent.h>
 
 /*
- * Mach interface
- */
-#include <mach/task.h>
-
-/*
  * MacOS specific #define
  */
 

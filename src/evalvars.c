@@ -13,7 +13,7 @@
 
 #include "vim.h"
 
-#if defined(FEAT_EVAL)
+#if defined(FEAT_EVAL) || defined(PROTO)
 
 static dictitem_T	globvars_var;		// variable used for g:
 static dict_T		globvardict;		// Dictionary with g: variables
@@ -161,13 +161,7 @@ static struct vimvar
     {VV_NAME("t_typealias",	 VAR_NUMBER), NULL, VV_RO},
     {VV_NAME("t_enum",		 VAR_NUMBER), NULL, VV_RO},
     {VV_NAME("t_enumvalue",	 VAR_NUMBER), NULL, VV_RO},
-    {VV_NAME("stacktrace",	 VAR_LIST), &t_list_dict_any, VV_RO},
-    {VV_NAME("t_tuple",		 VAR_NUMBER), NULL, VV_RO},
-    {VV_NAME("wayland_display",  VAR_STRING), NULL, VV_RO},
-    {VV_NAME("clipmethod",	 VAR_STRING), NULL, VV_RO},
-    {VV_NAME("termda1",		 VAR_STRING), NULL, VV_RO},
-    {VV_NAME("termosc",		 VAR_STRING), NULL, VV_RO},
-    {VV_NAME("clipproviders",	 VAR_DICT), &t_dict_string, VV_RO}
+    {VV_NAME("cmdcomplete",	 VAR_BOOL), NULL, VV_RO},
 };
 
 // shorthand
@@ -241,6 +235,7 @@ evalvars_init(void)
     set_vim_var_nr(VV_SEARCHFORWARD, 1L);
     set_vim_var_nr(VV_HLSEARCH, 1L);
     set_vim_var_nr(VV_EXITING, VVAL_NULL);
+    set_vim_var_nr(VV_CMDCOMPLETE, VVAL_FALSE);
     set_vim_var_dict(VV_COMPLETED_ITEM, dict_alloc_lock(VAR_FIXED));
     set_vim_var_list(VV_ERRORS, list_alloc());
     set_vim_var_dict(VV_EVENT, dict_alloc_lock(VAR_FIXED));
@@ -271,9 +266,8 @@ evalvars_init(void)
     set_vim_var_nr(VV_TYPE_CLASS,   VAR_TYPE_CLASS);
     set_vim_var_nr(VV_TYPE_OBJECT,  VAR_TYPE_OBJECT);
     set_vim_var_nr(VV_TYPE_TYPEALIAS,  VAR_TYPE_TYPEALIAS);
-    set_vim_var_nr(VV_TYPE_ENUM,    VAR_TYPE_ENUM);
+    set_vim_var_nr(VV_TYPE_ENUM,  VAR_TYPE_ENUM);
     set_vim_var_nr(VV_TYPE_ENUMVALUE,  VAR_TYPE_ENUMVALUE);
-    set_vim_var_nr(VV_TYPE_TUPLE,   VAR_TYPE_TUPLE);
 
     set_vim_var_nr(VV_ECHOSPACE,    sc_col - 1);
 
@@ -288,7 +282,7 @@ evalvars_init(void)
     set_reg_var(0);
 }
 
-#if defined(EXITFREE)
+#if defined(EXITFREE) || defined(PROTO)
 /*
  * Free all vim variables information on exit
  */
@@ -328,13 +322,13 @@ evalvars_clear(void)
     int
 garbage_collect_globvars(int copyID)
 {
-    return set_ref_in_ht(&globvarht, copyID, NULL, NULL);
+    return set_ref_in_ht(&globvarht, copyID, NULL);
 }
 
     int
 garbage_collect_vimvars(int copyID)
 {
-    return set_ref_in_ht(&vimvarht, copyID, NULL, NULL);
+    return set_ref_in_ht(&vimvarht, copyID, NULL);
 }
 
     int
@@ -347,7 +341,7 @@ garbage_collect_scriptvars(int copyID)
 
     for (i = 1; i <= script_items.ga_len; ++i)
     {
-	abort = abort || set_ref_in_ht(&SCRIPT_VARS(i), copyID, NULL, NULL);
+	abort = abort || set_ref_in_ht(&SCRIPT_VARS(i), copyID, NULL);
 
 	si = SCRIPT_ITEM(i);
 	for (idx = 0; idx < si->sn_var_vals.ga_len; ++idx)
@@ -355,7 +349,7 @@ garbage_collect_scriptvars(int copyID)
 	    svar_T    *sv = ((svar_T *)si->sn_var_vals.ga_data) + idx;
 
 	    if (sv->sv_name != NULL)
-		abort = abort || set_ref_in_item(sv->sv_tv, copyID, NULL, NULL, NULL);
+		abort = abort || set_ref_in_item(sv->sv_tv, copyID, NULL, NULL);
 	}
     }
 
@@ -417,7 +411,7 @@ eval_charconvert(
     return OK;
 }
 
-# if defined(FEAT_POSTSCRIPT)
+# if defined(FEAT_POSTSCRIPT) || defined(PROTO)
     int
 eval_printexpr(char_u *fname, char_u *args)
 {
@@ -447,7 +441,7 @@ eval_printexpr(char_u *fname, char_u *args)
 }
 # endif
 
-# if defined(FEAT_DIFF)
+# if defined(FEAT_DIFF) || defined(PROTO)
     void
 eval_diff(
     char_u	*origfile,
@@ -505,7 +499,7 @@ eval_patch(
 }
 # endif
 
-#if defined(FEAT_SPELL)
+#if defined(FEAT_SPELL) || defined(PROTO)
 /*
  * Evaluate an expression to a list with suggestions.
  * For the "expr:" part of 'spellsuggest'.
@@ -969,11 +963,7 @@ heredoc_get(exarg_T *eap, char_u *cmd, int script_get, int vim9compile)
 	    }
 
 	    if (list_append_string(l, str, -1) == FAIL)
-	    {
-		if (free_str)
-		    vim_free(str);
 		break;
-	    }
 	    if (free_str)
 		vim_free(str);
 	}
@@ -1245,13 +1235,10 @@ ex_let_vars(
 {
     char_u	*arg = arg_start;
     list_T	*l;
-    tuple_T	*tuple = NULL;
     int		i;
     int		var_idx = 0;
-    listitem_T	*item = NULL;
+    listitem_T	*item;
     typval_T	ltv;
-    int		is_list = tv->v_type == VAR_LIST;
-    int		idx;
 
     if (tv->v_type == VAR_VOID)
     {
@@ -1267,121 +1254,58 @@ ex_let_vars(
     }
 
     // ":let [v1, v2] = list" or ":for [v1, v2] in listlist"
-    // or
-    // ":let [v1, v2] = tuple" or ":for [v1, v2] in tupletuple"
-    if (tv->v_type != VAR_LIST && tv->v_type != VAR_TUPLE)
+    if (tv->v_type != VAR_LIST || (l = tv->vval.v_list) == NULL)
     {
-	emsg(_(e_list_or_tuple_required));
+	emsg(_(e_list_required));
 	return FAIL;
     }
-    if (is_list)
-    {
-	l = tv->vval.v_list;
-	if (l == NULL)
-	{
-	    emsg(_(e_list_required));
-	    return FAIL;
-	}
-	i = list_len(l);
-    }
-    else
-    {
-	tuple = tv->vval.v_tuple;
-	if (tuple == NULL)
-	{
-	    emsg(_(e_tuple_required));
-	    return FAIL;
-	}
-	i = tuple_len(tuple);
-    }
 
+    i = list_len(l);
     if (semicolon == 0 && var_count < i)
     {
-	emsg(_(is_list ? e_less_targets_than_list_items
-					: e_less_targets_than_tuple_items));
+	emsg(_(e_less_targets_than_list_items));
 	return FAIL;
     }
     if (var_count - semicolon > i)
     {
-	emsg(_(is_list ? e_more_targets_than_list_items
-					: e_more_targets_than_tuple_items));
+	emsg(_(e_more_targets_than_list_items));
 	return FAIL;
     }
 
-    if (is_list)
-    {
-	CHECK_LIST_MATERIALIZE(l);
-	item = l->lv_first;
-    }
-    else
-	idx = 0;
-
+    CHECK_LIST_MATERIALIZE(l);
+    item = l->lv_first;
     while (*arg != ']')
     {
 	arg = skipwhite(arg + 1);
 	++var_idx;
-	arg = ex_let_one(arg, is_list ? &item->li_tv : TUPLE_ITEM(tuple, idx),
-			 TRUE, flags | ASSIGN_UNPACK, (char_u *)",;]", op,
-			 var_idx);
-	if (is_list)
-	    item = item->li_next;
-	else
-	    idx++;
+	arg = ex_let_one(arg, &item->li_tv, TRUE,
+			  flags | ASSIGN_UNPACK, (char_u *)",;]", op, var_idx);
+	item = item->li_next;
 	if (arg == NULL)
 	    return FAIL;
 
 	arg = skipwhite(arg);
 	if (*arg == ';')
 	{
-	    // Put the rest of the list or tuple (may be empty) in the var
-	    // after ';'.  Create a new list or tuple for this.
-	    if (is_list)
+	    // Put the rest of the list (may be empty) in the var after ';'.
+	    // Create a new list for this.
+	    l = list_alloc();
+	    if (l == NULL)
+		return FAIL;
+	    while (item != NULL)
 	    {
-		// Put the rest of the list (may be empty) in the var
-		// after ';'.  Create a new list for this.
-		l = list_alloc();
-		if (l == NULL)
-		    return FAIL;
-
-		// list
-		while (item != NULL)
-		{
-		    list_append_tv(l, &item->li_tv);
-		    item = item->li_next;
-		}
-
-		ltv.v_type = VAR_LIST;
-		ltv.v_lock = 0;
-		ltv.vval.v_list = l;
-		l->lv_refcount = 1;
-	    }
-	    else
-	    {
-		tuple_T	*new_tuple = tuple_alloc();
-		if (new_tuple == NULL)
-		    return FAIL;
-
-		// Put the rest of the tuple (may be empty) in the var
-		// after ';'.  Create a new tuple for this.
-		while (idx < TUPLE_LEN(tuple))
-		{
-		    typval_T    new_tv;
-
-		    copy_tv(TUPLE_ITEM(tuple, idx), &new_tv);
-		    if (tuple_append_tv(new_tuple, &new_tv) == FAIL)
-			return FAIL;
-		    idx++;
-		}
-
-		ltv.v_type = VAR_TUPLE;
-		ltv.v_lock = 0;
-		ltv.vval.v_tuple = new_tuple;
-		new_tuple->tv_refcount = 1;
+		list_append_tv(l, &item->li_tv);
+		item = item->li_next;
 	    }
 
+	    ltv.v_type = VAR_LIST;
+	    ltv.v_lock = 0;
+	    ltv.vval.v_list = l;
+	    l->lv_refcount = 1;
 	    ++var_idx;
+
 	    arg = ex_let_one(skipwhite(arg + 1), &ltv, FALSE,
-			flags | ASSIGN_UNPACK, (char_u *)"]", op, var_idx);
+			    flags | ASSIGN_UNPACK, (char_u *)"]", op, var_idx);
 	    clear_tv(&ltv);
 	    if (arg == NULL)
 		return FAIL;
@@ -2495,9 +2419,6 @@ item_lock(typval_T *tv, int deep, int lock, int check_refcount)
 		}
 	    }
 	    break;
-	case VAR_TUPLE:
-	    tuple_lock(tv->vval.v_tuple, deep, lock, check_refcount);
-	    break;
 	case VAR_DICT:
 	    if ((d = tv->vval.v_dict) != NULL
 				    && !(check_refcount && d->dv_refcount > 1))
@@ -2525,7 +2446,7 @@ item_lock(typval_T *tv, int deep, int lock, int check_refcount)
     --recurse;
 }
 
-#if defined(FEAT_MENU) && defined(FEAT_MULTI_LANG)
+#if (defined(FEAT_MENU) && defined(FEAT_MULTI_LANG)) || defined(PROTO)
 /*
  * Delete all "menutrans_" variables.
  */
@@ -2916,17 +2837,6 @@ set_vim_var_string(
 	vimvars[idx].vv_str = vim_strnsave(val, len);
 }
 
-    void
-set_vim_var_string_direct(
-    int		idx,
-    char_u	*val)
-{
-    clear_tv(&vimvars[idx].vv_di.di_tv);
-    vimvars[idx].vv_tv_type = VAR_STRING;
-
-    vimvars[idx].vv_str = val;
-}
-
 /*
  * Set List v: variable to "val".
  */
@@ -3178,9 +3088,6 @@ eval_variable(
 			dictitem_T *v = find_var_in_ht(ht, 0, name,
 						  flags & EVAL_VAR_NOAUTOLOAD);
 
-			if (v == NULL)
-			    v = find_var_autoload_prefix(name, sid, NULL, NULL);
-
 			if (v != NULL)
 			{
 			    tv = &v->di_tv;
@@ -3214,20 +3121,6 @@ eval_variable(
 	    int	    has_g_prefix = STRNCMP(name, "g:", 2) == 0;
 	    ufunc_T *ufunc = find_func(name, FALSE);
 
-	    if (ufunc != NULL && cc == '<')
-	    {
-		// handle generic function
-		char_u	*argp = name + len;
-		name[len] = cc;
-		ufunc = eval_generic_func(ufunc, name, &argp);
-		name[len] = NUL;
-		if (ufunc == NULL)
-		{
-		    ret = FAIL;
-		    goto done;
-		}
-	    }
-
 	    // In Vim9 script we can get a function reference by using the
 	    // function name.  For a global non-autoload function "g:" is
 	    // required.
@@ -3239,24 +3132,11 @@ eval_variable(
 		{
 		    rettv->v_type = VAR_FUNC;
 		    if (has_g_prefix)
-		    {
 			// Keep the "g:", otherwise script-local may be
 			// assumed.
-			if (cc != '<')
-			    rettv->vval.v_string = vim_strsave(name);
-			else
-			{
-			    // append the generic function arguments
-			    char_u	*argp = name + len;
-			    name[len] = cc;
-			    rettv->vval.v_string =
-				append_generic_func_type_args(name, len,
-									&argp);
-			    name[len] = NUL;
-			}
-		    }
+			rettv->vval.v_string = vim_strsave(name);
 		    else
-			rettv->vval.v_string = vim_strnsave(ufunc->uf_name, ufunc->uf_namelen);
+			rettv->vval.v_string = vim_strsave(ufunc->uf_name);
 		    if (rettv->vval.v_string != NULL)
 			func_ref(ufunc->uf_name);
 		}
@@ -3307,9 +3187,9 @@ eval_variable(
 		}
 	    }
 
-	    // If a list or tuple or dict variable wasn't initialized and has
-	    // meaningful type, do it now.  Not for global variables, they are
-	    // not declared.
+	    // If a list or dict variable wasn't initialized and has meaningful
+	    // type, do it now.  Not for global variables, they are not
+	    // declared.
 	    if (ht != &globvarht)
 	    {
 		if (tv->v_type == VAR_DICT && tv->vval.v_dict == NULL
@@ -3338,19 +3218,6 @@ eval_variable(
 			    sv->sv_flags |= SVFLAG_ASSIGNED;
 		    }
 		}
-		else if (tv->v_type == VAR_TUPLE && tv->vval.v_tuple == NULL
-					    && ((type != NULL && !was_assigned)
-							  || !in_vim9script()))
-		{
-		    tv->vval.v_tuple = tuple_alloc();
-		    if (tv->vval.v_tuple != NULL)
-		    {
-			++tv->vval.v_tuple->tv_refcount;
-			tv->vval.v_tuple->tv_type = alloc_type(type);
-			if (sv != NULL)
-			    sv->sv_flags |= SVFLAG_ASSIGNED;
-		    }
-		}
 		else if (tv->v_type == VAR_BLOB && tv->vval.v_blob == NULL
 					    && ((type != NULL && !was_assigned)
 							  || !in_vim9script()))
@@ -3364,7 +3231,7 @@ eval_variable(
 		    }
 		}
 	    }
-	    ret = copy_tv(tv, rettv);
+	    copy_tv(tv, rettv);
 	}
     }
 

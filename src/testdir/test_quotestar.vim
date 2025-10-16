@@ -1,5 +1,8 @@
 " *-register (quotestar) tests
 
+source shared.vim
+source check.vim
+
 CheckFeature clipboard_working
 
 func Do_test_quotestar_for_macunix()

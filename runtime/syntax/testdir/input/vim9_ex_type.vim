@@ -1,6 +1,5 @@
 vim9script
-# Vim9 :type command
-
+# Vim :type command
 
 type Foo = string
 type Bar = list<string>
